@@ -32,7 +32,6 @@ public class Parser
     }
 }
 
-
 PARSER_END(Parser)
 
 SKIP :
@@ -125,7 +124,7 @@ void ImportDeclaration() : {}
 
 void Complete() : {}
 {
-    <IDENTIFIER> (<DOT> <IDENTIFIER>)* <LPRTHSIS> Type() <RPRTHSIS>
+    <IDENTIFIER> (<DOT> <IDENTIFIER>)* <LPRTHSIS> Type() <RPRTHSIS> Type()
 }
 
 void ClassDeclaration() : {} 
@@ -145,7 +144,7 @@ void VarDeclaration() : {}
 
 void NonIdentifierVarDeclaration() : {}
 {
-    Type() <IDENTIFIER> <SEMICOLON>
+    NonIdentifierType() <IDENTIFIER> <SEMICOLON>
 }
 
 void IdentifierVarDeclaration() : {}
@@ -154,6 +153,15 @@ void IdentifierVarDeclaration() : {}
 }
 
 void Type() : {}
+{
+    <BOOL>
+    |
+    <INT> [<LSQBRACKET> <RSQBRACKET>]
+    |
+    <IDENTIFIER>
+}
+
+void NonIdentifierType() : {}
 {
     <BOOL>
     |

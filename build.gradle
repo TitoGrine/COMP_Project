@@ -46,6 +46,9 @@ sourceSets {
       java {
          srcDir 'test'
       }
+       resources {
+           srcDir 'test'
+       }
    }
     
 }

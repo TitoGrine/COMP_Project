@@ -7,7 +7,9 @@
 
 PARSER_BEGIN(Parser)
 
-import java.io.FileNotFoundException;public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants/*@egen*/
+import java.io.FileNotFoundException;
+
+public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants/*@egen*/
 {/*@bgen(jjtree)*/
   protected static JJTParserState jjtree = new JJTParserState();
 
@@ -190,7 +192,7 @@ void Complete() : {/*@bgen(jjtree) Complete */
 {/*@bgen(jjtree) Complete */
     try {
 /*@egen*/
-    <IDENTIFIER> (<DOT> <IDENTIFIER>)* <LPRTHSIS> Type() <RPRTHSIS>/*@bgen(jjtree)*/
+    <IDENTIFIER> (<DOT> <IDENTIFIER>)* <LPRTHSIS> Type() <RPRTHSIS> Type()/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -288,7 +290,7 @@ void NonIdentifierVarDeclaration() : {/*@bgen(jjtree) NonIdentifierVarDeclaratio
 {/*@bgen(jjtree) NonIdentifierVarDeclaration */
     try {
 /*@egen*/
-    Type() <IDENTIFIER> <SEMICOLON>/*@bgen(jjtree)*/
+    NonIdentifierType() <IDENTIFIER> <SEMICOLON>/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -334,6 +336,27 @@ void Type() : {/*@bgen(jjtree) Type */
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
 {/*@bgen(jjtree) Type */
+    try {
+/*@egen*/
+    <BOOL>
+    |
+    <INT> [<LSQBRACKET> <RSQBRACKET>]
+    |
+    <IDENTIFIER>/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void NonIdentifierType() : {/*@bgen(jjtree) NonIdentifierType */
+  ASTNonIdentifierType jjtn000 = new ASTNonIdentifierType(JJTNONIDENTIFIERTYPE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) NonIdentifierType */
     try {
 /*@egen*/
     <BOOL>

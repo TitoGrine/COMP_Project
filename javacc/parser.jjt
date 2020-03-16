@@ -27,8 +27,6 @@ public class Parser
         }
 
         SimpleNode root = grammar.Program(); // returns reference to root node
-
-        System.out.println("\n Code is accepted by Java-- grammar! \n");
     }
 }
 
@@ -107,9 +105,8 @@ TOKEN :
 }
 
 TOKEN: {
-    < LETTER: ["a"-"z","A"-"Z"] >                     |
-    < INTEGERLITERAL: (["0"-"9"])+ >                  |
-    < IDENTIFIER: <LETTER>(<LETTER>|["0"-"9"]|"_")* >
+    < INTEGERLITERAL: (["0"-"9"])+ >                                    |
+    < IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z"]|["0"-"9"]|"_")* >
 }
 
 SimpleNode Program(): {}
@@ -124,7 +121,7 @@ void ImportDeclaration() : {}
 
 void Complete() : {}
 {
-    <IDENTIFIER> (<DOT> <IDENTIFIER>)* <LPRTHSIS> Type() <RPRTHSIS> Type()
+    [<STATIC>] <IDENTIFIER> (<DOT> <IDENTIFIER>)* <LPRTHSIS> Type() <RPRTHSIS> Type()
 }
 
 void ClassDeclaration() : {} 
@@ -154,9 +151,7 @@ void IdentifierVarDeclaration() : {}
 
 void Type() : {}
 {
-    <BOOL>
-    |
-    <INT> [<LSQBRACKET> <RSQBRACKET>]
+    NonIdentifierType()
     |
     <IDENTIFIER>
 }
@@ -166,6 +161,8 @@ void NonIdentifierType() : {}
     <BOOL>
     |
     <INT> [<LSQBRACKET> <RSQBRACKET>]
+    |
+    <VOID>
 }
 
 void MethodDeclaration() : {}
@@ -199,6 +196,8 @@ void MethodBody() : {}
     <IDENTIFIER> (IdentifierVarDeclaration() MethodBody() | IdentifierStatements() (Statement())*)
     |
     NonIdentifierStatements() (Statement())*
+    |
+    {}
 }
 
 void Statement() : {}
@@ -224,6 +223,11 @@ void WhileStatement() : {}
     <WHILE> <LPRTHSIS> TerminalExpression() <RPRTHSIS> Statement()
 }
 
+void ExpressionStatement() : {}
+{
+    NITerminalExpression() <SEMICOLON>
+}
+
 void NonIdentifierStatements() : {}
 {
     EnclosedStatement()
@@ -232,7 +236,7 @@ void NonIdentifierStatements() : {}
     |
     WhileStatement()
     |
-    NITerminalExpression()
+    ExpressionStatement()
 }
 
 void IdentifierStatements() : {}
@@ -268,7 +272,7 @@ void NoAccessComplexExpression() : {Token t;}
 
 void OperationsPriority1() : {}
 {
-    <MULT>    TerminalExpression() /*#MULT(2)*/
+    <MULT>    TerminalExpression() #MULT(2)
     |
     <DIV>     TerminalExpression() /*#DIV(2)*/
 }

@@ -5,9 +5,9 @@ public class Main {
 
         try {
             SimpleNode root = parser.Program(); // returns reference to root node
-
             root.dump(""); // prints the tree on the screen
-        }catch(Exception e) {
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 }

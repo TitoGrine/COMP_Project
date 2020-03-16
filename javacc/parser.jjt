@@ -1,0 +1,314 @@
+options
+{
+    LOOKAHEAD=1;
+    MULTI = true;
+}
+
+PARSER_BEGIN(Parser)
+
+import java.io.FileNotFoundException;
+
+public class Parser
+{
+    public static void main(String args[]) throws ParseException {
+
+        Parser grammar;
+
+        if(args.length == 1) {
+            try{
+                java.io.FileInputStream file = new java.io.FileInputStream(new java.io.File(args[0]));
+                grammar = new Parser(file);
+            } catch (FileNotFoundException ex) {
+                System.out.println(ex);
+                return;
+            }
+        } else {
+            grammar = new Parser(System.in);
+        }
+
+        SimpleNode root = grammar.Program(); // returns reference to root node
+
+        System.out.println("\n Code is accepted by Java-- grammar! \n");
+    }
+}
+
+
+PARSER_END(Parser)
+
+SKIP :
+{
+    " "                         |
+    "\r"                        |
+    "\t"                        |
+    "\n"                        |
+    < "//" (~["\r", "\n"])* >
+}
+
+TOKEN : {
+    < LOGICOP: "&&" >           |
+    < RELOP: "<" >              |
+    < MULT: "*" >               |
+    < DIV: "/" >                |
+    < SUM: "+" >                |
+    < SUB: "-" >                |
+    < ASSIGN: "=" >             |
+    < NEG: "!" >                        
+}
+
+TOKEN :
+{
+    < IMPORT: "import" >        |
+    < CLASS: "class" >          |
+    < EXTENDS: "extends" >      |
+    < PUBLIC: "public" >        |
+    < RETURN: "return" >        |
+    < STATIC: "static" >        |
+    < VOID: "void" >            |
+    < MAIN: "main" >            |
+    < NEW: "new" >            
+}
+
+TOKEN :
+{
+    < WHILE: "while" >          |
+    < IF: "if" >                |
+    < ELSE: "else" >            |
+    < TRUE: "true" >            |
+    < FALSE: "false" >        
+}
+
+TOKEN :
+{
+    < INT: "int" >              |
+    < BOOL: "boolean" >         |
+    < STRING: "String" >      
+}
+
+TOKEN:
+{
+    < THIS: "this" >            |
+    < LENGTH: "length" >      
+}
+
+TOKEN : {
+    < COMPLETE: "complete" >
+}
+
+TOKEN :
+{
+    < LBRACKET: "{" >           |
+    < RBRACKET: "}" >           |
+    < LSQBRACKET: "[" >         |
+    < RSQBRACKET: "]" >         |
+    < LPRTHSIS: "(">            |
+    < RPRTHSIS: ")">            |
+    < DOT: "." >                |
+    < COMMA: "," >              |
+    < SEMICOLON: ";" >        
+}
+
+TOKEN: {
+    < LETTER: ["a"-"z","A"-"Z"] >                     |
+    < INTEGERLITERAL: (["0"-"9"])+ >                  |
+    < IDENTIFIER: <LETTER>(<LETTER>|["0"-"9"]|"_")* >
+}
+
+SimpleNode Program(): {}
+{
+    ImportDeclaration() ClassDeclaration() <EOF> {return jjtThis;}
+}
+
+void ImportDeclaration() : {}
+{
+    (<IMPORT> Complete() <SEMICOLON>)*
+}
+
+void Complete() : {}
+{
+    <IDENTIFIER> (<DOT> <IDENTIFIER>)* <LPRTHSIS> Type() <RPRTHSIS>
+}
+
+void ClassDeclaration() : {} 
+{
+    <CLASS> <IDENTIFIER> [<EXTENDS> <IDENTIFIER>] <LBRACKET>
+    (VarDeclaration())*
+    (MethodDeclaration())*
+    <RBRACKET>
+}
+
+void VarDeclaration() : {} 
+{
+    NonIdentifierVarDeclaration()
+    |
+    IdentifierVarDeclaration()
+}
+
+void NonIdentifierVarDeclaration() : {}
+{
+    Type() <IDENTIFIER> <SEMICOLON>
+}
+
+void IdentifierVarDeclaration() : {}
+{
+    <IDENTIFIER> <SEMICOLON>
+}
+
+void Type() : {}
+{
+    <BOOL>
+    |
+    <INT> [<LSQBRACKET> <RSQBRACKET>]
+}
+
+void MethodDeclaration() : {}
+{
+    <PUBLIC> (RegularMethod() | MainMethod())
+}
+
+void RegularMethod() : {}
+{
+    Type() <IDENTIFIER>
+    <LPRTHSIS> [Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*] <RPRTHSIS>
+    <LBRACKET>
+    MethodBody()
+    <RETURN> TerminalExpression() <SEMICOLON>
+    <RBRACKET>
+}
+
+void MainMethod() : {}
+{
+    <STATIC> <VOID> <MAIN>
+    <LPRTHSIS> <STRING> <LSQBRACKET> <RSQBRACKET> <IDENTIFIER> <RPRTHSIS>
+    <LBRACKET>
+    MethodBody()
+    <RBRACKET>
+}
+
+void MethodBody() : {}
+{
+    NonIdentifierVarDeclaration() MethodBody()
+    |
+    <IDENTIFIER> (IdentifierVarDeclaration() MethodBody() | IdentifierStatements() (Statement())*)
+    |
+    NonIdentifierStatements() (Statement())*
+}
+
+void Statement() : {}
+{
+    NonIdentifierStatements()
+    |
+    <IDENTIFIER> IdentifierStatements()
+}
+
+void EnclosedStatement() : {}
+{
+    <LBRACKET> (Statement())* <RBRACKET>
+}
+
+void IfElseStatement() : {}
+{
+    <IF> <LPRTHSIS> TerminalExpression() <RPRTHSIS> Statement()
+    <ELSE> Statement()
+}
+
+void WhileStatement() : {}
+{
+    <WHILE> <LPRTHSIS> TerminalExpression() <RPRTHSIS> Statement()
+}
+
+void NonIdentifierStatements() : {}
+{
+    EnclosedStatement()
+    |
+    IfElseStatement()
+    |
+    WhileStatement()
+    |
+    NITerminalExpression()
+}
+
+void IdentifierStatements() : {}
+{
+    (AssignStatement() | (ArrayAccess() (AssignStatement() | ComplexExpression())) | NoAccessComplexExpression()) <SEMICOLON>
+}
+
+void ArrayAccess() : {}
+{
+    <LSQBRACKET> TerminalExpression() <RSQBRACKET>
+}
+
+void AssignStatement() : {}
+{
+   <ASSIGN> TerminalExpression()
+}
+
+void ComplexExpression() : {}
+{
+    AccessComplexExpression()
+    |
+    NoAccessComplexExpression()
+}
+
+void NoAccessComplexExpression() : {Token t;}
+{
+    (OperationsPriority1() | OperationsPriority2() | OperationsPriority3()) ComplexExpression()
+    |
+    <DOT> (<LENGTH> #LENGTH | t = <IDENTIFIER> <LPRTHSIS> [TerminalExpression() (<COMMA> TerminalExpression())*] <RPRTHSIS> {jjtThis.methodID = t.image;} #FUNCMETHOD) ComplexExpression()
+    |
+    {}
+}
+
+void OperationsPriority1() : {}
+{
+    <MULT>    TerminalExpression() /*#MULT(2)*/
+    |
+    <DIV>     TerminalExpression() /*#DIV(2)*/
+}
+
+void OperationsPriority2() : {}
+{
+    <SUM>     TerminalExpression() /*#SUM(2)*/
+    |
+    <SUB>     TerminalExpression() /*#SUB(2)*/
+}
+
+void OperationsPriority3() : {}
+{
+    <LOGICOP> TerminalExpression() /*#AND(2)*/
+    |
+    <RELOP>   TerminalExpression() /*#LESSTHAN(2)*/
+}
+
+void AccessComplexExpression() : {}
+{
+    ArrayAccess() ComplexExpression()
+}
+
+void TerminalExpression() : {}
+{
+    NITerminalExpression() | ITerminalExpression()
+}
+
+void NITerminalExpression() : {Token t;}
+{
+    t = <INTEGERLITERAL> {jjtThis.value = Integer.parseInt(t.image);} #NUM ComplexExpression()
+    |
+    t = <TRUE> {jjtThis.truth_value = true;} #BOOL ComplexExpression()
+    |
+    t = <FALSE> {jjtThis.truth_value = false;} #BOOL ComplexExpression()
+    |
+    <THIS> ComplexExpression()
+    |
+    <NEW> (<INT> <LSQBRACKET> TerminalExpression() <RSQBRACKET> | <IDENTIFIER> <LPRTHSIS> <RPRTHSIS>) ComplexExpression()
+    |
+    <NEG> TerminalExpression() ComplexExpression()
+    |
+    <LPRTHSIS> TerminalExpression() <RPRTHSIS> ComplexExpression()
+}
+
+void ITerminalExpression() : {}
+{
+    <IDENTIFIER> ComplexExpression()
+}
+
+

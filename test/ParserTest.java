@@ -53,7 +53,7 @@ public class ParserTest {
         }
     }
 
-    @Test
+   @Test
     public void testFindMaximum() {
         test("fixtures/public/FindMaximum.jmm", false);
     }
@@ -97,8 +97,8 @@ public class ParserTest {
     public void testWhileAndIF() {
         test("fixtures/public/WhileAndIF.jmm", false);
     }
-
-    /*@Test
+/*
+    @Test
     public void testarr_index_not_int() {
         test("fixtures/public/fail/semantic/arr_index_not_int.jmm", true);
     }

@@ -11,6 +11,5 @@ class ASTNUM extends SimpleNode {
   public ASTNUM(Parser p, int id) {
     super(p, id);
   }
-
 }
 /* JavaCC - OriginalChecksum=25da7da480b9539054009c129a22d81e (do not edit this line) */

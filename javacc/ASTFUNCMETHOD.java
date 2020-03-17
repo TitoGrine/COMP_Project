@@ -11,6 +11,5 @@ class ASTFUNCMETHOD extends SimpleNode {
   public ASTFUNCMETHOD(Parser p, int id) {
     super(p, id);
   }
-
 }
 /* JavaCC - OriginalChecksum=54a9f6d33a5022ecd7338879131cb817 (do not edit this line) */

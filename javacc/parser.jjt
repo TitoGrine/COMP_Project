@@ -38,7 +38,14 @@ SKIP :
     "\r"                        |
     "\t"                        |
     "\n"                        |
-    < "//" (~["\r", "\n"])* >
+    < "//" (~["\r", "\n"])* >   |
+    "/*" : MULTILINE_COMMENT
+}
+
+<MULTILINE_COMMENT> SKIP :
+{
+  "*/" : DEFAULT                |
+  < ~[] >
 }
 
 TOKEN : {
@@ -105,8 +112,8 @@ TOKEN :
 }
 
 TOKEN: {
-    < INTEGERLITERAL: (["0"-"9"])+ >                                    |
-    < IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z"]|["0"-"9"]|"_")* >
+    < INTEGERLITERAL: (["0"-"9"])+ >                                                |
+    < IDENTIFIER: ["a"-"z","A"-"Z", "$", "_"](["a"-"z","A"-"Z"]|["0"-"9"]|"_")* >
 }
 
 SimpleNode Program(): {}
@@ -121,7 +128,7 @@ void ImportDeclaration() : {}
 
 void Complete() : {}
 {
-    [<STATIC>] <IDENTIFIER> (<DOT> <IDENTIFIER>)* <LPRTHSIS> Type() <RPRTHSIS> Type()
+    [<STATIC>] <IDENTIFIER> (<DOT> <IDENTIFIER>)* [<LPRTHSIS> [Type() (<COMMA> Type())*] <RPRTHSIS> Type()]
 }
 
 void ClassDeclaration() : {} 
@@ -272,7 +279,7 @@ void NoAccessComplexExpression() : {Token t;}
 
 void OperationsPriority1() : {}
 {
-    <MULT>    TerminalExpression() #MULT(2)
+    <MULT>    TerminalExpression() /*#MULT(2)*/
     |
     <DIV>     TerminalExpression() /*#DIV(2)*/
 }

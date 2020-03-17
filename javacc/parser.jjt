@@ -45,13 +45,13 @@ public class Parser
     }
 
 
-    void displayError(ParseException e, String condition) {
+    void displayError(ParseException e, String condition, int kind) {
 
         nr_errors++;
 
         System.out.println("Error in " + condition + "condition.\n" + e.toString());
 
-        errorSkip(RPRTHSIS);
+        errorSkip(kind);
 
         if (MAX_ERRORS < nr_errors) {
           System.out.println("The program has reached the maximum number of errors (10). Exiting...");
@@ -251,13 +251,21 @@ void Statement() #void : {}
 
 void NonIdentifierStatements() #void : {}
 {
-    EnclosedStatement()
+    try {
+        EnclosedStatement()
+    } catch(ParseException e) {
+        displayError(e, "Statement", RBRACKET);
+    }
     |
-    IfElseStatement()
+    IfElseStatement() //How should we proceed in this Statement?
     |
-    WhileStatement()
+    WhileStatement() //How should we proceed in this Statement?
     |
-    ExpressionStatement()
+    try {
+        ExpressionStatement()
+    } catch(ParseException e) {
+        displayError(e, "Statement", SEMICOLON);
+    }
 }
 
 void EnclosedStatement() #void : {}

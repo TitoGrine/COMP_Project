@@ -158,17 +158,17 @@ SimpleNode Program(): {}
     ImportDeclaration() ClassDeclaration() <EOF> {return jjtThis;}
 }
 
-void ImportDeclaration() : {}
+void ImportDeclaration() #void : {}
 {
-    (<IMPORT> Complete() <SEMICOLON>)*
+    (<IMPORT> ImportExpression() <SEMICOLON>)*
 }
 
-void Complete() : {}
+void ImportExpression() #void : {}
 {
     [<STATIC>] <IDENTIFIER> (<DOT> <IDENTIFIER>)* [<LPRTHSIS> [Type() (<COMMA> Type())*] <RPRTHSIS> Type()]
 }
 
-void ClassDeclaration() : {} 
+void ClassDeclaration() #void : {}
 {
     <CLASS> <IDENTIFIER> [<EXTENDS> <IDENTIFIER>] <LBRACKET>
     (VarDeclaration())*
@@ -176,31 +176,31 @@ void ClassDeclaration() : {}
     <RBRACKET>
 }
 
-void VarDeclaration() : {} 
+void VarDeclaration() #void : {}
 {
     NonIdentifierVarDeclaration()
     |
     IdentifierVarDeclaration()
 }
 
-void NonIdentifierVarDeclaration() : {}
+void NonIdentifierVarDeclaration() #void : {}
 {
     NonIdentifierType() <IDENTIFIER> <SEMICOLON>
 }
 
-void IdentifierVarDeclaration() : {}
+void IdentifierVarDeclaration() #void : {}
 {
     <IDENTIFIER> <SEMICOLON>
 }
 
-void Type() : {}
+void Type() #void : {}
 {
     NonIdentifierType()
     |
     <IDENTIFIER>
 }
 
-void NonIdentifierType() : {}
+void NonIdentifierType() #void : {}
 {
     <BOOL>
     |
@@ -209,12 +209,12 @@ void NonIdentifierType() : {}
     <VOID>
 }
 
-void MethodDeclaration() : {}
+void MethodDeclaration() #void : {}
 {
     <PUBLIC> (RegularMethod() | MainMethod())
 }
 
-void RegularMethod() : {}
+void RegularMethod() #void : {}
 {
     Type() <IDENTIFIER> <LPRTHSIS> [Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*] <RPRTHSIS>
     <LBRACKET>
@@ -223,7 +223,7 @@ void RegularMethod() : {}
     <RBRACKET>
 }
 
-void MainMethod() : {}
+void MainMethod() #void : {}
 {
     <STATIC> <VOID> <MAIN> <LPRTHSIS> <STRING> <LSQBRACKET> <RSQBRACKET> <IDENTIFIER> <RPRTHSIS>
     <LBRACKET>
@@ -231,7 +231,7 @@ void MainMethod() : {}
     <RBRACKET>
 }
 
-void MethodBody() : {}
+void MethodBody() #void : {}
 {
     NonIdentifierVarDeclaration() MethodBody()
     |
@@ -242,14 +242,14 @@ void MethodBody() : {}
     {}
 }
 
-void Statement() : {}
+void Statement() #void : {}
 {
     NonIdentifierStatements()
     |
     <IDENTIFIER> IdentifierStatements()
 }
 
-void NonIdentifierStatements() : {}
+void NonIdentifierStatements() #void : {}
 {
     EnclosedStatement()
     |
@@ -260,55 +260,55 @@ void NonIdentifierStatements() : {}
     ExpressionStatement()
 }
 
-void EnclosedStatement() : {}
+void EnclosedStatement() #void : {}
 {
     <LBRACKET> (Statement())* <RBRACKET>
 }
 
-void IfElseStatement() : {}
+void IfElseStatement() #void : {}
 {
     <IF> <LPRTHSIS> TerminalExpression() <RPRTHSIS> Statement()
     <ELSE> Statement()
 }
 
-void WhileStatement() : {}
+void WhileStatement() #void : {}
 {
     <WHILE> <LPRTHSIS> TerminalExpression() <RPRTHSIS> Statement()
 }
 
-void ExpressionStatement() : {}
+void ExpressionStatement() #void : {}
 {
     NITerminalExpression() <SEMICOLON>
 }
 
-void IdentifierStatements() : {}
+void IdentifierStatements() #void : {}
 {
     (AssignStatement() | (ArrayAccess() (AssignStatement() | ComplexExpression())) | NoAccessComplexExpression()) <SEMICOLON>
 }
 
-void ArrayAccess() : {}
+void ArrayAccess() #void : {}
 {
     <LSQBRACKET> TerminalExpression() <RSQBRACKET>
 }
 
-void AssignStatement() : {}
+void AssignStatement() #void : {}
 {
    <ASSIGN> TerminalExpression()
 }
 
-void ComplexExpression() : {}
+void ComplexExpression() #void : {}
 {
     AccessComplexExpression()
     |
     NoAccessComplexExpression()
 }
 
-void AccessComplexExpression() : {}
+void AccessComplexExpression() #void : {}
 {
     ArrayAccess() ComplexExpression()
 }
 
-void NoAccessComplexExpression() : {Token t;}
+void NoAccessComplexExpression() #void : {Token t;}
 {
     (OperationsPriority1() | OperationsPriority2() | OperationsPriority3()) ComplexExpression()
     |
@@ -317,33 +317,33 @@ void NoAccessComplexExpression() : {Token t;}
     {}
 }
 
-void OperationsPriority1() : {}
+void OperationsPriority1() #void : {}
 {
     <MULT>    TerminalExpression() /*#MULT(2)*/
     |
     <DIV>     TerminalExpression() /*#DIV(2)*/
 }
 
-void OperationsPriority2() : {}
+void OperationsPriority2() #void : {}
 {
     <SUM>     TerminalExpression() /*#SUM(2)*/
     |
     <SUB>     TerminalExpression() /*#SUB(2)*/
 }
 
-void OperationsPriority3() : {}
+void OperationsPriority3() #void : {}
 {
     <LOGICOP> TerminalExpression() /*#AND(2)*/
     |
     <RELOP>   TerminalExpression() /*#LESSTHAN(2)*/
 }
 
-void TerminalExpression() : {}
+void TerminalExpression() #void : {}
 {
     NITerminalExpression() | ITerminalExpression()
 }
 
-void NITerminalExpression() : {Token t;}
+void NITerminalExpression() #void : {Token t;}
 {
     t = <INTEGERLITERAL> {jjtThis.value = Integer.parseInt(t.image);} #NUM ComplexExpression()
     |
@@ -351,16 +351,16 @@ void NITerminalExpression() : {Token t;}
     |
     t = <FALSE> {jjtThis.truth_value = false;} #BOOL ComplexExpression()
     |
-    <THIS> ComplexExpression()
+    <THIS> #THIS ComplexExpression()
     |
-    <NEW> (<INT> <LSQBRACKET> TerminalExpression() <RSQBRACKET> | <IDENTIFIER> <LPRTHSIS> <RPRTHSIS>) ComplexExpression()
+    <NEW> (<INT> <LSQBRACKET> TerminalExpression() <RSQBRACKET> | t=<IDENTIFIER> {} #NEW <LPRTHSIS> <RPRTHSIS>) ComplexExpression()
     |
-    <NEG> TerminalExpression() ComplexExpression()
+    <NEG> #NEGATION TerminalExpression() ComplexExpression()
     |
     <LPRTHSIS> TerminalExpression() <RPRTHSIS> ComplexExpression()
 }
 
-void ITerminalExpression() : {}
+void ITerminalExpression() #void : {}
 {
     <IDENTIFIER> ComplexExpression()
 }

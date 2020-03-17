@@ -10,6 +10,10 @@ import java.io.FileNotFoundException;
 
 public class Parser
 {
+
+    private static int nr_errors = 0;
+    private static int MAX_ERRORS = 10;
+
     public static void main(String args[]) throws ParseException {
 
         Parser grammar;
@@ -27,7 +31,34 @@ public class Parser
         }
 
         SimpleNode root = grammar.Program(); // returns reference to root node
+
+
+
     }
+
+    void errorSkip(int kind) {
+      Token t;
+      do {
+        t = getNextToken();
+      }
+      while (t.kind != kind);
+    }
+
+
+    void displayError(ParseException e, String condition) {
+
+        nr_errors++;
+
+        System.out.println("Error in " + condition + "condition.\n" + e.toString());
+
+        errorSkip(RPRTHSIS);
+
+        if (MAX_ERRORS < nr_errors) {
+          System.out.println("The program has reached the maximum number of errors (10). Exiting...");
+          System.exit(2);
+        }
+      }
+
 }
 
 PARSER_END(Parser)

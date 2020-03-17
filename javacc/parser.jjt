@@ -32,6 +32,8 @@ public class Parser
 
 PARSER_END(Parser)
 
+// ==================================== SKIP ==================================== //
+
 SKIP :
 {
     " "                         |
@@ -47,6 +49,8 @@ SKIP :
   "*/" : DEFAULT                |
   < ~[] >
 }
+
+// =================================== TOKENS =================================== //
 
 TOKEN : {
     < LOGICOP: "&&" >           |
@@ -116,6 +120,8 @@ TOKEN: {
     < IDENTIFIER: ["a"-"z","A"-"Z", "$", "_"](["a"-"z","A"-"Z"]|["0"-"9"]|"_")* >
 }
 
+// ================================= EXPRESSIONS ================================= //
+
 SimpleNode Program(): {}
 {
     ImportDeclaration() ClassDeclaration() <EOF> {return jjtThis;}
@@ -179,8 +185,7 @@ void MethodDeclaration() : {}
 
 void RegularMethod() : {}
 {
-    Type() <IDENTIFIER>
-    <LPRTHSIS> [Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*] <RPRTHSIS>
+    Type() <IDENTIFIER> <LPRTHSIS> [Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*] <RPRTHSIS>
     <LBRACKET>
     MethodBody()
     <RETURN> TerminalExpression() <SEMICOLON>
@@ -189,8 +194,7 @@ void RegularMethod() : {}
 
 void MainMethod() : {}
 {
-    <STATIC> <VOID> <MAIN>
-    <LPRTHSIS> <STRING> <LSQBRACKET> <RSQBRACKET> <IDENTIFIER> <RPRTHSIS>
+    <STATIC> <VOID> <MAIN> <LPRTHSIS> <STRING> <LSQBRACKET> <RSQBRACKET> <IDENTIFIER> <RPRTHSIS>
     <LBRACKET>
     MethodBody()
     <RBRACKET>
@@ -214,6 +218,17 @@ void Statement() : {}
     <IDENTIFIER> IdentifierStatements()
 }
 
+void NonIdentifierStatements() : {}
+{
+    EnclosedStatement()
+    |
+    IfElseStatement()
+    |
+    WhileStatement()
+    |
+    ExpressionStatement()
+}
+
 void EnclosedStatement() : {}
 {
     <LBRACKET> (Statement())* <RBRACKET>
@@ -233,17 +248,6 @@ void WhileStatement() : {}
 void ExpressionStatement() : {}
 {
     NITerminalExpression() <SEMICOLON>
-}
-
-void NonIdentifierStatements() : {}
-{
-    EnclosedStatement()
-    |
-    IfElseStatement()
-    |
-    WhileStatement()
-    |
-    ExpressionStatement()
 }
 
 void IdentifierStatements() : {}
@@ -266,6 +270,11 @@ void ComplexExpression() : {}
     AccessComplexExpression()
     |
     NoAccessComplexExpression()
+}
+
+void AccessComplexExpression() : {}
+{
+    ArrayAccess() ComplexExpression()
 }
 
 void NoAccessComplexExpression() : {Token t;}
@@ -296,11 +305,6 @@ void OperationsPriority3() : {}
     <LOGICOP> TerminalExpression() /*#AND(2)*/
     |
     <RELOP>   TerminalExpression() /*#LESSTHAN(2)*/
-}
-
-void AccessComplexExpression() : {}
-{
-    ArrayAccess() ComplexExpression()
 }
 
 void TerminalExpression() : {}

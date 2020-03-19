@@ -251,21 +251,13 @@ void Statement() #void : {}
 
 void NonIdentifierStatements() #void : {}
 {
-    try {
-        EnclosedStatement()
-    } catch(ParseException e) {
-        displayError(e, "Statement", RBRACKET);
-    }
+    EnclosedStatement()
     |
     IfElseStatement() //How should we proceed in this Statement?
     |
     WhileStatement() //How should we proceed in this Statement?
     |
-    try {
-        ExpressionStatement()
-    } catch(ParseException e) {
-        displayError(e, "Statement", SEMICOLON);
-    }
+    ExpressionStatement()
 }
 
 void EnclosedStatement() #void : {}
@@ -281,7 +273,14 @@ void IfElseStatement() #void : {}
 
 void WhileStatement() #void : {}
 {
-    <WHILE> <LPRTHSIS> TerminalExpression() <RPRTHSIS> Statement()
+    <WHILE>
+
+    try {
+        <LPRTHSIS> TerminalExpression() <RPRTHSIS>
+    } catch(ParseException e) {
+        displayError(e, "Statement", RPRTHSIS);
+    }
+    Statement()
 }
 
 void ExpressionStatement() #void : {}

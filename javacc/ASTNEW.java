@@ -13,7 +13,7 @@ class ASTNEW extends SimpleNode {
   }
 
   public String toString() {
-    return "NEW [" + classID + "]";
+    return "NEW[" + classID + "]";
   }
 }
 /* JavaCC - OriginalChecksum=7a0fe874174dc351abb16b01ef943ed2 (do not edit this line) */

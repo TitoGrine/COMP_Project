@@ -1,0 +1,22 @@
+import static ioPlus.printHelloWorld(void) void;
+class CustomTest {
+	public static void main(String[] args) {
+        int num;
+        num = 5;
+        num = num && num;
+
+        if(num < 1 && num < 1){
+            num = 5;
+        } else {
+            num = 7;
+        }
+
+        if((2*3-4) < (num+4/2)){
+            num = 5;
+        } else {
+            num = 7*3;
+        }
+
+		ioPlus.printHelloWorld();
+	}
+}

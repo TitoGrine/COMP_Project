@@ -13,7 +13,7 @@ class ASTFUNCMETHOD extends SimpleNode {
   }
 
   public String toString() {
-    return "FUNCMETHOD [" + methodID + "]";
+    return "FUNCMETHOD[" + methodID + "]";
   }
 }
 /* JavaCC - OriginalChecksum=54a9f6d33a5022ecd7338879131cb817 (do not edit this line) */

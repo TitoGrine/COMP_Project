@@ -460,7 +460,7 @@ void NIExpression4() #void : {}
 
 void NAExpression4(Token t) #void : {}
 {
-    NIExpression5() NAExpression4_alt(t)
+    NAExpression4_alt(t)
 }
 
 void NTExpression4() #void : {}

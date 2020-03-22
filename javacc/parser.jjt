@@ -32,7 +32,7 @@ public class Parser
 
         SimpleNode root = grammar.Program(); // returns reference to root node
 
-
+        if (nr_errors > 0) throw new RuntimeException("Too many errors.");
 
     }
 
@@ -49,10 +49,19 @@ public class Parser
 
         nr_errors++;
 
-       	System.out.println(exception.currentToken.next.image + " Line " +
-        exception.currentToken.beginLine + " Column " +
-        exception.currentToken.beginColumn + "\n" + exception.toString());
+        System.out.println("Error occurred. Found " + exception.currentToken.next.image + " in line " +
+        exception.currentToken.beginLine + " and column " +
+        exception.currentToken.beginColumn);
 
+        System.out.println("Expected one of the tokens:");
+        for(int i = 0; i < exception.expectedTokenSequences.length; i++) {
+            for(int k = 0; k < exception.expectedTokenSequences[i].length; k++) {
+                System.out.println(tokenImage[exception.expectedTokenSequences[i][k]]);
+            }
+        }
+
+
+        System.out.println("DEBUG END");
 
         errorSkip(LBRACKET);
 
@@ -287,6 +296,7 @@ void WhileStatement() #void : {}
     try {
         <LPRTHSIS> TerminalExpression() <RPRTHSIS>
     } catch(ParseException e) {
+        System.out.println("FOUND EXCEPTION");
         displayError(e);
     }
     Statement()

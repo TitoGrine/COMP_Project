@@ -14,7 +14,7 @@ class ASTBOOL extends SimpleNode {
   }
 
   public String toString() {
-    return "BOOL [" + truth_value + "]";
+    return "BOOL[" + truth_value + "]";
   }
 }
 /* JavaCC - OriginalChecksum=23b80ea0b958bf2b20d4453c33c247cc (do not edit this line) */

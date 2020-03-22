@@ -54,7 +54,7 @@ public class Parser
         exception.currentToken.beginColumn + "\n" + exception.toString());
 
 
-        errorSkip(RPRTHSIS);
+        errorSkip(LBRACKET);
 
         if (MAX_ERRORS < nr_errors) {
           System.out.println("The program has reached the maximum number of errors (10). Exiting...");
@@ -274,10 +274,25 @@ void IfElseStatement() #void : {}
     <ELSE> Statement()
 }
 
+// void WhileStatement() #void : {}
+// {
+//     <WHILE> <LPRTHSIS> TerminalExpression() <RPRTHSIS> Statement()
+// }
+
+
 void WhileStatement() #void : {}
 {
-    <WHILE> <LPRTHSIS> TerminalExpression() <RPRTHSIS> Statement()
+    <WHILE>
+
+    try {
+        <LPRTHSIS> TerminalExpression() <RPRTHSIS>
+    } catch(ParseException e) {
+        displayError(e);
+    }
+    Statement()
 }
+
+
 
 void ExpressionStatement() #void : {}
 {

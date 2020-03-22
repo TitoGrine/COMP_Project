@@ -45,11 +45,14 @@ public class Parser
     }
 
 
-    void displayError(ParseException e, String condition) {
+    void displayError(ParseException exception) {
 
         nr_errors++;
 
-        System.out.println("Error in " + condition + "condition.\n" + e.toString());
+       	System.out.println(exception.currentToken.next.image + " Line " +
+        exception.currentToken.beginLine + " Column " +
+        exception.currentToken.beginColumn + "\n" + exception.toString());
+
 
         errorSkip(RPRTHSIS);
 

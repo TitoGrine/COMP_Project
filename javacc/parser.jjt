@@ -32,7 +32,7 @@ public class Parser
 
         SimpleNode root = grammar.Program(); // returns reference to root node
 
-        if (nr_errors > 0) throw new RuntimeException("Too many errors.");
+        if (nr_errors > 0) throw new ParseException("Parsing error.");
 
     }
 
@@ -59,9 +59,6 @@ public class Parser
                 System.out.println(tokenImage[exception.expectedTokenSequences[i][k]]);
             }
         }
-
-
-        System.out.println("DEBUG END");
 
         errorSkip(LBRACKET);
 

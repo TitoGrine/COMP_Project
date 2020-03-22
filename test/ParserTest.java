@@ -182,4 +182,11 @@ public class ParserTest {
     public void testNestedLoop() {
         test("fixtures/public/fail/syntactical/NestedLoop.jmm", true);
     }
+
+    // CUSTOM MADE TESTS
+
+    @Test
+    public void testCustomTest() {
+        test("fixtures/public/CustomTest.jmm", false);
+    }
 }

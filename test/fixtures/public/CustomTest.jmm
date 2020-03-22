@@ -1,5 +1,5 @@
 import static ioPlus.printHelloWorld(void) void;
-import ioPlus.printINT(int) int;
+import ioPlus(int) int;
 
 class CustomTest extends Test{
     int something;
@@ -11,7 +11,7 @@ class CustomTest extends Test{
         boolean star;
 
         args.hello()[5] + 2;
-
+        args[1][2];
         num = 5;
         num = num && num;
 
@@ -28,10 +28,15 @@ class CustomTest extends Test{
         }
 
         if((2*3-4) < (num+4/2)){
-            args[5].hello();
+            args[5].hello().hello()[4][4].hello();
+            arg[3] && 4;
         } else {
+            args[5];
             num = 7*3;
         }
+
+        new int[5];
+        new Parser();
 
         ioPlus.length;
 

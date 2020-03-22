@@ -159,11 +159,11 @@ void ImportDeclaration() #void : {}
     (<IMPORT> ImportExpression() <SEMICOLON>)*
 }
 
-void ImportExpression() #void: {}
+void ImportExpression() #void: {Token t1, t2=null;}
 {
-    (<STATIC> Identifier() (<DOT> Identifier())* [(<LPRTHSIS> [Type() (<COMMA> Type())*] <RPRTHSIS>) #PARAMETERS Type() #RETURN]) #STATIC_IMPORT
+    (<STATIC> t1=<IDENTIFIER> <DOT> t2=<IDENTIFIER> [(<LPRTHSIS> [Type() (<COMMA> Type())*] <RPRTHSIS>) #PARAMETERS Type() #RETURN] {jjtThis.name = t1.image + "." + t2.image;}) #STATIC_IMPORT
     |
-    (Identifier() (<DOT> Identifier())* [(<LPRTHSIS> [Type() (<COMMA> Type())*] <RPRTHSIS>) #PARAMETERS Type() #RETURN]) #IMPORT
+    (t1=<IDENTIFIER> [<DOT> t2=<IDENTIFIER>] [(<LPRTHSIS> [Type() (<COMMA> Type())*] <RPRTHSIS>) #PARAMETERS Type() #RETURN] {jjtThis.name = t1.image + (t2 == null ? "" : "." + t2.image);}) #IMPORT
 }
 
 void ClassDeclaration() #CLASS : {Token t;}
@@ -216,16 +216,16 @@ void MethodDeclaration() #void : {}
 
 void RegularMethod() #METHOD : {Token t;}
 {
-    Type() t=<IDENTIFIER> {jjtThis.name = t.image;} Arguments()
+    Type() #RETURN_TYPE t=<IDENTIFIER> {jjtThis.name = t.image;} Arguments()
     <LBRACKET>
     MethodBody() #METHOD_BODY
     <RETURN> Expression0() <SEMICOLON>
     <RBRACKET>
 }
 
-void Arguments() #ARGUMENTS : {}
+void Arguments() #void : {}
 {
-    <LPRTHSIS> [Type() Identifier() (<COMMA> Type() Identifier())*] <RPRTHSIS>
+    <LPRTHSIS> [(Type() Identifier() (<COMMA> Type() Identifier())*) #ARGUMENTS] <RPRTHSIS>
 }
 
 void MainMethod() #MAINMETHOD : {}
@@ -251,7 +251,7 @@ void Statement() #void : {Token t;}
 {
     NonIdentifierStatements()
     |
-    t=<IDENTIFIER> IdentifierStatements(t)
+    t=<IDENTIFIER> #IDENT IdentifierStatements(t)
 }
 
 void NonIdentifierStatements() #void : {}
@@ -297,15 +297,15 @@ void ExpressionStatement() #void : {}
 
 void IdentifierStatements(Token t) #void : {}
 {
-     (AssignStatement(t) | (ArrayAccess() (AssignStatement(t) | Expression0())) | NAExpression0(t)) <SEMICOLON>
+     (AssignStatement(t) | (ArrayAccess() (AssignStatement(t) | NTExpression0())) | NAExpression0(t)) <SEMICOLON>
 }
 
-void ArrayAccess() #ARRAYACCESS : {}
+void ArrayAccess() #ARRAY_ACCESS(2) : {}
 {
     <LSQBRACKET> Expression0() <RSQBRACKET>
 }
 
-void AssignStatement(Token t) #ASSIGN : {}
+void AssignStatement(Token t) #ASSIGN(2) : {}
 {
     ({} {jjtThis.name = t.image;} #IDENT) <ASSIGN> Expression0()
 }
@@ -325,6 +325,11 @@ void NIExpression0() #void : {}
 void NAExpression0(Token t) #void : {}
 {
     NAExpression1(t) Expression0_alt()
+}
+
+void NTExpression0() #void : {}
+{
+    NTExpression1() Expression0_alt()
 }
 
 void Expression0_alt() #void : {}
@@ -351,6 +356,11 @@ void NAExpression1(Token t) #void : {}
     NAExpression2(t) Expression1_alt()
 }
 
+void NTExpression1() #void : {}
+{
+    NTExpression2() Expression1_alt()
+}
+
 void Expression1_alt() #void : {}
 {
     <LESS> Expression2() #LESSTHAN(2) Expression1_alt()
@@ -373,6 +383,11 @@ void NIExpression2() #void : {}
 void NAExpression2(Token t) #void : {}
 {
     NAExpression3(t) Expression2_alt()
+}
+
+void NTExpression2() #void : {}
+{
+    NTExpression3() Expression2_alt()
 }
 
 void Expression2_alt() #void : {}
@@ -401,6 +416,11 @@ void NAExpression3(Token t) #void : {}
     NAExpression4(t) Expression3_alt()
 }
 
+void NTExpression3() #void : {}
+{
+    NTExpression4() Expression3_alt()
+}
+
 void Expression3_alt() #void : {}
 {
     <MULT> Expression4() #MUL(2) Expression3_alt()
@@ -415,8 +435,6 @@ void Expression3_alt() #void : {}
 void Expression4() #void : {}
 {
     Expression5() Expression4_alt()
-    |
-    DotOperator() Expression4_alt()
 }
 
 void NIExpression4() #void : {}
@@ -429,6 +447,11 @@ void NAExpression4(Token t) #void : {}
     NIExpression5() NAExpression4_alt(t)
 }
 
+void NTExpression4() #void : {}
+{
+    Expression4_alt()
+}
+
 void Expression4_alt() #void : {}
 {
     ArrayAccess() Expression4_alt()
@@ -438,7 +461,7 @@ void Expression4_alt() #void : {}
 
 void NAExpression4_alt(Token t) #void : {}
 {
-    (DotOperator() Expression4_alt() {jjtThis.methodID = (t == null ? "" : t.image);}) #FUNCMETHOD
+    (({} {jjtThis.name = (t == null ? "" : t.image);}) #IDENT DotOperator() Expression4_alt()) #FUNC_METHOD(2)
     |
     {}
 }
@@ -448,9 +471,9 @@ void DotOperator() #void : {}
     <DOT> (<LENGTH> #LENGTH | (Identifier()  GivenArguments()))
 }
 
-void GivenArguments() #ARGUMENTS : {}
+void GivenArguments() #void : {}
 {
-    <LPRTHSIS> [Expression0() (<COMMA> Expression0())*] <RPRTHSIS>
+    <LPRTHSIS> [(Expression0() (<COMMA> Expression0())*) #ARGUMENTS] <RPRTHSIS>
 }
 
 // ============================== Expressions 5 ============================== //
@@ -486,7 +509,7 @@ void NITerminalExpression() #void : {Token t;}
     |
     <THIS> #THIS
     |
-    <NEW> (<INT> <LSQBRACKET> Expression0() <RSQBRACKET> | Identifier() #NEW <LPRTHSIS> <RPRTHSIS>)
+    <NEW> ((<INT> <LSQBRACKET> Expression0() <RSQBRACKET> {jjtThis.classID = "int[]";}) #NEW | (t=<IDENTIFIER> <LPRTHSIS> <RPRTHSIS> {jjtThis.classID = t.image;}) #NEW)
     |
     <NEG> Expression4() #NEGATION
     |

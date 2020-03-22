@@ -34,7 +34,7 @@ class CustomTest extends Test{
             args[5];
             num = 7*3;
         }
-        est
+
         new int[5];
         new Parser();
 

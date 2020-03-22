@@ -1,22 +1,42 @@
 import static ioPlus.printHelloWorld(void) void;
-class CustomTest {
-	public static void main(String[] args) {
+import ioPlus.printINT(int) int;
+
+class CustomTest extends Test{
+    int something;
+    Stonk stonk;
+    boolean truth;
+
+	public int stonk(int[] args) {
         int num;
+        boolean star;
+
+        args.hello()[5] + 2;
+
         num = 5;
         num = num && num;
 
-        if(num < 1 && num < 1){
+        //if((num < 1 && num < 1)){
+        if((2-3+4 && 2*4-6) < !num && (2-3/45 < 34+5) < 4/4*1){
             num = 5;
         } else {
             num = 7;
         }
 
+        while(!num){
+            star = true;
+            num = !star * 3+2;
+        }
+
         if((2*3-4) < (num+4/2)){
-            num = 5;
+            args[5].hello();
         } else {
             num = 7*3;
         }
 
-		ioPlus.printHelloWorld();
+        ioPlus.length;
+
+		ioPlus.printHelloWorld(num, num+3*5);
+
+		return num;
 	}
 }

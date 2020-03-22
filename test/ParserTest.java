@@ -53,7 +53,7 @@ public class ParserTest {
         }
     }
 
-   /*@Test
+   @Test
     public void testFindMaximum() {
         test("fixtures/public/FindMaximum.jmm", false);
     }
@@ -96,7 +96,7 @@ public class ParserTest {
     @Test
     public void testWhileAndIF() {
         test("fixtures/public/WhileAndIF.jmm", false);
-    }*/
+    }
 /*
     @Test
     public void testarr_index_not_int() {
@@ -152,7 +152,7 @@ public class ParserTest {
     public void testmiss_type() {
         test("fixtures/public/fail/semantic/extra/miss_type.jmm", true);
     }
-
+*/
     @Test
     public void testBlowUp() {
         test("fixtures/public/fail/syntactical/BlowUp.jmm", true);
@@ -182,5 +182,4 @@ public class ParserTest {
     public void testNestedLoop() {
         test("fixtures/public/fail/syntactical/NestedLoop.jmm", true);
     }
-*/
 }

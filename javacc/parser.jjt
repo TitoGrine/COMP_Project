@@ -84,8 +84,8 @@ SKIP :
 // =================================== TOKENS =================================== //
 
 TOKEN : {
-    < LOGICOP: "&&" >           |
-    < RELOP: "<" >              |
+    < AND: "&&" >           |
+    < LESS: "<" >              |
     < MULT: "*" >               |
     < DIV: "/" >                |
     < SUM: "+" >                |
@@ -149,100 +149,109 @@ TOKEN: {
 
 // ================================= EXPRESSIONS ================================= //
 
-SimpleNode Program(): {}
+SimpleNode Program() #PROGRAM : {}
 {
     ImportDeclaration() ClassDeclaration() <EOF> {return jjtThis;}
 }
 
-void ImportDeclaration() : {}
+void ImportDeclaration() #void : {}
 {
     (<IMPORT> ImportExpression() <SEMICOLON>)*
 }
 
-void ImportExpression() #IMPORTEXP : {}
+void ImportExpression() #void: {}
 {
-    [<STATIC>] Identifier() #LIBRARY (<DOT> Identifier())*  [<LPRTHSIS> [Type() (<COMMA> Type())*] <RPRTHSIS> Type()]
+    (<STATIC> Identifier() (<DOT> Identifier())* [(<LPRTHSIS> [Type() (<COMMA> Type())*] <RPRTHSIS>) #PARAMETERS Type() #RETURN]) #STATIC_IMPORT
+    |
+    (Identifier() (<DOT> Identifier())* [(<LPRTHSIS> [Type() (<COMMA> Type())*] <RPRTHSIS>) #PARAMETERS Type() #RETURN]) #IMPORT
 }
 
-void ClassDeclaration() #void : {}
+void ClassDeclaration() #CLASS : {Token t;}
 {
-    <CLASS> Identifier() [<EXTENDS> Identifier()] <LBRACKET>
+    <CLASS> t=<IDENTIFIER> {jjtThis.name = t.image;} [<EXTENDS> t=<IDENTIFIER> {jjtThis.class_name = t.image;} #EXTENDS] <LBRACKET>
     (VarDeclaration())*
     (MethodDeclaration())*
     <RBRACKET>
 }
 
-void VarDeclaration() #void : {}
+void VarDeclaration() #void : {Token t;}
 {
     NonIdentifierVarDeclaration()
     |
-    IdentifierVarDeclaration()
+    t=<IDENTIFIER> IdentifierVarDeclaration(t)
 }
 
-void NonIdentifierVarDeclaration() #void : {}
+void NonIdentifierVarDeclaration() #VARIABLE : {Token t;}
 {
-    NonIdentifierType() Identifier() <SEMICOLON>
+    NonIdentifierType() t=<IDENTIFIER> {jjtThis.name = t.image;} #IDENT <SEMICOLON>
 }
 
-void IdentifierVarDeclaration() #void : {}
+void IdentifierVarDeclaration(Token previous_token) #VARIABLE : {Token t;}
 {
-    Identifier() <SEMICOLON>
+    {} {jjtThis.typeID = previous_token.image;} #TYPE t=<IDENTIFIER> {jjtThis.name = t.image;} #IDENT <SEMICOLON>
 }
 
 void Type() #void : {Token t;}
 {
     NonIdentifierType()
     |
-    Identifier() #TYPE
+    t = <IDENTIFIER> {jjtThis.typeID = t.image;} #TYPE
 }
 
-void NonIdentifierType() #void : {}
+void NonIdentifierType() #TYPE : {}
 {
-    <BOOL> {jjtThis.typeID = "bool";} #TYPE
+    <BOOL> {jjtThis.typeID = "bool";}
     |
-    <INT> {jjtThis.typeID = "int";}  #TYPE [<LSQBRACKET> <RSQBRACKET>]
+    <INT> (<LSQBRACKET> <RSQBRACKET> {jjtThis.typeID = "int[]";} | {} {jjtThis.typeID = "int";})
     |
-    <VOID> {jjtThis.typeID = "void";} #TYPE
+    <STRING> {jjtThis.typeID = "string";}
+    |
+    <VOID> {jjtThis.typeID = "";}
 }
 
-void MethodDeclaration()  : {}
+void MethodDeclaration() #void : {}
 {
     <PUBLIC> (RegularMethod() | MainMethod())
 }
 
-void RegularMethod() #METHOD : {}
+void RegularMethod() #METHOD : {Token t;}
 {
-    Type() Identifier() <LPRTHSIS> [Type() Identifier() (<COMMA> Type() Identifier())*] <RPRTHSIS>
+    Type() t=<IDENTIFIER> {jjtThis.name = t.image;} Arguments()
     <LBRACKET>
-    MethodBody()
-    <RETURN> TerminalExpression() <SEMICOLON>
+    MethodBody() #METHOD_BODY
+    <RETURN> Expression0() <SEMICOLON>
     <RBRACKET>
+}
+
+void Arguments() #ARGUMENTS : {}
+{
+    <LPRTHSIS> [Type() Identifier() (<COMMA> Type() Identifier())*] <RPRTHSIS>
 }
 
 void MainMethod() #MAINMETHOD : {}
 {
     <STATIC> <VOID> <MAIN> <LPRTHSIS> <STRING> <LSQBRACKET> <RSQBRACKET> Identifier() <RPRTHSIS>
     <LBRACKET>
-    MethodBody()
+    MethodBody() #METHOD_BODY
     <RBRACKET>
 }
 
-void MethodBody() #void : {}
+void MethodBody() #void : {Token t;}
 {
     NonIdentifierVarDeclaration() MethodBody()
     |
-    Identifier() (IdentifierVarDeclaration() MethodBody() | IdentifierStatements() (Statement())*)
+    t=<IDENTIFIER> (IdentifierVarDeclaration(t) MethodBody() | IdentifierStatements(t) (Statement())*)
     |
     NonIdentifierStatements() (Statement())*
     |
     {}
 }
 
-void Statement() #void : {}
+void Statement() #void : {Token t;}
 {
     NonIdentifierStatements()
     |
-    Identifier() IdentifierStatements()
+    t=<IDENTIFIER> IdentifierStatements(t)
 }
 
 void NonIdentifierStatements() #void : {}
@@ -256,144 +265,232 @@ void NonIdentifierStatements() #void : {}
     ExpressionStatement()
 }
 
-void EnclosedStatement() #void : {}
+void EnclosedStatement() #SCOPE : {}
 {
     <LBRACKET> (Statement())* <RBRACKET>
 }
 
 void IfElseStatement() #void : {}
 {
-    <IF> <LPRTHSIS> TerminalExpression() <RPRTHSIS> Statement()
+    IfStatement() ElseStatement()
+}
+
+void IfStatement() #IF : {}
+{
+    <IF> <LPRTHSIS> (Expression0() #CONDITION) <RPRTHSIS> Statement()
+}
+
+void ElseStatement() #ELSE : {}
+{
     <ELSE> Statement()
 }
 
-void WhileStatement() #void : {}
+void WhileStatement() #WHILE : {}
 {
-    <WHILE> <LPRTHSIS> TerminalExpression() <RPRTHSIS> Statement()
+    <WHILE> <LPRTHSIS> (Expression0() #CONDITION) <RPRTHSIS> Statement()
 }
 
 void ExpressionStatement() #void : {}
 {
-    NITerminalExpression() <SEMICOLON>
+    NIExpression0() <SEMICOLON>
 }
 
-void IdentifierStatements() #void : {}
+void IdentifierStatements(Token t) #void : {}
 {
-    (AssignStatement() | (ArrayAccess() (AssignStatement() | ComplexExpression())) | NoAccessComplexExpression()) <SEMICOLON>
+     (AssignStatement(t) | (ArrayAccess() (AssignStatement(t) | Expression0())) | NAExpression0(t)) <SEMICOLON>
 }
 
 void ArrayAccess() #ARRAYACCESS : {}
 {
-    <LSQBRACKET> TerminalExpression() <RSQBRACKET>
+    <LSQBRACKET> Expression0() <RSQBRACKET>
 }
 
-void AssignStatement() #ASSIGN : {}
+void AssignStatement(Token t) #ASSIGN : {}
 {
-    <ASSIGN> TerminalExpression()
+    ({} {jjtThis.name = t.image;} #IDENT) <ASSIGN> Expression0()
 }
 
-void ComplexExpression() #void : {}
+// ============================== Expressions 0 ============================== //
+
+void Expression0() #void : {}
 {
-    AccessComplexExpression()
-    |
-    NoAccessComplexExpression()
+    Expression1() Expression0_alt()
 }
 
-void ComplexExpressionNoOperators() #void : {}
+void NIExpression0() #void : {}
 {
-    AccessComplexExpression()
-    |
-    <DOT> (<LENGTH> #LENGTH | (Identifier()  <LPRTHSIS> [TerminalExpression() (<COMMA> TerminalExpression())*] <RPRTHSIS>) #FUNCMETHOD(2))  ComplexExpression()
-    |
-    {}
+    NIExpression1() Expression0_alt()
 }
 
-void AccessComplexExpression() #void : {}
+void NAExpression0(Token t) #void : {}
 {
-    ArrayAccess() ComplexExpression()
+    NAExpression1(t) Expression0_alt()
 }
 
-void NoAccessComplexExpression() #void : {Token t;}
+void Expression0_alt() #void : {}
 {
-    <DOT> (<LENGTH> #LENGTH | (Identifier()  <LPRTHSIS> [TerminalExpression() (<COMMA> TerminalExpression())*] <RPRTHSIS>) #FUNCMETHOD(2))  ComplexExpression()
-    |
-    OperationsPriority1() ComplexExpression()
+    <AND> Expression1() #AND(2) Expression0_alt()
     |
     {}
 }
 
-void OperationsPriority1() #void : {}
+// ============================== Expressions 1 ============================== //
+
+void Expression1() #void : {}
 {
-    LOOKAHEAD(2) OperationsPriority2()
-    |
-    ([OperationsPriority2()] <LOGICOP> TerminalExpression()) #AND(2)
+    Expression2() Expression1_alt()
 }
 
-void OperationsPriority2() #void : {}
+void NIExpression1() #void : {}
 {
-    LOOKAHEAD(2) OperationsPriority3()
-    |
-    ([OperationsPriority3()] <RELOP> TerminalExpressionNoOperators()) #LESSTHAN(2)
+    NIExpression2() Expression1_alt()
 }
 
-void OperationsPriority3() #void : {}
+void NAExpression1(Token t) #void : {}
 {
-    LOOKAHEAD(2) OperationsPriority4()
-    |
-    (<SUM> TerminalExpressionNoOperators() [LOOKAHEAD(2) OperationsPriority3()]) #SUM(2)
-    |
-    (<SUB> TerminalExpressionNoOperators() [LOOKAHEAD(2) OperationsPriority3()]) #SUB(2)
+    NAExpression2(t) Expression1_alt()
 }
 
-void OperationsPriority4() #void : {}
+void Expression1_alt() #void : {}
 {
-    (LOOKAHEAD(2)(<MULT> TerminalExpressionNoOperators() #MULT(2) | <DIV> TerminalExpressionNoOperators() #DIV(2)))+
+    <LESS> Expression2() #LESSTHAN(2) Expression1_alt()
+    |
+    {}
 }
 
-void TerminalExpression() #void : {}
+// ============================== Expressions 2 ============================== //
+
+void Expression2() #void : {}
 {
-    NITerminalExpression() | ITerminalExpression()
+    Expression3() Expression2_alt()
+}
+
+void NIExpression2() #void : {}
+{
+    NIExpression3() Expression2_alt()
+}
+
+void NAExpression2(Token t) #void : {}
+{
+    NAExpression3(t) Expression2_alt()
+}
+
+void Expression2_alt() #void : {}
+{
+    <SUM> Expression3() #ADD(2) Expression2_alt()
+    |
+    <SUB> Expression3() #SUB(2) Expression2_alt()
+    |
+    {}
+}
+
+// ============================== Expressions 3 ============================== //
+
+void Expression3() #void : {}
+{
+    Expression4() Expression3_alt()
+}
+
+void NIExpression3() #void : {}
+{
+    NIExpression4() Expression3_alt()
+}
+
+void NAExpression3(Token t) #void : {}
+{
+    NAExpression4(t) Expression3_alt()
+}
+
+void Expression3_alt() #void : {}
+{
+    <MULT> Expression4() #MUL(2) Expression3_alt()
+    |
+    <DIV> Expression4() #DIV(2) Expression3_alt()
+    |
+    {}
+}
+
+// ============================== Expressions 4 ============================== //
+
+void Expression4() #void : {}
+{
+    Expression5() Expression4_alt()
+    |
+    DotOperator() Expression4_alt()
+}
+
+void NIExpression4() #void : {}
+{
+    NIExpression5() Expression4_alt()
+}
+
+void NAExpression4(Token t) #void : {}
+{
+    NIExpression5() NAExpression4_alt(t)
+}
+
+void Expression4_alt() #void : {}
+{
+    ArrayAccess() Expression4_alt()
+    |
+    NAExpression4_alt(null)
+}
+
+void NAExpression4_alt(Token t) #void : {}
+{
+    (DotOperator() Expression4_alt() {jjtThis.methodID = (t == null ? "" : t.image);}) #FUNCMETHOD
+    |
+    {}
+}
+
+void DotOperator() #void : {}
+{
+    <DOT> (<LENGTH> #LENGTH | (Identifier()  GivenArguments()))
+}
+
+void GivenArguments() #ARGUMENTS : {}
+{
+    <LPRTHSIS> [Expression0() (<COMMA> Expression0())*] <RPRTHSIS>
+}
+
+// ============================== Expressions 5 ============================== //
+
+void Expression5() #void : {}
+{
+    TerminalExpression()
+}
+
+void NIExpression5() #void : {}
+{
+    NITerminalExpression()
+    |
+    {}
+}
+
+// ========================== Terminal Expressions ========================== //
+
+void TerminalExpression() #void: {}
+{
+    NITerminalExpression()
+    |
+    Identifier()
 }
 
 void NITerminalExpression() #void : {Token t;}
 {
-    t = <INTEGERLITERAL> {jjtThis.value = Integer.parseInt(t.image);} #NUM  ComplexExpression()
+    t = <INTEGERLITERAL> {jjtThis.value = Integer.parseInt(t.image);} #NUM
     |
-    t = <TRUE> {jjtThis.truth_value = true;} #BOOL  ComplexExpression()
+    t = <TRUE> {jjtThis.truth_value = true;} #BOOL
     |
-    t = <FALSE> {jjtThis.truth_value = false;} #BOOL  ComplexExpression()
+    t = <FALSE> {jjtThis.truth_value = false;} #BOOL
     |
-    <THIS> #THIS  ComplexExpression()
+    <THIS> #THIS
     |
-    <NEW> (<INT> <LSQBRACKET> TerminalExpression() <RSQBRACKET> | Identifier() #NEW <LPRTHSIS> <RPRTHSIS>)  ComplexExpression()
+    <NEW> (<INT> <LSQBRACKET> Expression0() <RSQBRACKET> | Identifier() #NEW <LPRTHSIS> <RPRTHSIS>)
     |
-    <NEG> #NEGATION TerminalExpression()  ComplexExpression()
+    <NEG> Expression4() #NEGATION
     |
-    <LPRTHSIS> TerminalExpression() <RPRTHSIS>  ComplexExpression()
-}
-
-void TerminalExpressionNoOperators() #void : {Token t;}
-{
-    t = <INTEGERLITERAL> {jjtThis.value = Integer.parseInt(t.image);} #NUM  ComplexExpressionNoOperators()
-    |
-    t = <TRUE> {jjtThis.truth_value = true;} #BOOL  ComplexExpressionNoOperators()
-    |
-    t = <FALSE> {jjtThis.truth_value = false;} #BOOL  ComplexExpressionNoOperators()
-    |
-    <THIS> #THIS  ComplexExpressionNoOperators()
-    |
-    <NEW> (<INT> <LSQBRACKET> TerminalExpression() <RSQBRACKET> | Identifier() #NEW <LPRTHSIS> <RPRTHSIS>)  ComplexExpressionNoOperators()
-    |
-    <NEG> #NEGATION TerminalExpression()  ComplexExpressionNoOperators()
-    |
-    <LPRTHSIS> TerminalExpression() <RPRTHSIS>  ComplexExpressionNoOperators()
-    |
-    t = <IDENTIFIER> {jjtThis.name = t.image;} #IDENT ComplexExpressionNoOperators()
-}
-
-void ITerminalExpression() #void : {Token t;}
-{
-    Identifier() ComplexExpression()
+    <LPRTHSIS> Expression0() <RPRTHSIS>
 }
 
 void Identifier() #void : {Token t;}

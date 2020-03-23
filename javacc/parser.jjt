@@ -6,13 +6,14 @@ options
 
 PARSER_BEGIN(Parser)
 
+import java.io.IOException;
 import java.io.FileNotFoundException;
 
 public class Parser
 {
-
-    private static int nr_errors = 0;
+    private int nr_errors = 0;
     private static int MAX_ERRORS = 10;
+    private int parenthesis_counter = 0;
 
     public static void main(String args[]) throws ParseException {
 
@@ -32,24 +33,39 @@ public class Parser
 
         SimpleNode root = grammar.Program(); // returns reference to root node
 
-        if (nr_errors > 0) throw new ParseException("Parsing error.");
 
     }
 
-    void errorSkip(int kind) {
-      Token t;
+    public int errorSkip() {
+      Token error_t = getToken(1);
+
       do {
-        t = getNextToken();
-      }
-      while (t.kind != kind);
+        if(error_t == null || error_t.kind == LBRACKET || parenthesis_counter == 0)
+            break;
+
+        if(error_t.kind == LPRTHSIS)
+            parenthesis_counter++;
+        else if (error_t.kind == RPRTHSIS)
+            parenthesis_counter--;
+
+        getNextToken();
+        error_t = getToken(1);
+      } while (true);
+
+      if(error_t.kind == RPRTHSIS)
+          getNextToken();
+
+      int missing_parethesis = parenthesis_counter;
+
+      parenthesis_counter = java.lang.Math.min(parenthesis_counter,0);
+
+      return missing_parethesis;
     }
 
 
-    void displayError(ParseException exception) {
+    public void displayError(ParseException exception) throws ParseException{
 
-        nr_errors++;
-
-        System.out.println("\nError occurred. Found \"" + exception.currentToken.next.image + "\" on line " +
+        System.out.println("Error occurred. Found \"" + exception.currentToken.next.image + "\" on line " +
         exception.currentToken.beginLine + " and column " +
         exception.currentToken.beginColumn);
 
@@ -59,16 +75,23 @@ public class Parser
                 System.out.println(tokenImage[exception.expectedTokenSequences[i][k]]);
             }
         }
-//        System.out.println("\n");
 
-        errorSkip(LBRACKET);
+        int missing_parenthesis = errorSkip();
 
-        if (MAX_ERRORS < nr_errors) {
-          System.out.println("The program has reached the maximum number of errors (10). Exiting...");
-          System.exit(2);
+        if(missing_parenthesis > 0){
+            System.out.println("There are " + missing_parenthesis + " parenthesis missing.");
+        }
+
+        System.out.println("\n");
+
+        nr_errors++;
+
+
+        if (MAX_ERRORS <= nr_errors) {
+          throw new ParseException("The program has reached the maximum number of errors ("+ MAX_ERRORS +").");
+
         }
       }
-
 }
 
 PARSER_END(Parser)
@@ -154,14 +177,24 @@ TOKEN :
 
 TOKEN: {
     < INTEGERLITERAL: (["0"-"9"])+ >                                                |
-    < IDENTIFIER: ["a"-"z","A"-"Z", "$", "_"](["a"-"z","A"-"Z"]|["0"-"9"]|"_")* >
+    < IDENTIFIER: ["a"-"z","A"-"Z", "$", "_"](["a"-"z","A"-"Z", "$", "_"]|["0"-"9"]|"_")* >
 }
 
 // ================================= EXPRESSIONS ================================= //
 
 SimpleNode Program() #PROGRAM : {}
 {
-    ImportDeclaration() ClassDeclaration() <EOF> {return jjtThis;}
+    {this.parenthesis_counter = 0; this.nr_errors = 0;}
+
+    ImportDeclaration() ClassDeclaration() <EOF>
+
+    {
+        if(this.nr_errors > 0){
+            throw new ParseException("Error in while statements.");
+        }
+    }
+
+    {return jjtThis;}
 }
 
 void ImportDeclaration() #void : {}
@@ -171,9 +204,9 @@ void ImportDeclaration() #void : {}
 
 void ImportExpression() #void: {Token t1, t2=null;}
 {
-    (<STATIC> t1=<IDENTIFIER> <DOT> t2=<IDENTIFIER> [(<LPRTHSIS> [Type() (<COMMA> Type())*] <RPRTHSIS>) #PARAMETERS Type() #RETURN] {jjtThis.name = t1.image + "." + t2.image;}) #STATIC_IMPORT
+    (<STATIC> t1=<IDENTIFIER> <DOT> t2=<IDENTIFIER> [(<LPRTHSIS> {parenthesis_counter++;} [Type() (<COMMA> Type())*] <RPRTHSIS>{parenthesis_counter--;}) #PARAMETERS Type() #RETURN] {jjtThis.name = t1.image + "." + t2.image;}) #STATIC_IMPORT
     |
-    (t1=<IDENTIFIER> [<DOT> t2=<IDENTIFIER>] [(<LPRTHSIS> [Type() (<COMMA> Type())*] <RPRTHSIS>) #PARAMETERS Type() #RETURN] {jjtThis.name = t1.image + (t2 == null ? "" : "." + t2.image);}) #IMPORT
+    (t1=<IDENTIFIER> [<DOT> t2=<IDENTIFIER>] [(<LPRTHSIS>{parenthesis_counter++;} [Type() (<COMMA> Type())*] <RPRTHSIS>{parenthesis_counter--;}) #PARAMETERS Type() #RETURN] {jjtThis.name = t1.image + (t2 == null ? "" : "." + t2.image);}) #IMPORT
 }
 
 void ClassDeclaration() #CLASS : {Token t;}
@@ -235,12 +268,12 @@ void RegularMethod() #METHOD : {Token t;}
 
 void Arguments() #void : {}
 {
-    <LPRTHSIS> [(Type() Identifier() (<COMMA> Type() Identifier())*) #ARGUMENTS] <RPRTHSIS>
+    <LPRTHSIS> {parenthesis_counter++;} [(Type() Identifier() (<COMMA> Type() Identifier())*) #ARGUMENTS] <RPRTHSIS> {parenthesis_counter--;}
 }
 
 void MainMethod() #MAINMETHOD : {}
 {
-    <STATIC> <VOID> <MAIN> <LPRTHSIS> <STRING> <LSQBRACKET> <RSQBRACKET> Identifier() <RPRTHSIS>
+    <STATIC> <VOID> <MAIN> <LPRTHSIS> {parenthesis_counter++;} <STRING> <LSQBRACKET> <RSQBRACKET> Identifier() <RPRTHSIS> {parenthesis_counter--;}
     <LBRACKET>
     MethodBody() #METHOD_BODY
     <RBRACKET>
@@ -287,7 +320,7 @@ void IfElseStatement() #void : {}
 
 void IfStatement() #IF : {}
 {
-    <IF> <LPRTHSIS> (Expression0() #CONDITION) <RPRTHSIS> Statement()
+    <IF> Condition() Statement()
 }
 
 void ElseStatement() #ELSE : {}
@@ -297,13 +330,19 @@ void ElseStatement() #ELSE : {}
 
 void WhileStatement() #WHILE : {}
 {
-    <WHILE>
     try {
-        <LPRTHSIS> (Expression0() #CONDITION) <RPRTHSIS>
+        <WHILE> Condition()
     } catch(ParseException e) {
         displayError(e);
     }
     Statement()
+}
+
+void Condition() #CONDITION : {}
+{
+    <LPRTHSIS> {parenthesis_counter++;}
+    Expression0() #CONDITION
+    <RPRTHSIS> {parenthesis_counter--;}
 }
 
 void ExpressionStatement() #void : {}
@@ -489,7 +528,7 @@ void DotOperator() #void : {}
 
 void GivenArguments() #void : {}
 {
-    <LPRTHSIS> [(Expression0() (<COMMA> Expression0())*) #ARGUMENTS] <RPRTHSIS>
+    <LPRTHSIS> {parenthesis_counter++;} [(Expression0() (<COMMA> Expression0())*) #ARGUMENTS] <RPRTHSIS> {parenthesis_counter--;}
 }
 
 // ============================== Expressions 5 ============================== //
@@ -525,11 +564,11 @@ void NITerminalExpression() #void : {Token t;}
     |
     <THIS> #THIS
     |
-    <NEW> ((<INT> <LSQBRACKET> Expression0() <RSQBRACKET> {jjtThis.classID = "int[]";}) #NEW | (t=<IDENTIFIER> <LPRTHSIS> <RPRTHSIS> {jjtThis.classID = t.image;}) #NEW)
+    <NEW> ((<INT> <LSQBRACKET> Expression0() <RSQBRACKET> {jjtThis.classID = "int[]";}) #NEW | (t=<IDENTIFIER> <LPRTHSIS> {parenthesis_counter++;} <RPRTHSIS> {parenthesis_counter--;} {jjtThis.classID = t.image;}) #NEW)
     |
     <NEG> Expression4() #NEGATION
     |
-    <LPRTHSIS> Expression0() <RPRTHSIS>
+    <LPRTHSIS> {parenthesis_counter++;} Expression0() <RPRTHSIS> {parenthesis_counter--;}
 }
 
 void Identifier() #void : {Token t;}

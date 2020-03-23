@@ -185,8 +185,8 @@ public class ParserTest {
 
     // CUSTOM MADE TESTS
 
-    @Test
+/*    @Test
     public void testCustomTest() {
         test("fixtures/public/CustomTest.jmm", false);
-    }
+    }*/
 }

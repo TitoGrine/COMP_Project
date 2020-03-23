@@ -13,7 +13,7 @@ class ASTIDENT extends SimpleNode {
   }
 
   public String toString() {
-    return "IDENT[" + name + "]";
+    return "IDENT[" + (name == null ? "" : name) + "]";
   }
 }
 /* JavaCC - OriginalChecksum=51e214b95606552ad63a32c1fc88d236 (do not edit this line) */

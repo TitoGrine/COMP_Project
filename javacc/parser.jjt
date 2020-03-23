@@ -516,7 +516,7 @@ void Expression4_alt() #void : {}
 
 void NAExpression4_alt(Token t) #void : {}
 {
-    (({} {jjtThis.name = (t == null ? "" : t.image);}) #IDENT DotOperator() Expression4_alt()) #FUNC_METHOD(2)
+    ({} {jjtThis.name = (t == null ? "" : t.image);} #IDENT DotOperator() #FUNC_METHOD(2) Expression4_alt())
     |
     {}
 }

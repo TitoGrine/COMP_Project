@@ -41,6 +41,12 @@ sourceSets {
          srcDir 'src'
       }
    }
+
+   javacc {
+       java {
+           srcDir 'javacc'
+       }
+   }
 	
    test {
       java {

@@ -13,6 +13,11 @@ class ASTBOOL extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void eval() {
+
+  }
+
   public String toString() {
     return "BOOL[" + truth_value + "]";
   }

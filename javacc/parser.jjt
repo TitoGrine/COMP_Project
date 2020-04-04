@@ -15,27 +15,6 @@ public class Parser
     private static int MAX_ERRORS = 10;
     private int parenthesis_counter = 0;
 
-    public static void main(String args[]) throws ParseException {
-
-        Parser grammar;
-
-        if(args.length == 1) {
-            try{
-                java.io.FileInputStream file = new java.io.FileInputStream(new java.io.File(args[0]));
-                grammar = new Parser(file);
-            } catch (FileNotFoundException ex) {
-                System.out.println(ex);
-                return;
-            }
-        } else {
-            grammar = new Parser(System.in);
-        }
-
-        SimpleNode root = grammar.Program(); // returns reference to root node
-
-
-    }
-
     public int errorSkip() {
       Token error_t = getToken(1);
 
@@ -57,7 +36,7 @@ public class Parser
 
       int missing_parethesis = parenthesis_counter;
 
-      parenthesis_counter = java.lang.Math.min(parenthesis_counter,0);
+      parenthesis_counter = java.lang.Math.min(parenthesis_counter, 0);
 
       return missing_parethesis;
     }
@@ -117,8 +96,8 @@ SKIP :
 // =================================== TOKENS =================================== //
 
 TOKEN : {
-    < AND: "&&" >           |
-    < LESS: "<" >              |
+    < AND: "&&" >               |
+    < LESS: "<" >               |
     < MULT: "*" >               |
     < DIV: "/" >                |
     < SUM: "+" >                |

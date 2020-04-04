@@ -12,6 +12,38 @@ class ASTSTATIC_IMPORT extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+
+    if(numChildren != 2)
+      throw new Exception("Static import has an irregular amount number of children nodes.");
+
+    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
+    SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
+
+    if(firstChild.id == ParserTreeConstants.JJTPARAMETERS){
+      firstChild.addSymbolTable(this.symbolTable);
+      firstChild.eval();
+    } else {
+      throw new Exception("Static import doesn't have the parameters node in the correct place or at all.");
+    }
+
+    if(secondChild.id == ParserTreeConstants.JJTRETURN){
+      secondChild.addSymbolTable(this.symbolTable);
+      secondChild.eval();
+    } else {
+      throw new Exception("Static import doesn't have the return node in the correct place or at all.");
+    }
+  }
+
   public String toString() {
     return "STATIC_IMPORT[" + name + "]";
   }

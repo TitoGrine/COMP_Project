@@ -8,6 +8,7 @@ class SimpleNode implements Node {
   protected int id;
   protected Object value;
   protected Parser parser;
+  protected SymbolTable symbolTable;
 
   public SimpleNode(int i) {
     id = i;
@@ -59,6 +60,13 @@ class SimpleNode implements Node {
     return ParserTreeConstants.jjtNodeName[id];
   }
   public String toString(String prefix) { return prefix + toString(); }
+
+  public void addSymbolTable(SymbolTable symbolTable){
+
+  }
+
+  public void eval() throws Exception {
+  }
 
   /* Override this method if you want to customize how the node dumps
      out its children. */

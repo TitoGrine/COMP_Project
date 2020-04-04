@@ -10,5 +10,10 @@ class ASTFUNC_METHOD extends SimpleNode {
   public ASTFUNC_METHOD(Parser p, int id) {
     super(p, id);
   }
+
+  @Override
+  public void eval() {
+
+  }
 }
 /* JavaCC - OriginalChecksum=54a9f6d33a5022ecd7338879131cb817 (do not edit this line) */

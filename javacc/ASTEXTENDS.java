@@ -12,6 +12,11 @@ class ASTEXTENDS extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void eval() {
+
+  }
+
   public String toString() {
     return "EXTENDS[" + class_name + "]";
   }

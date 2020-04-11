@@ -22,7 +22,7 @@ class ASTVARIABLE extends SimpleNode {
     int numChildren = this.jjtGetNumChildren();
 
     if(numChildren != 2)
-      throw new Exception("VARIABLE had an invalid number of children.");
+      throw new Exception("VARIABLE has an invalid number of children.");
 
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);

@@ -10,5 +10,17 @@ class ASTTHIS extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    //TODO: Add check?
+
+  }
 }
 /* JavaCC - OriginalChecksum=cc9ff3a6217769746e01f0b278090457 (do not edit this line) */

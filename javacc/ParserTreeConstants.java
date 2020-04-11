@@ -37,6 +37,7 @@ public interface ParserTreeConstants
   public int JJTTHIS = 33;
   public int JJTNEW = 34;
   public int JJTNEGATION = 35;
+  public int JJTARGUMENT = 36;
 
 
   public String[] jjtNodeName = {
@@ -76,6 +77,7 @@ public interface ParserTreeConstants
     "THIS",
     "NEW",
     "NEGATION",
+    "ARGUMENT",
   };
 }
 /* JavaCC - OriginalChecksum=6335d83c9b216a858727641f9f14327a (do not edit this line) */

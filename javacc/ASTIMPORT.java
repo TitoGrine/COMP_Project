@@ -33,14 +33,14 @@ class ASTIMPORT extends SimpleNode {
       firstChild.addSymbolTable(this.symbolTable);
       firstChild.eval();
     } else {
-      throw new Exception("Import doesn't have the parameters node in the correct place or at all.");
+      throw new Exception("IMPORT doesn't have the PARAMETERS node in the correct place or at all.");
     }
 
     if(secondChild.id == ParserTreeConstants.JJTRETURN){
       secondChild.addSymbolTable(this.symbolTable);
       secondChild.eval();
     } else {
-      throw new Exception("Import doesn't have the return node in the correct place or at all.");
+      throw new Exception("IMPORT doesn't have the RETURN node in the correct place or at all.");
     }
   }
 

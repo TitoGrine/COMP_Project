@@ -10,5 +10,28 @@ class ASTDIV extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+
+    if(numChildren != 2)
+      throw new Exception("DIV must have two children.");
+
+    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
+    SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
+
+    firstChild.addSymbolTable(this.symbolTable);
+    firstChild.eval();
+
+    secondChild.addSymbolTable(this.symbolTable);
+    secondChild.eval();
+  }
 }
 /* JavaCC - OriginalChecksum=7c66fef492265519258f8aeb8df13d5f (do not edit this line) */

@@ -10,5 +10,27 @@ class ASTCONDITION extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+    int childIndex = 0;
+    SimpleNode childNode;
+
+    while(childIndex < numChildren){
+      childNode = (SimpleNode) this.jjtGetChild(childIndex);
+
+      childNode.addSymbolTable(this.symbolTable);
+      childNode.eval();
+
+      childIndex++;
+    }
+  }
 }
 /* JavaCC - OriginalChecksum=58fa4c516c1f33d07663e796cee56418 (do not edit this line) */

@@ -10,5 +10,27 @@ class ASTRETURN_TYPE extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+
+    if(numChildren != 1)
+      throw new Exception("RETURN_TYPE has more than one child.");
+
+    SimpleNode childNode = (SimpleNode) this.jjtGetChild(0);
+
+    if(childNode.id != ParserTreeConstants.JJTTYPE)
+      throw new Exception("RETURN_TYPE has child of type not TYPE.");
+
+    childNode.addSymbolTable(this.symbolTable);
+    childNode.eval();
+  }
 }
 /* JavaCC - OriginalChecksum=d78c5c45d830aab60547f0ab5f54ba4f (do not edit this line) */

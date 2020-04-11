@@ -10,5 +10,33 @@ class ASTARGUMENTS extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = new SymbolTable(symbolTable);
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+    int childIndex = 0;
+    SimpleNode childNode;
+
+    if(!(numChildren > 0))
+      throw new Exception("ARGUMENTS must have at least one child.");
+
+    while(childIndex < numChildren){
+      childNode = (SimpleNode) this.jjtGetChild(childIndex);
+
+      if(childNode.id != ParserTreeConstants.JJTARGUMENT)
+        throw new Exception("ARGUMENTS can only have children of type ARGUMENT.");
+
+      childNode.addSymbolTable(this.symbolTable);
+      childNode.eval();
+
+      childIndex++;
+    }
+  }
 }
 /* JavaCC - OriginalChecksum=4206cf5195297e62078a7d896983dc2e (do not edit this line) */

@@ -13,7 +13,18 @@ class ASTTYPE extends SimpleNode {
   }
 
   @Override
-  public void eval() {
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+
+    if(numChildren != 0)
+      throw new Exception("TYPE has children.");
   }
 
   public String toString() {

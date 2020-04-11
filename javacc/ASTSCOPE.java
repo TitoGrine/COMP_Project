@@ -10,5 +10,27 @@ class ASTSCOPE extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = new SymbolTable(symbolTable);
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+    int childIndex = 0;
+    SimpleNode childNode;
+
+    while(childIndex < numChildren){
+      childNode = (SimpleNode) this.jjtGetChild(childIndex);
+
+      childNode.addSymbolTable(this.symbolTable);
+      childNode.eval();
+
+      childIndex++;
+    }
+  }
 }
 /* JavaCC - OriginalChecksum=3a5f0f41a53986f6a6fb7874b1e64952 (do not edit this line) */

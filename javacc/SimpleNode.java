@@ -87,7 +87,7 @@ class SimpleNode implements Node {
     return id;
   }
 
-  public static String getJasminType(String type) {
+  public static String getJType(String type) {
     switch(type) {
       case "void":
         return "V";
@@ -109,16 +109,14 @@ class SimpleNode implements Node {
   void printJasmin() {
     String j = getJasmin();
 
-    if(!j.isEmpty())
-    {
-      System.out.print("Jasmin: " + j);
-    }
+    if(!j.isEmpty()) System.out.print("Jasmin: " + j);
+
 
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
-        SimpleNode n = children[i];
-        if (n != null) {
-          n.printJasmin();
+        SimpleNode node = (SimpleNode) children[i];
+        if (node != null) {
+          node.printJasmin();
         }
       }
     }

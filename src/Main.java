@@ -22,6 +22,13 @@ public class Main {
             }
 
             root.dump(""); // prints the tree on the screen
+
+            ////
+
+            //root.printJasmin();
+
+            ///
+
         } catch (ParseException e) {
             e.printStackTrace();
             throw new ParseException("Parser error");

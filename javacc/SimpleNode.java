@@ -86,6 +86,45 @@ class SimpleNode implements Node {
   public int getId() {
     return id;
   }
+
+  public static String getJasminType(String type) {
+    switch(type) {
+      case "void":
+        return "V";
+      case "int[]":
+        return "[I";
+      case "int":
+        return "I";
+      case "bool":
+        return "Z";
+    }
+
+    return "";
+  }
+
+  String getJasmin() {
+    return "";
+  }
+
+  void printJasmin() {
+    String j = getJasmin();
+
+    if(!j.isEmpty())
+    {
+      System.out.print("Jasmin: " + j);
+    }
+
+    if (children != null) {
+      for (int i = 0; i < children.length; ++i) {
+        SimpleNode n = children[i];
+        if (n != null) {
+          n.printJasmin();
+        }
+      }
+    }
+  }
+
 }
+
 
 /* JavaCC - OriginalChecksum=ff562ba524f63263971357127128f566 (do not edit this line) */

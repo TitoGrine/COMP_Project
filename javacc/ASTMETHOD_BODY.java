@@ -10,5 +10,34 @@ class ASTMETHOD_BODY extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = new SymbolTable(symbolTable);
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+    int childIndex = 0;
+    boolean varsDeclared = false;
+    SimpleNode childNode;
+
+    while(childIndex < numChildren){
+      childNode = (SimpleNode) this.jjtGetChild(childIndex);
+
+      if(childNode.id == ParserTreeConstants.JJTVARIABLE){
+        if(varsDeclared)
+          throw new Exception("In METHOD_BODY variables were declared after statements.");
+      } else
+        varsDeclared = true;
+
+      childNode.addSymbolTable(this.symbolTable);
+      childNode.eval();
+
+      childIndex++;
+    }
+  }
 }
 /* JavaCC - OriginalChecksum=2c8fe84559602b622525e8e9ee1fb873 (do not edit this line) */

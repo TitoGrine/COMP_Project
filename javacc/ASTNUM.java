@@ -13,7 +13,15 @@ class ASTNUM extends SimpleNode {
   }
 
   @Override
-  public void eval() {
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    //TODO: Add check?
 
   }
 

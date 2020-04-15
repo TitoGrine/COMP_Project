@@ -11,14 +11,7 @@ class ASTRETURN extends SimpleNode {
   }
 
   @Override
-  public void addSymbolTable(SymbolTable symbolTable){
-    this.symbolTable = symbolTable;
-  }
-
-  @Override
   public void eval() throws Exception {
-    // TODO: Add symbol
-
     int numChildren = this.jjtGetNumChildren();
 
     if(numChildren != 1)
@@ -29,8 +22,9 @@ class ASTRETURN extends SimpleNode {
     if(childNode.id != ParserTreeConstants.JJTTYPE)
       throw new Exception("RETURN has child of type not TYPE.");
 
-    childNode.addSymbolTable(this.symbolTable);
-    childNode.eval();
+    TypeEnum type = ((ASTTYPE) childNode).typeID;
+
+    // TODO: Return type?
   }
 
 }

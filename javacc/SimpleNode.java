@@ -62,7 +62,7 @@ class SimpleNode implements Node {
   public String toString(String prefix) { return prefix + toString(); }
 
   public void addSymbolTable(SymbolTable symbolTable){
-
+    this.symbolTable = symbolTable;
   }
 
   public void eval() throws Exception {

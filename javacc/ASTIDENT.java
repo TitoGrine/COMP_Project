@@ -12,10 +12,6 @@ class ASTIDENT extends SimpleNode {
     super(p, id);
   }
 
-  @Override
-  public void eval() {
-  }
-
   public String toString() {
     return "IDENT[" + (name == null ? "" : name) + "]";
   }

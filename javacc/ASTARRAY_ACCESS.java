@@ -10,5 +10,28 @@ class ASTARRAY_ACCESS extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+
+    if(numChildren != 2)
+      throw new Exception("ARRAY_ACCESS has an invalid number of children.");
+
+    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
+    SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
+
+    firstChild.addSymbolTable(this.symbolTable);
+    firstChild.eval();
+
+    secondChild.addSymbolTable(this.symbolTable);
+    secondChild.eval();
+  }
 }
 /* JavaCC - OriginalChecksum=22f8f358ed3b439b354e0322ba03ff68 (do not edit this line) */

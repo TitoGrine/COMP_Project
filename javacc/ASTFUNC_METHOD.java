@@ -12,8 +12,27 @@ class ASTFUNC_METHOD extends SimpleNode {
   }
 
   @Override
-  public void eval() {
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
 
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+
+    if(numChildren != 2)
+      throw new Exception("ARRAY_ACCESS has an invalid number of children.");
+
+    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
+    SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
+
+    firstChild.addSymbolTable(this.symbolTable);
+    firstChild.eval();
+
+    secondChild.addSymbolTable(this.symbolTable);
+    secondChild.eval();
   }
 }
 /* JavaCC - OriginalChecksum=54a9f6d33a5022ecd7338879131cb817 (do not edit this line) */

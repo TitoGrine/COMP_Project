@@ -2,7 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTTYPE extends SimpleNode {
-  public String typeID;
+  public TypeEnum typeID = null;
 
   public ASTTYPE(int id) {
     super(id);
@@ -13,11 +13,32 @@ class ASTTYPE extends SimpleNode {
   }
 
   @Override
-  public void eval() {
+  public void eval() throws Exception {
+    if(typeID != null)
+      return;
+
+    int numChildren = this.jjtGetNumChildren();
+
+    if(numChildren != 1)
+      throw new Exception("TYPE can only have at most one child.");
+
+    SimpleNode child = (SimpleNode) this.jjtGetChild(0);
+
+    if(child.id != ParserTreeConstants.JJTIDENT)
+      throw new Exception("TYPE can only a child of type IDENT");
+
+    String name = ((ASTIDENT) child).name;
+
+    Symbol symbol = this.symbolTable.getSymbol(name);
+
+    if(symbol == null)
+      throw new Exception("Could not resolve identifier of name " + name);
+
+    this.typeID = symbol.getType();
   }
 
   public String toString() {
-    return "TYPE[" + typeID + "]";
+    return "TYPE[" + (typeID == null ? "IDENT" : typeID.toString()) + "]";
   }
 }
 /* JavaCC - OriginalChecksum=29a55f5e39a6079796b397360dc9d240 (do not edit this line) */

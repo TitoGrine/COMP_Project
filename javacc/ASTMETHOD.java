@@ -3,8 +3,6 @@
 public
 class ASTMETHOD extends SimpleNode {
 
-  public String name;
-
   public ASTMETHOD(int id) {
     super(id);
   }
@@ -14,12 +12,58 @@ class ASTMETHOD extends SimpleNode {
   }
 
   @Override
-  public void eval() {
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = new SymbolTable(symbolTable);
+  }
 
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+    int childIndex = 0;
+
+    if(numChildren < 3 || numChildren > 4)
+      throw new Exception("METHOD has an invalid number of children");
+
+    SimpleNode childNode = (SimpleNode) this.jjtGetChild(childIndex);
+
+    if(childNode.id == ParserTreeConstants.JJTRETURN_TYPE){
+      childNode.addSymbolTable(this.symbolTable);
+      childNode.eval();
+    } else {
+      throw new Exception("METHOD doesn't have the RETURN_TYPE node in the correct place or at all.");
+    }
+
+    if(numChildren == 4){
+      childNode = (SimpleNode) this.jjtGetChild(++childIndex);
+
+      if(childNode.id == ParserTreeConstants.JJTARGUMENTS){
+        childNode.addSymbolTable(this.symbolTable);
+        childNode.eval();
+      } else {
+        throw new Exception("METHOD doesn't have the ARGUMENTS node in the correct place or at all.");
+      }
+    }
+
+    childNode = (SimpleNode) this.jjtGetChild(++childIndex);
+
+    if(childNode.id == ParserTreeConstants.JJTMETHOD_BODY){
+      childNode.addSymbolTable(this.symbolTable);
+      childNode.eval();
+    } else {
+      throw new Exception("METHOD doesn't have the METHOD_BODY node in the correct place or at all.");
+    }
+
+    childNode = (SimpleNode) this.jjtGetChild(++childIndex);
+
+    // TODO: Check valid return?
+    childNode.addSymbolTable(this.symbolTable);
+    childNode.eval();
   }
 
   public String toString() {
-    return "METHOD[" + name + "]";
+    return "METHOD";
   }
 }
 /* JavaCC - OriginalChecksum=ea7e13413ab21b460f76667a3725c2ac (do not edit this line) */

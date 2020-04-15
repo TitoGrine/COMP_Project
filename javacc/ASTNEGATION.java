@@ -10,5 +10,28 @@ class ASTNEGATION extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+    int childIndex = 0;
+    SimpleNode childNode;
+
+    while(childIndex < numChildren){
+      childNode = (SimpleNode) this.jjtGetChild(childIndex);
+
+      childNode.addSymbolTable(this.symbolTable);
+      childNode.eval();
+
+      childIndex++;
+    }
+  }
+
 }
 /* JavaCC - OriginalChecksum=4ffa54cb323c32b97a8d1dfeae6338b8 (do not edit this line) */

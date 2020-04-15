@@ -10,5 +10,32 @@ class ASTASSIGN extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+
+    if(numChildren != 2)
+      throw new Exception("ASSIGN has an invalid number of children.");
+
+    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
+    SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
+
+    if(firstChild.id == ParserTreeConstants.JJTIDENT){
+      firstChild.addSymbolTable(this.symbolTable);
+      firstChild.eval();
+    } else {
+      throw new Exception("ASSIGN must have first child of type IDENT.");
+    }
+
+    secondChild.addSymbolTable(this.symbolTable);
+    secondChild.eval();
+  }
 }
 /* JavaCC - OriginalChecksum=cbade18a4c362fe9b5729b12bfc068fc (do not edit this line) */

@@ -2,8 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTNEW extends SimpleNode {
-  public String classID;
-
   public ASTNEW(int id) {
     super(id);
   }
@@ -13,12 +11,30 @@ class ASTNEW extends SimpleNode {
   }
 
   @Override
-  public void eval() {
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
 
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+    int childIndex = 0;
+    SimpleNode childNode;
+
+    while(childIndex < numChildren){
+      childNode = (SimpleNode) this.jjtGetChild(childIndex);
+
+      childNode.addSymbolTable(this.symbolTable);
+      childNode.eval();
+
+      childIndex++;
+    }
   }
 
   public String toString() {
-    return "NEW[" + classID + "]";
+    return "NEW";
   }
 }
 /* JavaCC - OriginalChecksum=7a0fe874174dc351abb16b01ef943ed2 (do not edit this line) */

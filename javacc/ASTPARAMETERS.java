@@ -26,7 +26,7 @@ class ASTPARAMETERS extends SimpleNode {
       SimpleNode childNode = (SimpleNode) this.jjtGetChild(childIndex);
 
       if(childNode.id != ParserTreeConstants.JJTTYPE)
-        throw new Exception("PARAMETERS has children of type of Type.");
+        throw new Exception("PARAMETERS must have all children of type Type.");
 
       childNode.addSymbolTable(this.symbolTable);
       childNode.eval();

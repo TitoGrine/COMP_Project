@@ -2,8 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTIMPORT extends SimpleNode {
-  public String name;
-
   public ASTIMPORT(int id) {
     super(id);
   }
@@ -33,19 +31,19 @@ class ASTIMPORT extends SimpleNode {
       firstChild.addSymbolTable(this.symbolTable);
       firstChild.eval();
     } else {
-      throw new Exception("Import doesn't have the parameters node in the correct place or at all.");
+      throw new Exception("IMPORT doesn't have the PARAMETERS node in the correct place or at all.");
     }
 
     if(secondChild.id == ParserTreeConstants.JJTRETURN){
       secondChild.addSymbolTable(this.symbolTable);
       secondChild.eval();
     } else {
-      throw new Exception("Import doesn't have the return node in the correct place or at all.");
+      throw new Exception("IMPORT doesn't have the RETURN node in the correct place or at all.");
     }
   }
 
   public String toString() {
-    return "IMPORT[" + name + "]";
+    return "IMPORT";
   }
 }
 /* JavaCC - OriginalChecksum=88acf2e261b5ed8d1318a9e9015ad173 (do not edit this line) */

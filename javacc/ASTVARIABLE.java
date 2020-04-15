@@ -10,5 +10,36 @@ class ASTVARIABLE extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = symbolTable;
+  }
+
+  @Override
+  public void eval() throws Exception {
+    // TODO: Add symbol
+
+    int numChildren = this.jjtGetNumChildren();
+
+    if(numChildren != 2)
+      throw new Exception("VARIABLE has an invalid number of children.");
+
+    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
+    SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
+    TypeEnum type;
+
+    if(firstChild.id == ParserTreeConstants.JJTTYPE){
+      firstChild.eval();
+      type = ((ASTTYPE) firstChild).typeID;
+    } else {
+      throw new Exception("VARIABLE must have first child of type TYPE.");
+    }
+
+    if(secondChild.id == ParserTreeConstants.JJTIDENT){
+      this.symbolTable.addSymbol(((ASTIDENT) secondChild).name, new Symbol(type));
+    } else {
+      throw new Exception("VARIABLE must have second child of type IDENT.");
+    }
+  }
 }
 /* JavaCC - OriginalChecksum=f4f029f02b50c27d11f0009ca087d42c (do not edit this line) */

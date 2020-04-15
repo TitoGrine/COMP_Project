@@ -9,5 +9,19 @@ public class SymbolTable {
         this.parent = parent;
     }
 
+    public void addSymbol(String key, Symbol symbol){
+        table.put(key, symbol);
+    }
 
+    public Symbol getSymbol(String key){
+        Symbol symbol = table.get(key);
+
+        if(symbol != null)
+            return symbol;
+
+        if(parent != null)
+            return parent.getSymbol(key);
+
+        return null;
+    }
 }

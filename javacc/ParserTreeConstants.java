@@ -10,12 +10,12 @@ public interface ParserTreeConstants
   public int JJTCLASS = 6;
   public int JJTEXTENDS = 7;
   public int JJTVARIABLE = 8;
-  public int JJTIDENT = 9;
-  public int JJTTYPE = 10;
-  public int JJTMETHOD = 11;
-  public int JJTRETURN_TYPE = 12;
-  public int JJTMETHOD_BODY = 13;
-  public int JJTARGUMENTS = 14;
+  public int JJTTYPE = 9;
+  public int JJTMETHOD = 10;
+  public int JJTRETURN_TYPE = 11;
+  public int JJTMETHOD_BODY = 12;
+  public int JJTARGUMENTS = 13;
+  public int JJTARGUMENT = 14;
   public int JJTMAINMETHOD = 15;
   public int JJTSCOPE = 16;
   public int JJTIF = 17;
@@ -35,9 +35,10 @@ public interface ParserTreeConstants
   public int JJTNUM = 31;
   public int JJTBOOL = 32;
   public int JJTTHIS = 33;
-  public int JJTNEW = 34;
-  public int JJTNEGATION = 35;
-  public int JJTARGUMENT = 36;
+  public int JJTNEW_ARRAY = 34;
+  public int JJTNEW = 35;
+  public int JJTNEGATION = 36;
+  public int JJTIDENT = 37;
 
 
   public String[] jjtNodeName = {
@@ -50,12 +51,12 @@ public interface ParserTreeConstants
     "CLASS",
     "EXTENDS",
     "VARIABLE",
-    "IDENT",
     "TYPE",
     "METHOD",
     "RETURN_TYPE",
     "METHOD_BODY",
     "ARGUMENTS",
+    "ARGUMENT",
     "MAINMETHOD",
     "SCOPE",
     "IF",
@@ -75,9 +76,10 @@ public interface ParserTreeConstants
     "NUM",
     "BOOL",
     "THIS",
+    "NEW_ARRAY",
     "NEW",
     "NEGATION",
-    "ARGUMENT",
+    "IDENT",
   };
 }
-/* JavaCC - OriginalChecksum=6335d83c9b216a858727641f9f14327a (do not edit this line) */
+/* JavaCC - OriginalChecksum=92a3869ce174b20412ee41f4124009ec (do not edit this line) */

@@ -2,7 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTSTATIC_IMPORT extends SimpleNode {
-  public String name;
 
   public ASTSTATIC_IMPORT(int id) {
     super(id);
@@ -45,7 +44,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
   }
 
   public String toString() {
-    return "STATIC_IMPORT[" + name + "]";
+    return "STATIC_IMPORT";
   }
 }
 /* JavaCC - OriginalChecksum=0ea55270eb33c3d4cca7df9ddcbc14ab (do not edit this line) */

@@ -17,8 +17,6 @@ class ASTSCOPE extends SimpleNode {
 
   @Override
   public void eval() throws Exception {
-    // TODO: Add symbol
-
     int numChildren = this.jjtGetNumChildren();
     int childIndex = 0;
     SimpleNode childNode;

@@ -2,8 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTNEW extends SimpleNode {
-  public String classID;
-
   public ASTNEW(int id) {
     super(id);
   }
@@ -36,7 +34,7 @@ class ASTNEW extends SimpleNode {
   }
 
   public String toString() {
-    return "NEW[" + classID + "]";
+    return "NEW";
   }
 }
 /* JavaCC - OriginalChecksum=7a0fe874174dc351abb16b01ef943ed2 (do not edit this line) */

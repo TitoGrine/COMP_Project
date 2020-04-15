@@ -26,17 +26,17 @@ class ASTVARIABLE extends SimpleNode {
 
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
+    TypeEnum type;
 
-    if(firstChild.id == ParserTreeConstants.JJTTYPE || firstChild.id == ParserTreeConstants.JJTIDENT){
-      firstChild.addSymbolTable(this.symbolTable);
+    if(firstChild.id == ParserTreeConstants.JJTTYPE){
       firstChild.eval();
+      type = ((ASTTYPE) firstChild).typeID;
     } else {
-      throw new Exception("VARIABLE must have first child of type TYPE or IDENT.");
+      throw new Exception("VARIABLE must have first child of type TYPE.");
     }
 
     if(secondChild.id == ParserTreeConstants.JJTIDENT){
-      secondChild.addSymbolTable(this.symbolTable);
-      secondChild.eval();
+      this.symbolTable.addSymbol(((ASTIDENT) secondChild).name, new Symbol(type));
     } else {
       throw new Exception("VARIABLE must have second child of type IDENT.");
     }

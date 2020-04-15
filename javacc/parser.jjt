@@ -183,52 +183,52 @@ void ImportDeclaration() #void : {}
 
 void ImportExpression() #void: {Token t1, t2=null;}
 {
-    (<STATIC> t1=<IDENTIFIER> <DOT> t2=<IDENTIFIER> [(<LPRTHSIS> {parenthesis_counter++;} [Type() (<COMMA> Type())*] <RPRTHSIS>{parenthesis_counter--;}) #PARAMETERS Type() #RETURN] {jjtThis.name = t1.image + "." + t2.image;}) #STATIC_IMPORT
+    (<STATIC> Identifier() <DOT> Identifier() [(<LPRTHSIS> {parenthesis_counter++;} [Type() (<COMMA> Type())*] <RPRTHSIS>{parenthesis_counter--;}) #PARAMETERS Type() #RETURN]) #STATIC_IMPORT
     |
-    (t1=<IDENTIFIER> [<DOT> t2=<IDENTIFIER>] [(<LPRTHSIS>{parenthesis_counter++;} [Type() (<COMMA> Type())*] <RPRTHSIS>{parenthesis_counter--;}) #PARAMETERS Type() #RETURN] {jjtThis.name = t1.image + (t2 == null ? "" : "." + t2.image);}) #IMPORT
+    (Identifier() [<DOT> Identifier()] [(<LPRTHSIS>{parenthesis_counter++;} [Type() (<COMMA> Type())*] <RPRTHSIS>{parenthesis_counter--;}) #PARAMETERS Type() #RETURN]) #IMPORT
 }
 
-void ClassDeclaration() #CLASS : {Token t;}
+void ClassDeclaration() #CLASS : {}
 {
-    <CLASS> t=<IDENTIFIER> {jjtThis.name = t.image;} [<EXTENDS> t=<IDENTIFIER> {jjtThis.class_name = t.image;} #EXTENDS] <LBRACKET>
+    <CLASS> Identifier() [<EXTENDS> Identifier() #EXTENDS] <LBRACKET>
     (VarDeclaration())*
     (MethodDeclaration())*
     <RBRACKET>
 }
 
-void VarDeclaration() #void : {Token t;}
+void VarDeclaration() #void : {}
 {
     NonIdentifierVarDeclaration()
     |
-    t=<IDENTIFIER> IdentifierVarDeclaration(t)
+    Identifier() IdentifierVarDeclaration()
 }
 
-void NonIdentifierVarDeclaration() #VARIABLE : {Token t;}
+void NonIdentifierVarDeclaration() #VARIABLE : {}
 {
-    NonIdentifierType() t=<IDENTIFIER> {jjtThis.name = t.image;} #IDENT <SEMICOLON>
+    NonIdentifierType() Identifier() <SEMICOLON>
 }
 
-void IdentifierVarDeclaration(Token previous_token) #VARIABLE : {Token t;}
+void IdentifierVarDeclaration() #VARIABLE : {}
 {
-    {jjtThis.typeID = previous_token.image;} #TYPE t=<IDENTIFIER> {jjtThis.name = t.image;} #IDENT <SEMICOLON>
+    Identifier() <SEMICOLON>
 }
 
-void Type() #void : {Token t;}
+void Type() #void : {}
 {
     NonIdentifierType()
     |
-    t = <IDENTIFIER> {jjtThis.typeID = t.image;} #TYPE
+    Identifier() #TYPE
 }
 
 void NonIdentifierType() #TYPE : {}
 {
-    <BOOL> {jjtThis.typeID = "bool";}
+    <BOOL> {jjtThis.typeID = TypeEnum.BOOL;}
     |
-    <INT> (<LSQBRACKET> <RSQBRACKET> {jjtThis.typeID = "int[]";} | {jjtThis.typeID = "int";})
+    <INT> (<LSQBRACKET> <RSQBRACKET> {jjtThis.typeID = TypeEnum.INT_ARRAY;} | {jjtThis.typeID = TypeEnum.INT;})
     |
-    <STRING> {jjtThis.typeID = "string";}
+    <STRING> {jjtThis.typeID = TypeEnum.STRING;}
     |
-    <VOID> {jjtThis.typeID = "";}
+    <VOID> {jjtThis.typeID = TypeEnum.VOID;}
 }
 
 void MethodDeclaration() #void : {}
@@ -236,9 +236,9 @@ void MethodDeclaration() #void : {}
     <PUBLIC> (RegularMethod() | MainMethod())
 }
 
-void RegularMethod() #METHOD : {Token t;}
+void RegularMethod() #METHOD : {}
 {
-    Type() #RETURN_TYPE t=<IDENTIFIER> {jjtThis.name = t.image;} Arguments()
+    Type() #RETURN_TYPE Identifier() Arguments()
     <LBRACKET>
     MethodBody() #METHOD_BODY
     <RETURN> Expression0() <SEMICOLON>
@@ -267,18 +267,18 @@ void MethodBody() #void : {Token t;}
 {
     NonIdentifierVarDeclaration() MethodBody()
     |
-    t=<IDENTIFIER> (IdentifierVarDeclaration(t) MethodBody() | IdentifierStatements(t) (Statement())*)
+    Identifier() (IdentifierVarDeclaration() MethodBody() | IdentifierStatements() (Statement())*)
     |
     NonIdentifierStatements() (Statement())*
     |
     {}
 }
 
-void Statement() #void : {Token t;}
+void Statement() #void : {}
 {
     NonIdentifierStatements()
     |
-    t=<IDENTIFIER> IdentifierStatements(t)
+    Identifier() IdentifierStatements()
 }
 
 void NonIdentifierStatements() #void : {}
@@ -334,9 +334,9 @@ void ExpressionStatement() #void : {}
     NIExpression0() <SEMICOLON>
 }
 
-void IdentifierStatements(Token t) #void : {}
+void IdentifierStatements() #void : {}
 {
-     (AssignStatement(t) | (IdentArrayAccess(t) (AssignStatement(t) | NTExpression0())) | ({jjtThis.name = t.image;} #IDENT) NAExpression0()) <SEMICOLON>
+     (AssignStatement() | (ArrayAccess() (AssignStatement() | NTExpression0())) | NAExpression0()) <SEMICOLON>
 }
 
 void ArrayAccess() #ARRAY_ACCESS(2) : {}
@@ -344,14 +344,9 @@ void ArrayAccess() #ARRAY_ACCESS(2) : {}
     <LSQBRACKET> Expression0() <RSQBRACKET>
 }
 
-void IdentArrayAccess(Token t) #ARRAY_ACCESS(2) : {}
+void AssignStatement() #ASSIGN : {}
 {
-    ({jjtThis.name = t.image;} #IDENT) <LSQBRACKET> Expression0() <RSQBRACKET>
-}
-
-void AssignStatement(Token t) #ASSIGN : {}
-{
-    ({jjtThis.name = t.image;} #IDENT) <ASSIGN> Expression0()
+     <ASSIGN> Expression0()
 }
 
 // ============================== Expressions 0 ============================== //
@@ -553,7 +548,7 @@ void NITerminalExpression() #void : {Token t;}
     |
     <THIS> #THIS
     |
-    <NEW> ((<INT> <LSQBRACKET> Expression0() <RSQBRACKET> {jjtThis.classID = "int[]";}) #NEW | (t=<IDENTIFIER> <LPRTHSIS> {parenthesis_counter++;} <RPRTHSIS> {parenthesis_counter--;} {jjtThis.classID = t.image;}) #NEW)
+    <NEW> ((<INT> <LSQBRACKET> Expression0() <RSQBRACKET>) #NEW_ARRAY | (Identifier() <LPRTHSIS> {parenthesis_counter++;} <RPRTHSIS> {parenthesis_counter--;}) #NEW)
     |
     <NEG> Expression4() #NEGATION
     |

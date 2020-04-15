@@ -10,5 +10,27 @@ class ASTWHILE extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void addSymbolTable(SymbolTable symbolTable){
+    this.symbolTable = new SymbolTable(symbolTable);
+  }
+
+  @Override
+  public void eval() throws Exception {
+
+    int numChildren = this.jjtGetNumChildren();
+
+    if(numChildren != 2)
+      throw new Exception("WHILE has an invalid number of children.");
+
+    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
+    SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
+
+    firstChild.addSymbolTable(this.symbolTable);
+    firstChild.eval();
+
+    secondChild.addSymbolTable(this.symbolTable);
+    secondChild.eval();
+  }
 }
 /* JavaCC - OriginalChecksum=2515247992b3ab99f36c09855e8843b0 (do not edit this line) */

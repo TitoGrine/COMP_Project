@@ -12,21 +12,6 @@ class ASTIDENT extends SimpleNode {
     super(p, id);
   }
 
-  @Override
-  public void addSymbolTable(SymbolTable symbolTable){
-    this.symbolTable = symbolTable;
-  }
-
-  @Override
-  public void eval() throws Exception {
-    // TODO: Add symbol
-
-    int numChildren = this.jjtGetNumChildren();
-
-    if(numChildren != 0)
-      throw new Exception("IDENT has children.");
-  }
-
   public String toString() {
     return "IDENT[" + (name == null ? "" : name) + "]";
   }

@@ -2,8 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTIMPORT extends SimpleNode {
-  public String name;
-
   public ASTIMPORT(int id) {
     super(id);
   }
@@ -45,7 +43,7 @@ class ASTIMPORT extends SimpleNode {
   }
 
   public String toString() {
-    return "IMPORT[" + name + "]";
+    return "IMPORT";
   }
 }
 /* JavaCC - OriginalChecksum=88acf2e261b5ed8d1318a9e9015ad173 (do not edit this line) */

@@ -4,55 +4,39 @@ public class Operator extends SimpleNode {
         super(p, id);
     }
 
-    private boolean validateNumeric(SimpleNode node) throws Exception {
-        if(node.id == ParserTreeConstants.JJTNUM)
-            return true;
-
-        if(node.id == ParserTreeConstants.JJTIDENT){
-            String var_name = ((ASTIDENT) node).name;
-
-            Symbol symbol = this.symbolTable.getSymbol(var_name);
-
-            if(symbol.getType() == TypeEnum.INT)
-                return true;
-        } else if (node.id == ParserTreeConstants.JJTTYPE){
-            node.eval();
-
-            if(((ASTTYPE) node).typeID == TypeEnum.INT)
-                return true;
+    private TypeEnum getType(SimpleNode node){
+        switch(node.id){
+            case ParserTreeConstants.JJTADD:
+            case ParserTreeConstants.JJTSUB:
+            case ParserTreeConstants.JJTMUL:
+            case ParserTreeConstants.JJTDIV:
+            case ParserTreeConstants.JJTNUM:
+                return TypeEnum.INT;
+            case ParserTreeConstants.JJTAND:
+            case ParserTreeConstants.JJTLESSTHAN:
+            case ParserTreeConstants.JJTNEGATION:
+            case ParserTreeConstants.JJTBOOL:
+                return TypeEnum.BOOL;
+            case ParserTreeConstants.JJTFUNC_METHOD:
+                return ((ASTFUNC_METHOD) node).type;
+            case ParserTreeConstants.JJTARRAY_ACCESS:
+                break;
+            case ParserTreeConstants.JJTIDENT:
+                Symbol symbol = this.symbolTable.getSymbol(((ASTIDENT) node).name);
+                return symbol.getType();
+            default:
+                break;
         }
 
-        return false;
-    }
-
-    private boolean validateLogic(SimpleNode node){
-        if(node.id == ParserTreeConstants.JJTBOOL)
-            return true;
-
-        if(node.id == ParserTreeConstants.JJTIDENT){
-            String var_name = ((ASTIDENT) node).name;
-
-            Symbol symbol = this.symbolTable.getSymbol(var_name);
-
-            if(symbol.getType() == TypeEnum.BOOL)
-                return true;
-        }
-
-        return false;
+        return null;
     }
 
     public Operator(int i) {
         super(i);
     }
 
-    public boolean validType(SimpleNode node, int type){
+    public boolean validType(SimpleNode node, TypeEnum type){
 
-        if(type == ParserTreeConstants.JJTNUM)
-            return this.validateNumeric(node);
-
-        if(type == ParserTreeConstants.JJTBOOL)
-            return this.validateLogic(node);
-
-        return true;
+        return this.getType(node) == type;
     }
 }

@@ -4,12 +4,13 @@ public class Operator extends SimpleNode {
         super(p, id);
     }
 
-    private TypeEnum getType(SimpleNode node){
+    public TypeEnum getType(SimpleNode node){
         switch(node.id){
             case ParserTreeConstants.JJTADD:
             case ParserTreeConstants.JJTSUB:
             case ParserTreeConstants.JJTMUL:
             case ParserTreeConstants.JJTDIV:
+            case ParserTreeConstants.JJTNEW_ARRAY:
             case ParserTreeConstants.JJTNUM:
                 return TypeEnum.INT;
             case ParserTreeConstants.JJTAND:
@@ -18,12 +19,14 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTBOOL:
                 return TypeEnum.BOOL;
             case ParserTreeConstants.JJTFUNC_METHOD:
-                return ((ASTFUNC_METHOD) node).type;
+                return null;
             case ParserTreeConstants.JJTARRAY_ACCESS:
-                break;
+                return null;
             case ParserTreeConstants.JJTIDENT:
                 Symbol symbol = this.symbolTable.getSymbol(((ASTIDENT) node).name);
                 return symbol.getType();
+            case ParserTreeConstants.JJTNEW:
+                return null;
             default:
                 break;
         }

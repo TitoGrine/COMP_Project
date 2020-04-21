@@ -183,9 +183,9 @@ void ImportDeclaration() #void : {}
 
 void ImportExpression() #void: {Token t1, t2=null;}
 {
-    (<STATIC> Identifier() <DOT> Identifier() [(<LPRTHSIS> {parenthesis_counter++;} [Type() (<COMMA> Type())*] <RPRTHSIS>{parenthesis_counter--;}) #PARAMETERS Type() #RETURN]) #STATIC_IMPORT
+    (<STATIC> Identifier() <DOT> Identifier() [<LPRTHSIS> {parenthesis_counter++;} [(Type() (<COMMA> Type())*) #PARAMETERS]  <RPRTHSIS>{parenthesis_counter--;} [Type() #RETURN]]) #STATIC_IMPORT
     |
-    (Identifier() [<DOT> Identifier()] [(<LPRTHSIS>{parenthesis_counter++;} [Type() (<COMMA> Type())*] <RPRTHSIS>{parenthesis_counter--;}) #PARAMETERS Type() #RETURN]) #IMPORT
+    (Identifier() [<DOT> Identifier()] [<LPRTHSIS> {parenthesis_counter++;} [(Type() (<COMMA> Type())*) #PARAMETERS] <RPRTHSIS>{parenthesis_counter--;} [Type() #RETURN]]) #IMPORT
 }
 
 void ClassDeclaration() #CLASS : {}
@@ -344,7 +344,7 @@ void ArrayAccess() #ARRAY_ACCESS(2) : {}
     <LSQBRACKET> Expression0() <RSQBRACKET>
 }
 
-void AssignStatement() #ASSIGN : {}
+void AssignStatement() #ASSIGN(2) : {}
 {
      <ASSIGN> Expression0()
 }
@@ -500,19 +500,19 @@ void Expression4_alt() #void : {}
 
 void NAExpression4_alt() #void : {}
 {
-    DotOperator() #FUNC_METHOD(2) Expression4_alt()
+    DotOperator() Expression4_alt()
     |
     {}
 }
 
 void DotOperator() #void : {}
 {
-    <DOT> (<LENGTH> #LENGTH | (Identifier()  GivenArguments()))
+    <DOT> (<LENGTH> #LENGTH(1) | MethodCall() #FUNC_METHOD(2))
 }
 
-void GivenArguments() #void : {}
+void MethodCall() #CALL: {}
 {
-    <LPRTHSIS> {parenthesis_counter++;} [(Expression0() (<COMMA> Expression0())*) #ARGUMENTS] <RPRTHSIS> {parenthesis_counter--;}
+     Identifier()  <LPRTHSIS> {parenthesis_counter++;} [(Expression0() (<COMMA> Expression0())*) #ARGUMENTS] <RPRTHSIS> {parenthesis_counter--;}
 }
 
 // ============================== Expressions 5 ============================== //

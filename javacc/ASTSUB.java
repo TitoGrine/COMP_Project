@@ -34,7 +34,7 @@ class ASTSUB extends Operator {
 
     if(!this.validType(firstChild, TypeEnum.INT))
       throw new Exception("SUB must have left hand side expression of type INT.");
-    this.validType(secondChild, TypeEnum.INT);
+    if(!this.validType(secondChild, TypeEnum.INT))
       throw new Exception("SUB must have right hand side expression of type INT.");
   }
 }

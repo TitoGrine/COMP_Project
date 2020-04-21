@@ -40,7 +40,7 @@ class CustomTest extends Test{
 
         ioPlus.length;
 
-		ioPlus.printHelloWorld(num, num+3*5);
+		ioPlus.printHelloWorld(num, 3*5+num);
 
 		return num;
 	}

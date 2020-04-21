@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTNEW extends SimpleNode {
+  protected String object;
+
   public ASTNEW(int id) {
     super(id);
   }
@@ -17,24 +19,15 @@ class ASTNEW extends SimpleNode {
 
   @Override
   public void eval() throws Exception {
-    // TODO: Add symbol
-
-    int numChildren = this.jjtGetNumChildren();
     int childIndex = 0;
     SimpleNode childNode;
 
-    while(childIndex < numChildren){
-      childNode = (SimpleNode) this.jjtGetChild(childIndex);
+    childNode = (SimpleNode) this.jjtGetChild(childIndex);
 
-      childNode.addSymbolTable(this.symbolTable);
-      childNode.eval();
+    if(childNode.id != ParserTreeConstants.JJTIDENT)
+      throw new Exception("NEW must have child of type IDENT.");
 
-      childIndex++;
-    }
-  }
-
-  public String toString() {
-    return "NEW";
+    this.object = ((ASTIDENT) childNode).name;
   }
 }
 /* JavaCC - OriginalChecksum=7a0fe874174dc351abb16b01ef943ed2 (do not edit this line) */

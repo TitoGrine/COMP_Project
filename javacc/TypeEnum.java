@@ -6,4 +6,5 @@ public enum TypeEnum {
     OBJECT,
     STRING,
     VOID,
+    CLASS,
 }

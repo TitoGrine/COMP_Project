@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTRETURN extends SimpleNode {
+  TypeEnum type;
+
   public ASTRETURN(int id) {
     super(id);
   }
@@ -17,15 +19,12 @@ class ASTRETURN extends SimpleNode {
     if(numChildren != 1)
       throw new Exception("RETURN has more than one child.");
 
-    SimpleNode childNode = (SimpleNode) this.jjtGetChild(0);
+    ASTTYPE childNode = (ASTTYPE) this.jjtGetChild(0);
 
-    if(childNode.id != ParserTreeConstants.JJTTYPE)
-      throw new Exception("RETURN has child of type not TYPE.");
+    childNode.addSymbolTable(this.symbolTable);
+    childNode.eval();
 
-    TypeEnum type = ((ASTTYPE) childNode).typeID;
-
-    // TODO: Return type?
+    this.type = childNode.typeID;
   }
-
 }
 /* JavaCC - OriginalChecksum=cbb0390d4299ac5f8d468f97868a53a4 (do not edit this line) */

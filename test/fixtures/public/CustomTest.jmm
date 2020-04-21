@@ -1,4 +1,5 @@
 import static ioPlus.printHelloWorld(void) void;
+import static ioPlus.print();
 import ioPlus(int, int, boolean) int;
 
 class CustomTest extends Test{

@@ -12,6 +12,7 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTDIV:
             case ParserTreeConstants.JJTNEW_ARRAY:
             case ParserTreeConstants.JJTNUM:
+            case ParserTreeConstants.JJTLENGTH:
                 return TypeEnum.INT;
             case ParserTreeConstants.JJTAND:
             case ParserTreeConstants.JJTLESSTHAN:

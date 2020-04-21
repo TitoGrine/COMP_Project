@@ -13,14 +13,7 @@ class ASTFUNC_METHOD extends SimpleNode {
   }
 
   @Override
-  public void addSymbolTable(SymbolTable symbolTable){
-    this.symbolTable = symbolTable;
-  }
-
-  @Override
   public void eval() throws Exception {
-    // TODO: Add symbol
-
     int numChildren = this.jjtGetNumChildren();
 
     if(numChildren != 2)
@@ -32,21 +25,27 @@ class ASTFUNC_METHOD extends SimpleNode {
     firstChild.addSymbolTable(this.symbolTable);
     firstChild.eval();
 
+    String object;
+
     if(firstChild.id == ParserTreeConstants.JJTARRAY_ACCESS)
       return;
     else if(firstChild.id == ParserTreeConstants.JJTNEW)
+      object = ((ASTNEW) firstChild).object;
+    else if(firstChild.id == ParserTreeConstants.JJTIDENT)
+      object = ((ASTIDENT) firstChild).name;
+    else if(firstChild.id == ParserTreeConstants.JJTFUNC_METHOD){
+      firstChild.addSymbolTable(this.symbolTable);
+      firstChild.eval();
+      object = ((ASTFUNC_METHOD) firstChild).call;
+    }
+    else
       throw new Exception("FUNC_METHOD must have make a call to an object");
 
-    String method;
+    if(secondChild.id != ParserTreeConstants.JJTCALL)
+      throw new Exception(("FUNC_METHOD must have CALL node has second child."));
 
-    if (secondChild.id == ParserTreeConstants.JJTIDENT)
-      method = ((ASTIDENT) secondChild).name;
-    else
-      throw new Exception("FUNC_METHOD must have last child of type LENGTH or IDENT.");
-
-    String key = method; // TODO: Change!
-
-
+    secondChild.addSymbolTable(this.symbolTable);
+    secondChild.eval();
   }
 }
 /* JavaCC - OriginalChecksum=54a9f6d33a5022ecd7338879131cb817 (do not edit this line) */

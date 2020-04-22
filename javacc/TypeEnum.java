@@ -1,7 +1,7 @@
 public enum TypeEnum {
     BOOL,
     INT,
-    INT_ARRAY,
+    ARRAY,
     METHOD,
     OBJECT,
     STRING,

@@ -24,4 +24,10 @@ public class SymbolTable {
 
         return null;
     }
+
+    public boolean existsClassSymbol(String key){
+        Symbol symbol = this.getSymbol(key);
+
+        return symbol != null && symbol.type == TypeEnum.CLASS;
+    }
 }

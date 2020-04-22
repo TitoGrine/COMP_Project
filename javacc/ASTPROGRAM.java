@@ -14,6 +14,7 @@ class ASTPROGRAM extends SimpleNode {
     int numChildren = this.jjtGetNumChildren();
     int childIndex = 0;
     boolean importsDone = false;
+    this.symbolTable = new SymbolTable(null);
 
     while(childIndex < numChildren){
 

@@ -12,8 +12,8 @@ public interface ParserTreeConstants
   public int JJTVARIABLE = 8;
   public int JJTTYPE = 9;
   public int JJTMETHOD = 10;
-  public int JJTRETURN_TYPE = 11;
-  public int JJTMETHOD_BODY = 12;
+  public int JJTMETHOD_BODY = 11;
+  public int JJTRETURN_EXP = 12;
   public int JJTARGUMENTS = 13;
   public int JJTARGUMENT = 14;
   public int JJTMAINMETHOD = 15;
@@ -54,8 +54,8 @@ public interface ParserTreeConstants
     "VARIABLE",
     "TYPE",
     "METHOD",
-    "RETURN_TYPE",
     "METHOD_BODY",
+    "RETURN_EXP",
     "ARGUMENTS",
     "ARGUMENT",
     "MAINMETHOD",
@@ -84,4 +84,4 @@ public interface ParserTreeConstants
     "IDENT",
   };
 }
-/* JavaCC - OriginalChecksum=0c17f764996f53a7e987a5a73847b656 (do not edit this line) */
+/* JavaCC - OriginalChecksum=ee5bc8d9d6903caa18fe6367765e1847 (do not edit this line) */

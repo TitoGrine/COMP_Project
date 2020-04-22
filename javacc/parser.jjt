@@ -196,11 +196,9 @@ void ClassDeclaration() #CLASS : {}
     <RBRACKET>
 }
 
-void VarDeclaration() #void : {}
+void VarDeclaration() #VARIABLE: {}
 {
-    NonIdentifierVarDeclaration()
-    |
-    Identifier() IdentifierVarDeclaration()
+    Type() Identifier() <SEMICOLON>
 }
 
 void NonIdentifierVarDeclaration() #VARIABLE : {}
@@ -208,7 +206,7 @@ void NonIdentifierVarDeclaration() #VARIABLE : {}
     NonIdentifierType() Identifier() <SEMICOLON>
 }
 
-void IdentifierVarDeclaration() #VARIABLE : {}
+void IdentifierVarDeclaration() #VARIABLE(2) : {}
 {
     Identifier() <SEMICOLON>
 }
@@ -238,10 +236,10 @@ void MethodDeclaration() #void : {}
 
 void RegularMethod() #METHOD : {}
 {
-    Type() #RETURN_TYPE Identifier() Arguments()
+    Type() #RETURN Identifier() Arguments()
     <LBRACKET>
     MethodBody() #METHOD_BODY
-    <RETURN> Expression0() <SEMICOLON>
+    <RETURN> (Expression0()) #RETURN_EXP <SEMICOLON>
     <RBRACKET>
 }
 
@@ -503,7 +501,7 @@ void NAExpression4_alt() #void : {}
     DotOperator() Expression4_alt()
     |
     {}
-}https://meet.google.com/jfu-qnvf-wpm?authuser=1
+}
 
 void DotOperator() #void : {}
 {

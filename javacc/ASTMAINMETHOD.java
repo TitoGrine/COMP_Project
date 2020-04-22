@@ -17,29 +17,16 @@ class ASTMAINMETHOD extends SimpleNode {
 
   @Override
   public void eval() throws Exception {
-    // TODO: Add symbol
+    ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
-    int numChildren = this.jjtGetNumChildren();
+    this.symbolTable.addSymbol(firstChild.name, new ArraySymbol(TypeEnum.STRING));
 
-    if(numChildren != 4)
-      throw new Exception("METHOD has an invalid number of children");
+    SimpleNode childNode = (SimpleNode) this.jjtGetChild(1);
 
-    SimpleNode childNode1 = (SimpleNode) this.jjtGetChild(0);
-    SimpleNode childNode2 = (SimpleNode) this.jjtGetChild(1);
+    ASTMETHOD_BODY methodBody = (ASTMETHOD_BODY) childNode;
 
-    if(childNode1.id == ParserTreeConstants.JJTIDENT){
-      childNode1.addSymbolTable(this.symbolTable);
-      childNode1.eval();
-    } else {
-      throw new Exception("MAIN_METHOD doesn't have the array IDENT node in the correct place or at all.");
-    }
-
-    if(childNode2.id == ParserTreeConstants.JJTMETHOD_BODY){
-      childNode2.addSymbolTable(this.symbolTable);
-      childNode2.eval();
-    } else {
-      throw new Exception("MAIN_METHOD doesn't have the METHOD_BODY node in the correct place or at all.");
-    }
+    methodBody.addSymbolTable(symbolTable);
+    methodBody.eval();
   }
 }
 /* JavaCC - OriginalChecksum=929a511142c3eb4332a56f5c02fad9ec (do not edit this line) */

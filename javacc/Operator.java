@@ -28,6 +28,8 @@ public class Operator extends SimpleNode {
                 return symbol.getType();
             case ParserTreeConstants.JJTNEW:
                 return null;
+            case ParserTreeConstants.JJTVOID:
+                return TypeEnum.VOID;
             default:
                 break;
         }
@@ -41,6 +43,8 @@ public class Operator extends SimpleNode {
 
     public boolean validType(SimpleNode node, TypeEnum type){
 
-        return this.getType(node) == type;
+        TypeEnum expType = this.getType(node);
+
+        return expType != null && expType == type;
     }
 }

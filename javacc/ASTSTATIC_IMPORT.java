@@ -25,23 +25,25 @@ class ASTSTATIC_IMPORT extends SimpleNode {
     TypeEnum returnType = TypeEnum.VOID;
     ArrayList<TypeEnum> parameters = new ArrayList<>();
 
-    if(numChildren < 3){
-      this.symbolTable.addSymbol(key, new MethodSymbol(returnType, parameters));
-      return;
-    }
-
-    SimpleNode thirdChild = (SimpleNode) this.jjtGetChild(2)
-
-    if(thirdChild.id == ParserTreeConstants.JJTRETURN){
+    if(numChildren > 2) {
+      SimpleNode thirdChild = (SimpleNode) this.jjtGetChild(2);
       thirdChild.addSymbolTable(this.symbolTable);
       thirdChild.eval();
-      this.symbolTable.addSymbol(key, new MethodSymbol(((ASTRETURN) thirdChild).type, parameters);
+
+      if (thirdChild.id == ParserTreeConstants.JJTRETURN)
+        returnType = ((ASTRETURN) thirdChild).type;
+      else
+        parameters = ((ASTPARAMETERS) thirdChild).parameters;
+
+      if (numChildren == 4) {
+        ASTRETURN fourthChild = (ASTRETURN) this.jjtGetChild(3);
+        fourthChild.addSymbolTable(this.symbolTable);
+        fourthChild.eval();
+        returnType = fourthChild.type;
+      }
     }
 
-  }
-
-  public String toString() {
-    return "STATIC_IMPORT";
+    this.symbolTable.addSymbol(key, new MethodSymbol(returnType, parameters));
   }
 }
 /* JavaCC - OriginalChecksum=0ea55270eb33c3d4cca7df9ddcbc14ab (do not edit this line) */

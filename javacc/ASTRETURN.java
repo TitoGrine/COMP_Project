@@ -14,11 +14,6 @@ class ASTRETURN extends SimpleNode {
 
   @Override
   public void eval() throws Exception {
-    int numChildren = this.jjtGetNumChildren();
-
-    if(numChildren != 1)
-      throw new Exception("RETURN has more than one child.");
-
     ASTTYPE childNode = (ASTTYPE) this.jjtGetChild(0);
 
     childNode.addSymbolTable(this.symbolTable);

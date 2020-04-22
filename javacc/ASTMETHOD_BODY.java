@@ -11,11 +11,6 @@ class ASTMETHOD_BODY extends SimpleNode {
   }
 
   @Override
-  public void addSymbolTable(SymbolTable symbolTable){
-    this.symbolTable = new SymbolTable(symbolTable);
-  }
-
-  @Override
   public void eval() throws Exception {
     // TODO: Add symbol
 

@@ -1,6 +1,9 @@
 import static ioPlus.printHelloWorld(void) void;
 import static ioPlus.print();
-import ioPlus(int, int, boolean) int;
+import ioPlus;
+import ioPlus.plus(int, int, boolean);
+import Test;
+import Stonk;
 
 class CustomTest extends Test{
     int something;
@@ -35,6 +38,8 @@ class CustomTest extends Test{
             args[5];
             num = 7*3;
         }
+
+        a = 8 / 2 + 4 * 5 / 2 - 2;
 
         new int[5];
         new Parser();

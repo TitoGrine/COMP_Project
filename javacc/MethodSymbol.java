@@ -5,6 +5,11 @@ public class MethodSymbol extends Symbol{
     List<TypeEnum> parameters = new ArrayList<>();
     TypeEnum returnType;
 
+    public MethodSymbol(TypeEnum returnType) {
+        super(TypeEnum.METHOD);
+        this.returnType = returnType;
+    }
+
     public MethodSymbol(TypeEnum returnType, ArrayList<TypeEnum> parameters) {
         super(TypeEnum.METHOD);
         this.returnType = returnType;

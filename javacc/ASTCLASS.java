@@ -5,6 +5,8 @@ import java.util.List;
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTCLASS extends SimpleNode {
+  protected String className;
+
   public ASTCLASS(int id) {
     super(id);
   }
@@ -26,6 +28,8 @@ class ASTCLASS extends SimpleNode {
 
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
+    this.className = firstChild.name;
+
     ClassSymbol classSymbol = new ClassSymbol(new ArrayList<>());
 
     SimpleNode childNode = (SimpleNode) this.jjtGetChild(childIndex);
@@ -42,29 +46,31 @@ class ASTCLASS extends SimpleNode {
       childIndex++;
     }
 
-    this.symbolTable.addSymbol(firstChild.name, classSymbol);
+    this.symbolTable.addSymbol(this.className, classSymbol);
 
     while(childIndex < numChildren){
       childNode = (SimpleNode) this.jjtGetChild(childIndex);
 
+      childNode.addSymbolTable(this.symbolTable);
+
       if (childNode.id == ParserTreeConstants.JJTVARIABLE) {
-        childNode.addSymbolTable(this.symbolTable);
+        ((ASTVARIABLE) childNode).classScope = true;
+
         childNode.eval();
       } else if (childNode.id == ParserTreeConstants.JJTMETHOD) {
         ASTMETHOD method = (ASTMETHOD) childNode;
 
-        method.addSymbolTable(this.symbolTable);
         method.preProcessMethod();
-
         methods.add(method);
-
         this.symbolTable.addSymbol(method.methodName, method.methodSymbol);
       } else if (childNode.id == ParserTreeConstants.JJTMAINMETHOD){
         if(mainDeclared)
           throw new Exception("CLASS " + firstChild.name + " has more than one main method.");
 
-        mainDeclared = true;
         mainMethod = (ASTMAINMETHOD) childNode;
+
+        this.symbolTable.addSymbol(mainMethod.methodName, mainMethod.methodSymbol);
+        mainDeclared = true;
       }
       childIndex++;
     }

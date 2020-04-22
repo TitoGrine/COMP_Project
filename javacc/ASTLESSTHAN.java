@@ -18,13 +18,6 @@ class ASTLESSTHAN extends Operator {
 
   @Override
   public void eval() throws Exception {
-    // TODO: Add symbol
-
-    int numChildren = this.jjtGetNumChildren();
-
-    if(numChildren != 2)
-      throw new Exception("LESSTHAN must have two children.");
-
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 

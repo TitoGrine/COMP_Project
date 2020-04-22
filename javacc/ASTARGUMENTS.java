@@ -20,8 +20,6 @@ class ASTARGUMENTS extends Operator {
     int childIndex = 0;
     SimpleNode childNode;
 
-    this.arguments = new TypeEnum[numChildren];
-
     while(childIndex < numChildren){
       childNode = (SimpleNode) this.jjtGetChild(childIndex);
 

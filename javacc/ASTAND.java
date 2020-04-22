@@ -17,13 +17,6 @@ class ASTAND extends Operator {
 
   @Override
   public void eval() throws Exception {
-    // TODO: Add symbol
-
-    int numChildren = this.jjtGetNumChildren();
-
-    if(numChildren != 2)
-      throw new Exception("AND must have two children.");
-
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
@@ -33,9 +26,9 @@ class ASTAND extends Operator {
     firstChild.eval();
     secondChild.eval();
 
-    if(!this.validType(firstChild, TypeEnum.INT))
+    if(!this.validType(firstChild, TypeEnum.BOOL))
       throw new Exception("AND must have left hand side expression of type BOOL.");
-    if(!this.validType(secondChild, TypeEnum.INT))
+    if(!this.validType(secondChild, TypeEnum.BOOL))
       throw new Exception("AND must have right hand side expression of type BOOL.");
   }
 }

@@ -9,6 +9,11 @@ public class SymbolTable {
         this.parent = parent;
     }
 
+    public void addSymbol(String key, MethodSymbol symbol){
+        if(table.containsKey(key))
+            ((MethodSymbol) table.get(key)).addParameters(symbol.parametersOverload);
+    }
+
     public void addSymbol(String key, Symbol symbol){
         table.put(key, symbol);
     }
@@ -25,9 +30,26 @@ public class SymbolTable {
         return null;
     }
 
+    public boolean existsSymbol(String key){
+        return this.table.containsKey(key);
+    }
+
+    public boolean existsMethodSymbol(String key){
+        Symbol symbol = this.getSymbol(key);
+
+        return symbol != null && symbol.type == TypeEnum.METHOD;
+    }
+
     public boolean existsClassSymbol(String key){
         Symbol symbol = this.getSymbol(key);
 
         return symbol != null && symbol.type == TypeEnum.CLASS;
+    }
+
+    public void setInitialized(String key){
+        Symbol symbol = this.getSymbol(key);
+
+        if(symbol != null)
+            symbol.setInitialized(true);
     }
 }

@@ -13,21 +13,10 @@ class ASTNEW extends SimpleNode {
   }
 
   @Override
-  public void addSymbolTable(SymbolTable symbolTable){
-    this.symbolTable = symbolTable;
-  }
-
-  @Override
   public void eval() throws Exception {
-    int childIndex = 0;
-    SimpleNode childNode;
+    ASTIDENT childNode = (ASTIDENT) this.jjtGetChild(0);
 
-    childNode = (SimpleNode) this.jjtGetChild(childIndex);
-
-    if(childNode.id != ParserTreeConstants.JJTIDENT)
-      throw new Exception("NEW must have child of type IDENT.");
-
-    this.object = ((ASTIDENT) childNode).name;
+    this.object = childNode.name;
   }
 }
 /* JavaCC - OriginalChecksum=7a0fe874174dc351abb16b01ef943ed2 (do not edit this line) */

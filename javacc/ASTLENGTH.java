@@ -14,15 +14,12 @@ class ASTLENGTH extends Operator {
 
   @Override
   public void eval() throws Exception {
-      int childIndex = 0;
-      SimpleNode childNode;
-
-      childNode = (SimpleNode) this.jjtGetChild(childIndex);
+      SimpleNode childNode = (SimpleNode) this.jjtGetChild(0);
 
       childNode.addSymbolTable(this.symbolTable);
       childNode.eval();
 
-      if(!this.validType(childNode, TypeEnum.OBJECT) && !this.validType(childNode, TypeEnum.INT_ARRAY) && !this.validType(childNode, TypeEnum.STRING))
+      if(!this.validType(childNode, TypeEnum.OBJECT) && !this.validType(childNode, TypeEnum.ARRAY) && !this.validType(childNode, TypeEnum.STRING))
         throw new Exception("LENGTH doesn't have a sizable object has child");
     }
   }

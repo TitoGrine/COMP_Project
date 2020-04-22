@@ -222,7 +222,7 @@ void NonIdentifierType() #TYPE : {}
 {
     <BOOL> {jjtThis.typeID = TypeEnum.BOOL;}
     |
-    <INT> (<LSQBRACKET> <RSQBRACKET> {jjtThis.typeID = TypeEnum.INT_ARRAY;} | {jjtThis.typeID = TypeEnum.INT;})
+    <INT> (<LSQBRACKET> <RSQBRACKET> {jjtThis.typeID = TypeEnum.ARRAY;} | {jjtThis.typeID = TypeEnum.INT;})
     |
     <STRING> {jjtThis.typeID = TypeEnum.STRING;}
     |
@@ -523,8 +523,8 @@ void Expression5() #void : {}
 void NIExpression5() #void : {}
 {
     NITerminalExpression()
-    |
-    {}
+//    |
+//    {}
 }
 
 // ========================== Terminal Expressions ========================== //

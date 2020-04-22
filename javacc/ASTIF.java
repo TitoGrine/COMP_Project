@@ -10,5 +10,16 @@ class ASTIF extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public void eval() throws Exception {
+    ASTCONDITION firstChild = (ASTCONDITION) this.jjtGetChild(0);
+    SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
+
+    firstChild.addSymbolTable(this.symbolTable);
+    firstChild.eval();
+
+    secondChild.addSymbolTable(this.symbolTable);
+    secondChild.eval();
+  }
 }
 /* JavaCC - OriginalChecksum=21bbd7f7d1c38606ab1a5d16f7da009d (do not edit this line) */

@@ -24,10 +24,9 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 return null;
             case ParserTreeConstants.JJTIDENT:
-                Symbol symbol = this.symbolTable.getSymbol(((ASTIDENT) node).name);
-                return symbol.getType();
+                return this.symbolTable.getSymbol(((ASTIDENT) node).name).getType();
             case ParserTreeConstants.JJTNEW:
-                return null;
+                return this.symbolTable.getSymbol(((ASTNEW) node).object).getType();
             case ParserTreeConstants.JJTVOID:
                 return TypeEnum.VOID;
             default:

@@ -14,37 +14,24 @@ class ASTARRAY_ACCESS extends Operator {
 
   @Override
   public void eval() throws Exception {
-    // TODO: Add symbol
-
-    int numChildren = this.jjtGetNumChildren();
-
-    if(numChildren != 2)
-      throw new Exception("ARRAY_ACCESS has an invalid number of children.");
-
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
-
-    if(firstChild.id == ParserTreeConstants.JJTARRAY_ACCESS)
-      object = ((ASTARRAY_ACCESS) firstChild).object;
-    else if(firstChild.id == ParserTreeConstants.JJTNEW)
-      object = ((ASTNEW) firstChild).object;
-    else if(firstChild.id == ParserTreeConstants.JJTIDENT)
-      object = ((ASTIDENT) firstChild).name;
-    else if(firstChild.id == ParserTreeConstants.JJTFUNC_METHOD){
+    if(firstChild.id == ParserTreeConstants.JJTIDENT){
+      this.object = ((ASTIDENT) firstChild).name;
+    } else if(firstChild.id == ParserTreeConstants.JJTFUNC_METHOD) {
       firstChild.addSymbolTable(this.symbolTable);
       firstChild.eval();
-      object = ((ASTFUNC_METHOD) firstChild).call;
-    }
-    else
-      throw new Exception("ARRAY_ACCESS must have make a call to an object");
 
-    secondChild.addSymbolTable(this.symbolTable);
-    secondChild.eval();
+      this.object = ((ASTFUNC_METHOD) firstChild).call;
+    } else
+      throw new Exception("Attempted to access a non array object like an array.");
 
-    if(this.validType(secondChild, TypeEnum.INT))
-      throw new Exception("ARRAY_ACCESS must have second child returning INT type.");
+    if(!this.validType(firstChild, TypeEnum.ARRAY))
+      throw new Exception("Variable " + this.object + " isn't an array but it's being accessed as one.");
 
+    if(!this.validType(secondChild, TypeEnum.INT))
+      throw new Exception("Array access with invalid index.");
   }
 }
 /* JavaCC - OriginalChecksum=22f8f358ed3b439b354e0322ba03ff68 (do not edit this line) */

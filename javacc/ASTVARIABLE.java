@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTVARIABLE extends SimpleNode {
+  protected boolean classScope = false;
+
   public ASTVARIABLE(int id) {
     super(id);
   }
@@ -18,7 +20,12 @@ class ASTVARIABLE extends SimpleNode {
     firstChild.addSymbolTable(this.symbolTable);
     firstChild.eval();
 
-    this.symbolTable.addSymbol(secondChild.name, new Symbol(firstChild.typeID));
+    String key = (classScope ? "this." : "") + secondChild.name;
+
+    if(firstChild.typeID == TypeEnum.ARRAY)
+      this.symbolTable.addSymbol(key, new ArraySymbol(TypeEnum.INT));
+    else
+      this.symbolTable.addSymbol(key, new Symbol(firstChild.typeID));
   }
 }
 /* JavaCC - OriginalChecksum=f4f029f02b50c27d11f0009ca087d42c (do not edit this line) */

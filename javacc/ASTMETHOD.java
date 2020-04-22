@@ -46,7 +46,6 @@ class ASTMETHOD extends SimpleNode {
 
   @Override
   public void eval() throws Exception {
-    int numChildren = this.jjtGetNumChildren();
     int childIndex = 2;
 
     SimpleNode childNode = (SimpleNode) this.jjtGetChild(childIndex);

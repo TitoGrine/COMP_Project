@@ -2,6 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTEXTENDS extends SimpleNode {
+  public String extendedClass;
 
   public ASTEXTENDS(int id) {
     super(id);
@@ -12,12 +13,13 @@ class ASTEXTENDS extends SimpleNode {
   }
 
   @Override
-  public void eval() {
+  public void eval() throws Exception {
+    ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
-  }
+    extendedClass = firstChild.name;
 
-  public String toString() {
-    return "EXTENDS";
+    if(!this.symbolTable.existsClassSymbol(extendedClass))
+      throw new Exception("Extending class " + extendedClass + " that wasn't previously imported.");
   }
 }
 /* JavaCC - OriginalChecksum=cf18fd1f3efb0740e47c2bdf53bca72e (do not edit this line) */

@@ -2,6 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTSUB extends Operator {
+
   public ASTSUB(int id) {
     super(id);
   }
@@ -17,21 +18,26 @@ class ASTSUB extends Operator {
 
   @Override
   public void eval() throws Exception {
-    // TODO: Add symbol
-
-    int numChildren = this.jjtGetNumChildren();
-
-    if(numChildren != 2)
-      throw new Exception("SUB must have two children.");
-
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
     firstChild.addSymbolTable(this.symbolTable);
-    firstChild.eval();
-
     secondChild.addSymbolTable(this.symbolTable);
+
+    firstChild.eval();
     secondChild.eval();
+
+    if(!this.validType(firstChild, TypeEnum.INT))
+      throw new Exception("SUB must have left hand side expression returning an integer.");
+
+    if(!this.initializedUse(firstChild))
+      throw new Exception("Subtracting a non initialized variable.");
+
+    if(!this.validType(secondChild, TypeEnum.INT))
+      throw new Exception("SUB must have right hand side expression returning an integer.");
+
+    if(!this.initializedUse(secondChild))
+      throw new Exception("Subtracting a non initialized variable.");
   }
 }
 /* JavaCC - OriginalChecksum=98d1976b6139d7188e8c28dcbea08ceb (do not edit this line) */

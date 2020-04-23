@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTNEW extends SimpleNode {
+  protected String object;
+
   public ASTNEW(int id) {
     super(id);
   }
@@ -11,30 +13,13 @@ class ASTNEW extends SimpleNode {
   }
 
   @Override
-  public void addSymbolTable(SymbolTable symbolTable){
-    this.symbolTable = symbolTable;
-  }
-
-  @Override
   public void eval() throws Exception {
-    // TODO: Add symbol
+    ASTIDENT childNode = (ASTIDENT) this.jjtGetChild(0);
 
-    int numChildren = this.jjtGetNumChildren();
-    int childIndex = 0;
-    SimpleNode childNode;
+    if(!this.symbolTable.existsClassSymbol(childNode.name))
+      throw new Exception("New unrecognized object " + childNode.name);
 
-    while(childIndex < numChildren){
-      childNode = (SimpleNode) this.jjtGetChild(childIndex);
-
-      childNode.addSymbolTable(this.symbolTable);
-      childNode.eval();
-
-      childIndex++;
-    }
-  }
-
-  public String toString() {
-    return "NEW";
+    this.object = childNode.name;
   }
 }
 /* JavaCC - OriginalChecksum=7a0fe874174dc351abb16b01ef943ed2 (do not edit this line) */

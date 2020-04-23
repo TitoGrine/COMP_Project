@@ -16,7 +16,8 @@ public class Main {
             SimpleNode root = parser.Program(); // returns reference to root node
 
             try{
-                //root.eval();
+                root.eval();
+                root.dump(""); // prints the tree on the screen
             } catch (Exception e){
                 e.printStackTrace();
             }

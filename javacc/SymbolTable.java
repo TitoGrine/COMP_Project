@@ -5,8 +5,18 @@ public class SymbolTable {
     SymbolTable parent = null;
     Hashtable<String, Symbol> table = new Hashtable<>();
 
+    SymbolTable(){
+    }
+
     SymbolTable(SymbolTable parent){
         this.parent = parent;
+    }
+
+    public void addSymbol(String key, MethodSymbol symbol){
+        if(table.containsKey(key))
+            ((MethodSymbol) table.get(key)).addParameters(symbol.parametersOverload);
+        else
+            table.put(key, symbol);
     }
 
     public void addSymbol(String key, Symbol symbol){
@@ -23,5 +33,41 @@ public class SymbolTable {
             return parent.getSymbol(key);
 
         return null;
+    }
+
+    public boolean existsSymbol(String key){
+        return (this.getSymbol(key) != null);
+    }
+
+    public boolean existsMethodSymbol(String key){
+        Symbol symbol = this.getSymbol(key);
+
+        return symbol != null && symbol.type == TypeEnum.METHOD;
+    }
+
+    public boolean existsClassSymbol(String key){
+        Symbol symbol = this.getSymbol(key);
+
+        return symbol != null && symbol.type == TypeEnum.OBJECT;
+    }
+
+    public void setInitialized(String key){
+        Symbol symbol = this.getSymbol(key);
+
+        if(symbol != null)
+            symbol.setInitialized(true);
+    }
+
+    @Override
+    public String toString() {
+        String convert = "";
+
+        if(parent != null)
+            convert = parent.toString();
+
+        for(String key : this.table.keySet())
+            convert += "Key: " + key + " - Symbol: " + this.table.get(key).toString() + "\n";
+
+        return convert;
     }
 }

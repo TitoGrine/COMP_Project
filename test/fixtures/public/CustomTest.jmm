@@ -1,46 +1,54 @@
 import static ioPlus.printHelloWorld(void) void;
-import ioPlus(int, int, boolean) int;
+import static ioPlus.print();
+import ioPlus;
+import ioPlus.plus(int, int, boolean);
+import ioPlus.plus(int, int, int);
+import Test;
+import Stonk;
 
 class CustomTest extends Test{
     int something;
     Stonk stonk;
     boolean truth;
+    int a;
 
 	public int stonk(int[] args, int nut) {
         int num;
         boolean star;
 
-        args.hello()[5] + 2;
-        args[1][2];
+        args[5] + 2;
         num = 5;
-        num = num.length && num.length;
+        star = false;
+        truth = !star;
 
         //if((num < 1 && num < 1)){
-        if((2-3+4 && 2*4-6) < !num && (2-3/45 < 34+5) < 4/4*1){
+        if(5*3+4/num < args[2] && (2-3/45*34+5) < 4/4*1){
             num = 5;
         } else {
             num = 7;
         }
 
-        while(!num){
+        while(num < 4){
             star = true;
-            num = !star * 3+2;
+            num = num/2 * 3+2;
         }
 
         if((2*3-4) < (num+4/2)){
-            args[5].hello().hello()[4][4].hello();
-            arg[3] && 4;
+            ioPlus.plus(2, 3, 2);
+            (args[3] < 3) && star;
         } else {
             args[5];
             num = 7*3;
         }
 
+        a = 8 / 2 + 4 * 5 / 2 - 2;
+
         new int[5];
-        new Parser();
+        new Stonk();
 
         ioPlus.length;
 
-		ioPlus.printHelloWorld(num, num+3*5);
+		ioPlus.printHelloWorld();
 
 		return num;
 	}

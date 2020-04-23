@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTVARIABLE extends SimpleNode {
+  protected boolean classScope = false;
+
   public ASTVARIABLE(int id) {
     super(id);
   }
@@ -11,35 +13,19 @@ class ASTVARIABLE extends SimpleNode {
   }
 
   @Override
-  public void addSymbolTable(SymbolTable symbolTable){
-    this.symbolTable = symbolTable;
-  }
-
-  @Override
   public void eval() throws Exception {
-    // TODO: Add symbol
+    ASTTYPE firstChild = (ASTTYPE) this.jjtGetChild(0);
+    ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
-    int numChildren = this.jjtGetNumChildren();
+    firstChild.addSymbolTable(this.symbolTable);
+    firstChild.eval();
 
-    if(numChildren != 2)
-      throw new Exception("VARIABLE has an invalid number of children.");
+    String key = (classScope ? "this." : "") + secondChild.name;
 
-    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
-    SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
-    TypeEnum type;
-
-    if(firstChild.id == ParserTreeConstants.JJTTYPE){
-      firstChild.eval();
-      type = ((ASTTYPE) firstChild).typeID;
-    } else {
-      throw new Exception("VARIABLE must have first child of type TYPE.");
-    }
-
-    if(secondChild.id == ParserTreeConstants.JJTIDENT){
-      this.symbolTable.addSymbol(((ASTIDENT) secondChild).name, new Symbol(type));
-    } else {
-      throw new Exception("VARIABLE must have second child of type IDENT.");
-    }
+    if(firstChild.typeID == TypeEnum.ARRAY)
+      this.symbolTable.addSymbol(key, new ArraySymbol(TypeEnum.INT));
+    else
+      this.symbolTable.addSymbol(key, new Symbol(firstChild.typeID));
   }
 }
 /* JavaCC - OriginalChecksum=f4f029f02b50c27d11f0009ca087d42c (do not edit this line) */

@@ -19,9 +19,8 @@ public class MethodSymbol extends Symbol{
         this.parametersOverload.add(parameters);
     }
 
-    @Override
-    public TypeEnum getType() {
-        return super.getType();
+    public TypeEnum getReturnType() {
+        return returnType;
     }
 
     public void addParameters(){

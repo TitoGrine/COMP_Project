@@ -19,6 +19,9 @@ class ASTRETURN_EXP extends Operator {
     childNode.addSymbolTable(this.symbolTable);
     childNode.eval();
 
+    if(!this.initializedUse(childNode))
+      throw new Exception("Returning a non instantiated variable.");
+
     this.expType = this.getType(childNode);
   }
 }

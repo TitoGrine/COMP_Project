@@ -29,7 +29,10 @@ class ASTASSIGN extends Operator {
     secondChild.eval();
 
     if(!this.validType(secondChild, this.symbolTable.getSymbol(varName).getType()))
-      throw new Exception("Assignment to variable " + firstChild.name + " to incompatible type.");
+      throw new Exception("Assignment of variable " + firstChild.name + " to incompatible type.");
+
+    if(!this.initializedUse(secondChild))
+      throw new Exception("Assignment of variable " + firstChild.name + " to uninstantiated object.");
 
     this.symbolTable.setInitialized(varName);
   }

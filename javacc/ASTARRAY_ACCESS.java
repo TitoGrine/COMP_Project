@@ -30,8 +30,14 @@ class ASTARRAY_ACCESS extends Operator {
     if(!this.validType(firstChild, TypeEnum.ARRAY))
       throw new Exception("Variable " + this.object + " isn't an array but it's being accessed as one.");
 
+    if(!this.initializedUse(firstChild))
+      throw new Exception("Array " + this.object + " is uninstantiated when accessed.");
+
     if(!this.validType(secondChild, TypeEnum.INT))
-      throw new Exception("Array access with invalid index.");
+      throw new Exception("Access to array " + this.object + " with invalid index.");
+
+    if(!this.initializedUse(secondChild))
+      throw new Exception("Access to array " + this.object + " with uninstantiated index value.");
   }
 }
 /* JavaCC - OriginalChecksum=22f8f358ed3b439b354e0322ba03ff68 (do not edit this line) */

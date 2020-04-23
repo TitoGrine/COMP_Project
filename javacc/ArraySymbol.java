@@ -9,8 +9,7 @@ public class ArraySymbol extends Symbol{
         this.returnType = returnType;
     }
 
-    @Override
-    public TypeEnum getType() {
-        return super.getType();
+    public TypeEnum getReturnType() {
+        return returnType;
     }
 }

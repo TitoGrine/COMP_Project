@@ -16,6 +16,9 @@ class ASTNEW extends SimpleNode {
   public void eval() throws Exception {
     ASTIDENT childNode = (ASTIDENT) this.jjtGetChild(0);
 
+    if(!this.symbolTable.existsClassSymbol(childNode.name))
+      throw new Exception("New unrecognized object " + childNode.name);
+
     this.object = childNode.name;
   }
 }

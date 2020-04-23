@@ -1,5 +1,9 @@
 public class Operator extends SimpleNode {
 
+    public Operator(int i) {
+        super(i);
+    }
+
     public Operator(Parser p, int id) {
         super(p, id);
     }
@@ -20,9 +24,9 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTBOOL:
                 return TypeEnum.BOOL;
             case ParserTreeConstants.JJTFUNC_METHOD:
-                return null;
+                return ((MethodSymbol) this.symbolTable.getSymbol(((ASTFUNC_METHOD) node).call)).getReturnType();
             case ParserTreeConstants.JJTARRAY_ACCESS:
-                return null;
+                return ((ArraySymbol) this.symbolTable.getSymbol(((ASTARRAY_ACCESS) node).object)).getReturnType();
             case ParserTreeConstants.JJTIDENT:
                 return this.symbolTable.getSymbol(((ASTIDENT) node).name).getType();
             case ParserTreeConstants.JJTNEW:
@@ -36,8 +40,33 @@ public class Operator extends SimpleNode {
         return null;
     }
 
-    public Operator(int i) {
-        super(i);
+    public boolean initializedUse(SimpleNode node){
+        switch(node.id){
+            case ParserTreeConstants.JJTADD:
+            case ParserTreeConstants.JJTSUB:
+            case ParserTreeConstants.JJTMUL:
+            case ParserTreeConstants.JJTDIV:
+            case ParserTreeConstants.JJTNEW_ARRAY:
+            case ParserTreeConstants.JJTNUM:
+            case ParserTreeConstants.JJTLENGTH:
+            case ParserTreeConstants.JJTAND:
+            case ParserTreeConstants.JJTLESSTHAN:
+            case ParserTreeConstants.JJTNEGATION:
+            case ParserTreeConstants.JJTBOOL:
+            case ParserTreeConstants.JJTNEW:
+            case ParserTreeConstants.JJTVOID:
+                return true;
+            case ParserTreeConstants.JJTFUNC_METHOD:
+                return this.symbolTable.getSymbol(((ASTFUNC_METHOD) node).call).isInitialized();
+            case ParserTreeConstants.JJTARRAY_ACCESS:
+                return this.symbolTable.getSymbol(((ASTARRAY_ACCESS) node).object).isInitialized();
+            case ParserTreeConstants.JJTIDENT:
+                return this.symbolTable.getSymbol(((ASTIDENT) node).name).isInitialized();
+            default:
+                break;
+        }
+
+        return false;
     }
 
     public boolean validType(SimpleNode node, TypeEnum type){

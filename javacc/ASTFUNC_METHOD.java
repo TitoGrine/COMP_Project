@@ -17,13 +17,17 @@ class ASTFUNC_METHOD extends Operator {
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     ASTCALL secondChild = (ASTCALL) this.jjtGetChild(1);
 
-    String object;
+    String object = "";
+    String extendedClass = null;
 
     firstChild.addSymbolTable(this.symbolTable);
 
     if(firstChild.id == ParserTreeConstants.JJTTHIS){
       firstChild.eval();
-      object = "";
+
+      ClassSymbol classSymbol = (ClassSymbol) this.symbolTable.getSymbol(((ASTTHIS) firstChild).className);
+
+      extendedClass = classSymbol.getExtendedClass();
     } else if(firstChild.id == ParserTreeConstants.JJTIDENT){
       object = ((ASTIDENT) firstChild).name;
     } else if(firstChild.id == ParserTreeConstants.JJTNEW){
@@ -33,15 +37,21 @@ class ASTFUNC_METHOD extends Operator {
       firstChild.eval();
       object = ((ASTFUNC_METHOD) firstChild).call;
     } else
-      throw new Exception("Method call to an invalid object");
+      throw new Exception("Method call to an invalid object.");
 
     secondChild.addSymbolTable(this.symbolTable);
-    secondChild.eval()
+    secondChild.eval();
 
     String method = secondChild.method;
 
-    if(!this.symbolTable.existsMethodSymbol(object + method))
-      throw new Exception("Method " + method + " doesn't exist for class " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object));
+    if(!this.symbolTable.existsMethodSymbol(object + method)){
+      if(extendedClass == null)
+        throw new Exception("Method " + method + " doesn't exist for class " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object));
+      else if(!this.symbolTable.existsMethodSymbol(extendedClass + method))
+        throw new Exception("Method " + method + " doesn't exist for class " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + " nor the extended class " + extendedClass);
+
+      object = extendedClass;
+    }
 
     MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(object + method);
 

@@ -28,9 +28,16 @@ class ASTDIV extends Operator {
     secondChild.eval();
 
     if(!this.validType(firstChild, TypeEnum.INT))
-      throw new Exception("DIV must have left hand side expression of type INT.");
+      throw new Exception("DIV must have left hand side expression returning an integer.");
+
+    if(!this.initializedUse(firstChild))
+      throw new Exception("Dividing a non initialized variable.");
+
     if(!this.validType(secondChild, TypeEnum.INT))
-      throw new Exception("DIV must have right hand side expression of type INT.");
+      throw new Exception("DIV must have right hand side expression returning an integer.");
+
+    if(!this.initializedUse(secondChild))
+      throw new Exception("Dividing a non initialized variable.");
   }
 }
 /* JavaCC - OriginalChecksum=7c66fef492265519258f8aeb8df13d5f (do not edit this line) */

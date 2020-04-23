@@ -28,9 +28,16 @@ class ASTLESSTHAN extends Operator {
     secondChild.eval();
 
     if(!this.validType(firstChild, TypeEnum.BOOL))
-      throw new Exception("LESSTHAN must have left hand side expression of type BOOL.");
+      throw new Exception("LESSTHAN must have left hand side expression returning an boolean.");
+
+    if(!this.initializedUse(firstChild))
+      throw new Exception("Comparing a non initialized variable.");
+
     if(!this.validType(secondChild, TypeEnum.BOOL))
-      throw new Exception("LESSTHAN must have right hand side expression of type BOOL.");
+      throw new Exception("LESSTHAN must have right hand side expression returning an boolean.");
+
+    if(!this.initializedUse(secondChild))
+      throw new Exception("Comparing a non initialized variable.");
   }
 }
 /* JavaCC - OriginalChecksum=e2b1718ad281406bb412afd2b9ecc955 (do not edit this line) */

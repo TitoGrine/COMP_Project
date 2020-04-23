@@ -25,6 +25,9 @@ class ASTNEGATION extends Operator {
 
     if(!this.validType(childNode, TypeEnum.BOOL))
       throw new Exception("NEGATION of a non boolean type.");
+
+    if(!this.initializedUse(childNode))
+      throw new Exception("Negation applied to a non instantiated variable.");
   }
 }
 /* JavaCC - OriginalChecksum=4ffa54cb323c32b97a8d1dfeae6338b8 (do not edit this line) */

@@ -52,4 +52,17 @@ public class SymbolTable {
         if(symbol != null)
             symbol.setInitialized(true);
     }
+
+    @Override
+    public String toString() {
+        String convert = "";
+
+        if(parent != null)
+            convert = parent.toString();
+
+        for(String key : this.table.keySet())
+            convert += "Key: " + key + " - Symbol: " + this.table.get(key).toString() + "\n";
+
+        return convert;
+    }
 }

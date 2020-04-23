@@ -14,7 +14,10 @@ class ASTCONDITION extends Operator {
   public void eval() throws Exception {
     SimpleNode childNode = (SimpleNode) this.jjtGetChild(0);
 
-    if(this.validType(childNode, TypeEnum.BOOL))
+    childNode.addSymbolTable(this.symbolTable);
+    childNode.eval();
+
+    if(!this.validType(childNode, TypeEnum.BOOL))
       throw new Exception("Expression in condition doesn't return a boolean value.");
   }
 }

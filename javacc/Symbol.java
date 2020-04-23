@@ -21,4 +21,9 @@ public class Symbol {
     public boolean isInitialized() {
         return initialized;
     }
+
+    @Override
+    public String toString() {
+        return this.type.toString();
+    }
 }

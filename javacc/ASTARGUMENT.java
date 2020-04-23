@@ -23,7 +23,12 @@ class ASTARGUMENT extends SimpleNode {
     secondChild.addSymbolTable(this.symbolTable);
     secondChild.eval();
 
-    Symbol symbol = new Symbol(firstChild.typeID);
+    Symbol symbol;
+
+    if(firstChild.typeID == TypeEnum.ARRAY)
+      symbol = new ArraySymbol(TypeEnum.INT);
+    else
+      symbol = new Symbol(firstChild.typeID);
 
     symbol.setInitialized(true);
 

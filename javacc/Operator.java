@@ -30,7 +30,12 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 return ((ArraySymbol) this.symbolTable.getSymbol(((ASTARRAY_ACCESS) node).object)).getReturnType();
             case ParserTreeConstants.JJTIDENT:
-                return this.symbolTable.getSymbol(((ASTIDENT) node).name).getType();
+                Symbol symbol = this.symbolTable.getSymbol(((ASTIDENT) node).name);
+
+                if(symbol == null)
+                    symbol = this.symbolTable.getSymbol("this." + ((ASTIDENT) node).name);
+
+                return symbol.getType();
             case ParserTreeConstants.JJTNEW:
                 return this.symbolTable.getSymbol(((ASTNEW) node).object).getType();
             default:
@@ -61,7 +66,12 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 return this.symbolTable.getSymbol(((ASTARRAY_ACCESS) node).object).isInitialized();
             case ParserTreeConstants.JJTIDENT:
-                return this.symbolTable.getSymbol(((ASTIDENT) node).name).isInitialized();
+                Symbol symbol = this.symbolTable.getSymbol(((ASTIDENT) node).name);
+
+                if(symbol == null)
+                    symbol = this.symbolTable.getSymbol("this." + ((ASTIDENT) node).name);
+
+                return symbol.isInitialized();
             default:
                 break;
         }

@@ -16,10 +16,11 @@ class CustomTest extends Test{
 
         args[5] + 2;
         num = 5;
-        num = num.length && num.length;
+        star = false;
+        truth = !star;
 
         //if((num < 1 && num < 1)){
-        if((2-3+4 && 2*4-6) < !num && (2-3/45 < 34+5) < 4/4*1){
+        if((truth && !star) < !num && (2-3/45 < 34+5) < 4/4*1){
             num = 5;
         } else {
             num = 7;

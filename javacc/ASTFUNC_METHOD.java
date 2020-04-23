@@ -46,9 +46,9 @@ class ASTFUNC_METHOD extends Operator {
 
     if(!this.symbolTable.existsMethodSymbol(object + method)){
       if(extendedClass == null)
-        throw new Exception("Method " + method + " doesn't exist for class " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object));
+        throw new Exception("Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object));
       else if(!this.symbolTable.existsMethodSymbol(extendedClass + method))
-        throw new Exception("Method " + method + " doesn't exist for class " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + " nor the extended class " + extendedClass);
+        throw new Exception("Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + " nor the extended class " + extendedClass);
 
       object = extendedClass;
     }

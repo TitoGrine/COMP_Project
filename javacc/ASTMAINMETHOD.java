@@ -6,7 +6,7 @@ import java.util.Collections;
 public
 class ASTMAINMETHOD extends SimpleNode {
   protected String methodName = "main";
-  protected MethodSymbol methodSymbol = new MethodSymbol(TypeEnum.VOID, new ArrayList<TypeEnum>(Collections.singleton(TypeEnum.ARRAY)));
+  protected MethodSymbol methodSymbol;
 
   public ASTMAINMETHOD(int id) {
     super(id);
@@ -21,11 +21,19 @@ class ASTMAINMETHOD extends SimpleNode {
     this.symbolTable = new SymbolTable(symbolTable);
   }
 
+  public void preProcessMethod() throws Exception {
+    methodSymbol = new MethodSymbol(TypeEnum.VOID, new ArrayList<TypeEnum>(Collections.singleton(TypeEnum.ARRAY)));
+  }
+
   @Override
   public void eval() throws Exception {
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
-    this.symbolTable.addSymbol(firstChild.name, new ArraySymbol(TypeEnum.STRING));
+    ArraySymbol arraySymbol = new ArraySymbol(TypeEnum.STRING);
+
+    arraySymbol.setInitialized(true);
+
+    this.symbolTable.addSymbol(firstChild.name, arraySymbol);
 
     SimpleNode childNode = (SimpleNode) this.jjtGetChild(1);
 

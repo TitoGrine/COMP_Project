@@ -8,14 +8,14 @@ public class MethodSymbol extends Symbol{
     public MethodSymbol(TypeEnum returnType) {
         super(TypeEnum.METHOD);
         this.returnType = returnType;
-
+        this.initialized = true;
         this.parametersOverload.add(new ArrayList<>());
     }
 
     public MethodSymbol(TypeEnum returnType, ArrayList<TypeEnum> parameters) {
         super(TypeEnum.METHOD);
         this.returnType = returnType;
-
+        this.initialized = true;
         this.parametersOverload.add(parameters);
     }
 

@@ -3,8 +3,7 @@ public enum TypeEnum {
     INT,
     ARRAY,
     METHOD,
-    OBJECT,
     STRING,
     VOID,
-    CLASS,
+    OBJECT,
 }

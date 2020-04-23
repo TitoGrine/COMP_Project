@@ -6,7 +6,7 @@ public class ClassSymbol extends Symbol{
     String extendedClass = null;
 
     public ClassSymbol(ArrayList<TypeEnum> parameters) {
-        super(TypeEnum.CLASS);
+        super(TypeEnum.OBJECT);
         this.parameters = parameters;
     }
 

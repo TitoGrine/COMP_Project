@@ -23,6 +23,8 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTNEGATION:
             case ParserTreeConstants.JJTBOOL:
                 return TypeEnum.BOOL;
+            case ParserTreeConstants.JJTVOID:
+                return TypeEnum.VOID;
             case ParserTreeConstants.JJTFUNC_METHOD:
                 return ((MethodSymbol) this.symbolTable.getSymbol(((ASTFUNC_METHOD) node).call)).getReturnType();
             case ParserTreeConstants.JJTARRAY_ACCESS:
@@ -31,8 +33,6 @@ public class Operator extends SimpleNode {
                 return this.symbolTable.getSymbol(((ASTIDENT) node).name).getType();
             case ParserTreeConstants.JJTNEW:
                 return this.symbolTable.getSymbol(((ASTNEW) node).object).getType();
-            case ParserTreeConstants.JJTVOID:
-                return TypeEnum.VOID;
             default:
                 break;
         }

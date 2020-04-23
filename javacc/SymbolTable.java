@@ -43,7 +43,7 @@ public class SymbolTable {
     public boolean existsClassSymbol(String key){
         Symbol symbol = this.getSymbol(key);
 
-        return symbol != null && symbol.type == TypeEnum.CLASS;
+        return symbol != null && symbol.type == TypeEnum.OBJECT;
     }
 
     public void setInitialized(String key){

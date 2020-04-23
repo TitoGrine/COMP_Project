@@ -58,6 +58,7 @@ public class Main {
 
         PrintWriter file = fileToWrite();
 
+        //(verificar se o root é classe, ver os children e por aí fora)
 
     }
 

@@ -27,6 +27,15 @@ class ASTARRAY_ACCESS extends Operator {
     } else
       throw new Exception("Attempted to access a non array object like an array.");
 
+    if(!this.symbolTable.existsSymbol(this.object)){
+
+      if(!this.symbolTable.existsSymbol("this." + this.object)){
+        throw new Exception("Trying to assign variable " + this.object + " that wasn't previously declared.");
+      }
+
+      this.object = "this." + this.object;
+    }
+
     if(!this.validType(firstChild, TypeEnum.ARRAY))
       throw new Exception("Variable " + this.object + " isn't an array but it's being accessed as one.");
 

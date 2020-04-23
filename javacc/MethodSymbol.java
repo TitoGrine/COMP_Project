@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 public class MethodSymbol extends Symbol{
     TypeEnum returnType;
@@ -9,7 +9,7 @@ public class MethodSymbol extends Symbol{
         super(TypeEnum.METHOD);
         this.returnType = returnType;
         this.initialized = true;
-        this.parametersOverload.add(new ArrayList<>());
+        this.parametersOverload.add(new ArrayList<>(Collections.singleton(TypeEnum.VOID)));
     }
 
     public MethodSymbol(TypeEnum returnType, ArrayList<TypeEnum> parameters) {
@@ -24,7 +24,7 @@ public class MethodSymbol extends Symbol{
     }
 
     public void addParameters(){
-        ArrayList<TypeEnum> parameters = new ArrayList<>();
+        ArrayList<TypeEnum> parameters = new ArrayList<>(Collections.singleton(TypeEnum.VOID));
 
         if(!this.acceptedParameters(parameters))
             this.parametersOverload.add(parameters);
@@ -37,6 +37,9 @@ public class MethodSymbol extends Symbol{
     }
 
     public boolean acceptedParameters(ArrayList<TypeEnum> arguments){
-        return parametersOverload.contains(arguments);
+        if(!arguments.isEmpty())
+            return parametersOverload.contains(arguments);
+
+        return parametersOverload.contains(arguments) || parametersOverload.contains(new ArrayList<>(Collections.singleton(TypeEnum.VOID)));
     }
 }

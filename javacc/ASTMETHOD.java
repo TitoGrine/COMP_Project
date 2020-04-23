@@ -66,7 +66,7 @@ class ASTMETHOD extends SimpleNode {
     returnExp.addSymbolTable(this.symbolTable);
     returnExp.eval();
 
-    if(returnExp.expType != methodSymbol.getType())
+    if(returnExp.expType != methodSymbol.getReturnType())
       throw new Exception("Method " + methodName + " returns type not compatible with declaration.");
   }
 }

@@ -28,7 +28,12 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTFUNC_METHOD:
                 return ((MethodSymbol) this.symbolTable.getSymbol(((ASTFUNC_METHOD) node).call)).getReturnType();
             case ParserTreeConstants.JJTARRAY_ACCESS:
-                return ((ArraySymbol) this.symbolTable.getSymbol(((ASTARRAY_ACCESS) node).object)).getReturnType();
+                ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(((ASTARRAY_ACCESS) node).object);
+
+                if(arraySymbol == null)
+                    arraySymbol = (ArraySymbol) this.symbolTable.getSymbol("this." + ((ASTARRAY_ACCESS) node).object);
+
+                return arraySymbol.getReturnType();
             case ParserTreeConstants.JJTIDENT:
                 Symbol symbol = this.symbolTable.getSymbol(((ASTIDENT) node).name);
 
@@ -64,7 +69,12 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTFUNC_METHOD:
                 return this.symbolTable.getSymbol(((ASTFUNC_METHOD) node).call).isInitialized();
             case ParserTreeConstants.JJTARRAY_ACCESS:
-                return this.symbolTable.getSymbol(((ASTARRAY_ACCESS) node).object).isInitialized();
+                ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(((ASTARRAY_ACCESS) node).object);
+
+                if(arraySymbol == null)
+                    arraySymbol = (ArraySymbol) this.symbolTable.getSymbol("this." + ((ASTARRAY_ACCESS) node).object);
+
+                return arraySymbol.isInitialized();
             case ParserTreeConstants.JJTIDENT:
                 Symbol symbol = this.symbolTable.getSymbol(((ASTIDENT) node).name);
 

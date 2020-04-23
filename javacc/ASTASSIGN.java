@@ -19,8 +19,6 @@ class ASTASSIGN extends Operator {
 
     if(!this.symbolTable.existsSymbol(varName)){
 
-      System.out.println("Symbol table: \n" + this.symbolTable.toString());
-
       if(!this.symbolTable.existsSymbol("this." + varName)){
         throw new Exception("Trying to assign variable " + varName + " that wasn't previously declared.");
       }

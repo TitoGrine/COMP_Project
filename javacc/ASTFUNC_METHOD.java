@@ -42,6 +42,7 @@ class ASTFUNC_METHOD extends Operator {
     secondChild.addSymbolTable(this.symbolTable);
     secondChild.eval();
 
+    object += '.';
     String method = secondChild.method;
 
     if(!this.symbolTable.existsMethodSymbol(object + method)){
@@ -50,7 +51,7 @@ class ASTFUNC_METHOD extends Operator {
       else if(!this.symbolTable.existsMethodSymbol(extendedClass + method))
         throw new Exception("Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + " nor the extended class " + extendedClass);
 
-      object = extendedClass;
+      object = extendedClass + '.';
     }
 
     MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(object + method);

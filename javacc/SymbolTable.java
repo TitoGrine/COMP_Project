@@ -5,6 +5,9 @@ public class SymbolTable {
     SymbolTable parent = null;
     Hashtable<String, Symbol> table = new Hashtable<>();
 
+    SymbolTable(){
+    }
+
     SymbolTable(SymbolTable parent){
         this.parent = parent;
     }
@@ -12,6 +15,8 @@ public class SymbolTable {
     public void addSymbol(String key, MethodSymbol symbol){
         if(table.containsKey(key))
             ((MethodSymbol) table.get(key)).addParameters(symbol.parametersOverload);
+        else
+            table.put(key, symbol);
     }
 
     public void addSymbol(String key, Symbol symbol){
@@ -31,7 +36,7 @@ public class SymbolTable {
     }
 
     public boolean existsSymbol(String key){
-        return this.table.containsKey(key);
+        return (this.getSymbol(key) != null);
     }
 
     public boolean existsMethodSymbol(String key){

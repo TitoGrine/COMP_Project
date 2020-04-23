@@ -106,21 +106,6 @@ class SimpleNode implements Node {
     return "";
   }
 
-  void printJasmin() {
-    String j = getJasmin();
-
-    if(!j.isEmpty()) System.out.print("Jasmin: " + j);
-
-
-    if (children != null) {
-      for (int i = 0; i < children.length; ++i) {
-        SimpleNode node = (SimpleNode) children[i];
-        if (node != null) {
-          node.printJasmin();
-        }
-      }
-    }
-  }
 
 }
 

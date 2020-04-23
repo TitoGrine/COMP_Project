@@ -11,11 +11,6 @@ class ASTSCOPE extends SimpleNode {
   }
 
   @Override
-  public void addSymbolTable(SymbolTable symbolTable){
-    this.symbolTable = new SymbolTable(symbolTable);
-  }
-
-  @Override
   public void eval() throws Exception {
     int numChildren = this.jjtGetNumChildren();
     int childIndex = 0;

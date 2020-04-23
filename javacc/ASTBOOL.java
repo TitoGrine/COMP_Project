@@ -13,19 +13,6 @@ class ASTBOOL extends SimpleNode {
     super(p, id);
   }
 
-  @Override
-  public void addSymbolTable(SymbolTable symbolTable){
-    this.symbolTable = symbolTable;
-  }
-
-  @Override
-  public void eval() throws Exception {
-    // TODO: Add symbol
-
-    //TODO: Add check?
-
-  }
-
   public String toString() {
     return "BOOL[" + truth_value + "]";
   }

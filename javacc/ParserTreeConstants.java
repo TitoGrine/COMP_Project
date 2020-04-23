@@ -12,8 +12,8 @@ public interface ParserTreeConstants
   public int JJTVARIABLE = 8;
   public int JJTTYPE = 9;
   public int JJTMETHOD = 10;
-  public int JJTRETURN_TYPE = 11;
-  public int JJTMETHOD_BODY = 12;
+  public int JJTMETHOD_BODY = 11;
+  public int JJTRETURN_EXP = 12;
   public int JJTARGUMENTS = 13;
   public int JJTARGUMENT = 14;
   public int JJTMAINMETHOD = 15;
@@ -30,15 +30,16 @@ public interface ParserTreeConstants
   public int JJTSUB = 26;
   public int JJTMUL = 27;
   public int JJTDIV = 28;
-  public int JJTFUNC_METHOD = 29;
-  public int JJTLENGTH = 30;
-  public int JJTNUM = 31;
-  public int JJTBOOL = 32;
-  public int JJTTHIS = 33;
-  public int JJTNEW_ARRAY = 34;
-  public int JJTNEW = 35;
-  public int JJTNEGATION = 36;
-  public int JJTIDENT = 37;
+  public int JJTLENGTH = 29;
+  public int JJTFUNC_METHOD = 30;
+  public int JJTCALL = 31;
+  public int JJTNUM = 32;
+  public int JJTBOOL = 33;
+  public int JJTTHIS = 34;
+  public int JJTNEW_ARRAY = 35;
+  public int JJTNEW = 36;
+  public int JJTNEGATION = 37;
+  public int JJTIDENT = 38;
 
 
   public String[] jjtNodeName = {
@@ -53,8 +54,8 @@ public interface ParserTreeConstants
     "VARIABLE",
     "TYPE",
     "METHOD",
-    "RETURN_TYPE",
     "METHOD_BODY",
+    "RETURN_EXP",
     "ARGUMENTS",
     "ARGUMENT",
     "MAINMETHOD",
@@ -71,8 +72,9 @@ public interface ParserTreeConstants
     "SUB",
     "MUL",
     "DIV",
-    "FUNC_METHOD",
     "LENGTH",
+    "FUNC_METHOD",
+    "CALL",
     "NUM",
     "BOOL",
     "THIS",
@@ -82,4 +84,4 @@ public interface ParserTreeConstants
     "IDENT",
   };
 }
-/* JavaCC - OriginalChecksum=92a3869ce174b20412ee41f4124009ec (do not edit this line) */
+/* JavaCC - OriginalChecksum=ee5bc8d9d6903caa18fe6367765e1847 (do not edit this line) */

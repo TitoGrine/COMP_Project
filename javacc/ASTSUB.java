@@ -30,14 +30,12 @@ class ASTSUB extends Operator {
     if(!this.validType(firstChild, TypeEnum.INT))
       throw new Exception("SUB must have left hand side expression returning an integer.");
 
-    if(!this.initializedUse(firstChild))
-      throw new Exception("Subtracting a non initialized variable.");
+    this.initializedUse(firstChild);
 
     if(!this.validType(secondChild, TypeEnum.INT))
       throw new Exception("SUB must have right hand side expression returning an integer.");
 
-    if(!this.initializedUse(secondChild))
-      throw new Exception("Subtracting a non initialized variable.");
+    this.initializedUse(secondChild);
   }
 }
 /* JavaCC - OriginalChecksum=98d1976b6139d7188e8c28dcbea08ceb (do not edit this line) */

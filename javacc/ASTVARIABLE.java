@@ -14,18 +14,33 @@ class ASTVARIABLE extends SimpleNode {
 
   @Override
   public void eval() throws Exception {
-    ASTTYPE firstChild = (ASTTYPE) this.jjtGetChild(0);
+    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
-    firstChild.addSymbolTable(this.symbolTable);
-    firstChild.eval();
+    TypeEnum type;
+
+    if(firstChild.id == ParserTreeConstants.JJTIDENT){
+      String name = ((ASTIDENT) firstChild).name;
+
+      Symbol symbol = this.symbolTable.getSymbol(name);
+
+      if(symbol == null)
+        throw new Exception("Unrecognized type " + name);
+
+      type = symbol.getType();
+    } else {
+      firstChild.addSymbolTable(this.symbolTable);
+      firstChild.eval();
+
+      type = ((ASTTYPE) firstChild).typeID;
+    }
 
     String key = (classScope ? "this." : "") + secondChild.name;
 
-    if(firstChild.typeID == TypeEnum.ARRAY)
+    if(type == TypeEnum.ARRAY)
       this.symbolTable.addSymbol(key, new ArraySymbol(TypeEnum.INT));
     else
-      this.symbolTable.addSymbol(key, new Symbol(firstChild.typeID));
+      this.symbolTable.addSymbol(key, new Symbol(type));
   }
 }
 /* JavaCC - OriginalChecksum=f4f029f02b50c27d11f0009ca087d42c (do not edit this line) */

@@ -20,7 +20,7 @@ class ASTLENGTH extends Operator {
       childNode.eval();
 
       if(!this.validType(childNode, TypeEnum.OBJECT) && !this.validType(childNode, TypeEnum.ARRAY) && !this.validType(childNode, TypeEnum.STRING))
-        throw new Exception("LENGTH doesn't have a sizable object has child");
+        throw new Exception("Length method isn't applied to a sizable object.");
     }
   }
 /* JavaCC - OriginalChecksum=9340b1c9d0f3a7601be1ff8cdf1361a0 (do not edit this line) */

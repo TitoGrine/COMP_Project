@@ -8,13 +8,12 @@ public class Operator extends SimpleNode {
         super(p, id);
     }
 
-    public TypeEnum getType(SimpleNode node){
+    public TypeEnum getType(SimpleNode node) throws Exception {
         switch(node.id){
             case ParserTreeConstants.JJTADD:
             case ParserTreeConstants.JJTSUB:
             case ParserTreeConstants.JJTMUL:
             case ParserTreeConstants.JJTDIV:
-            case ParserTreeConstants.JJTNEW_ARRAY:
             case ParserTreeConstants.JJTNUM:
             case ParserTreeConstants.JJTLENGTH:
                 return TypeEnum.INT;
@@ -25,20 +24,32 @@ public class Operator extends SimpleNode {
                 return TypeEnum.BOOL;
             case ParserTreeConstants.JJTVOID:
                 return TypeEnum.VOID;
+            case ParserTreeConstants.JJTNEW_ARRAY:
+                return TypeEnum.ARRAY;
             case ParserTreeConstants.JJTFUNC_METHOD:
                 return ((MethodSymbol) this.symbolTable.getSymbol(((ASTFUNC_METHOD) node).call)).getReturnType();
             case ParserTreeConstants.JJTARRAY_ACCESS:
-                ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(((ASTARRAY_ACCESS) node).object);
+                String object = ((ASTARRAY_ACCESS) node).object;
+
+                ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(object);
 
                 if(arraySymbol == null)
-                    arraySymbol = (ArraySymbol) this.symbolTable.getSymbol("this." + ((ASTARRAY_ACCESS) node).object);
+                    arraySymbol = (ArraySymbol) this.symbolTable.getSymbol("this." + object);
+
+                if(arraySymbol == null)
+                    throw new Exception("Array " + object + "[] used, but isn't previously declared.");
 
                 return arraySymbol.getReturnType();
             case ParserTreeConstants.JJTIDENT:
-                Symbol symbol = this.symbolTable.getSymbol(((ASTIDENT) node).name);
+                String name = ((ASTIDENT) node).name;
+
+                Symbol symbol = this.symbolTable.getSymbol(name);
 
                 if(symbol == null)
-                    symbol = this.symbolTable.getSymbol("this." + ((ASTIDENT) node).name);
+                    symbol = this.symbolTable.getSymbol("this." + name);
+
+                if(symbol == null)
+                    throw new Exception("Variable " + name + " used, but isn't previously declared.");
 
                 return symbol.getType();
             case ParserTreeConstants.JJTNEW:
@@ -50,7 +61,7 @@ public class Operator extends SimpleNode {
         return null;
     }
 
-    public boolean initializedUse(SimpleNode node){
+    public void initializedUse(SimpleNode node) throws Exception {
         switch(node.id){
             case ParserTreeConstants.JJTADD:
             case ParserTreeConstants.JJTSUB:
@@ -65,31 +76,41 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTBOOL:
             case ParserTreeConstants.JJTNEW:
             case ParserTreeConstants.JJTVOID:
-                return true;
+                break;
             case ParserTreeConstants.JJTFUNC_METHOD:
-                return this.symbolTable.getSymbol(((ASTFUNC_METHOD) node).call).isInitialized();
+                if(!this.symbolTable.getSymbol(((ASTFUNC_METHOD) node).call).isInitialized())
+                    throw new Exception("Method " + ((ASTFUNC_METHOD) node).call + "() called but isn't initialized.");
+                break;
             case ParserTreeConstants.JJTARRAY_ACCESS:
-                ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(((ASTARRAY_ACCESS) node).object);
+                String object = ((ASTARRAY_ACCESS) node).object;
+
+                ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(object);
 
                 if(arraySymbol == null)
-                    arraySymbol = (ArraySymbol) this.symbolTable.getSymbol("this." + ((ASTARRAY_ACCESS) node).object);
+                    arraySymbol = (ArraySymbol) this.symbolTable.getSymbol("this." + object);
 
-                return arraySymbol.isInitialized();
+                if(!arraySymbol.isInitialized())
+                    throw new Exception("Array " + object + "[] used, but isn't previously initialized.");
+
+                break;
             case ParserTreeConstants.JJTIDENT:
-                Symbol symbol = this.symbolTable.getSymbol(((ASTIDENT) node).name);
+                String name = ((ASTIDENT) node).name;
+
+                Symbol symbol = this.symbolTable.getSymbol(name);
 
                 if(symbol == null)
-                    symbol = this.symbolTable.getSymbol("this." + ((ASTIDENT) node).name);
+                    symbol = this.symbolTable.getSymbol("this." + name);
 
-                return symbol.isInitialized();
-            default:
+                if(!symbol.isInitialized())
+                    throw new Exception("Variable " + name + " used, but isn't previously initialized.");
+
                 break;
+            default:
+                throw new Exception("Unrecognized node.");
         }
-
-        return false;
     }
 
-    public boolean validType(SimpleNode node, TypeEnum type){
+    public boolean validType(SimpleNode node, TypeEnum type) throws Exception {
 
         TypeEnum expType = this.getType(node);
 

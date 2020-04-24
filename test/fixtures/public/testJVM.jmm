@@ -1,0 +1,11 @@
+import static ioPlus.printHelloWorld(void) void;
+class HelloWorld {
+
+    int num;
+    String B;
+
+	public static void main(String[] args) {
+    num = 2;
+		ioPlus.printHelloWorld();
+	}
+}

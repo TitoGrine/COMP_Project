@@ -43,6 +43,10 @@ class SimpleNode implements Node {
     return children[i];
   }
 
+  public Node[] jjtGetChildren() {
+    return children;
+  }
+
   public int jjtGetNumChildren() {
     return (children == null) ? 0 : children.length;
   }

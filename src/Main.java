@@ -1,4 +1,4 @@
-import sun.java2d.pipe.SpanShapeRenderer;
+// import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,7 +7,11 @@ import java.io.PrintWriter;
 import java.util.SimpleTimeZone;
 
 public class Main {
+    
+    static String tmp = "";
+
     public static void main(String[] args) throws ParseException {
+
 
         java.io.FileInputStream file = null;
         try {
@@ -62,61 +66,63 @@ public class Main {
     static void printJasmin(SimpleNode root) throws IOException {
 
         //PrintWriter file = fileToWrite();
-        String tmp = "";
+
 
         //(verificar se o root é classe, ver os children e por aí fora)
         Node[] children =  root.jjtGetChildren();
 
-        //check for classses
         for(int i = 0; i < children.length; i++) {
             if (children[i].getId() == 6) {
+                Node classChilds[] = displayClass(children[i]);
+                displayVariables(classChilds);
+                displayMainMethod(classChilds);
+            }
+        }
 
-                SimpleNode classNode = (SimpleNode) children[i];
-                Node[] grandChildren = classNode.jjtGetChildren();
+        System.out.println(tmp);
+    }
 
-                //get class identifier
-                tmp += ".public class " + ((ASTIDENT) grandChildren[0]).name + '\n';
-                tmp += ".super java/lang/Object\n";
+    static Node[] displayClass(Node node) {
+        SimpleNode classSimpleNode = (SimpleNode) node;
+        Node[] classChilds = classSimpleNode.jjtGetChildren();
 
-                //declared variables
-                for (Node n : grandChildren) {
-                    SimpleNode simpleN = (SimpleNode) n;
-                    if (simpleN.toString().equals("VARIABLE")) {
+        tmp += ".public class " + ((ASTIDENT) classChilds[0]).name + '\n';
+        tmp += ".super java/lang/Object\n";
 
-                        tmp += ".field " + ((ASTIDENT) simpleN.jjtGetChildren()[1]).name + " ";
+        return classChilds;
+    }
 
-                        ASTTYPE typeN = (ASTTYPE)simpleN.jjtGetChildren()[0];
-                        switch (typeN.typeID) {
-                            case STRING:
-                                tmp += "V\n";
-                                break;
-                            case INT:
-                                tmp += "I\n";
-                                break;
-                            case BOOL:
-                                tmp += "Z\n";
-                                break;
-                        }
-                    }
+    static void displayVariables(Node node[]) {
+        for (Node n : node) {
+            SimpleNode simpleN = (SimpleNode) n;
+            if (simpleN.toString().equals("VARIABLE")) {
+
+                tmp += ".field " + ((ASTIDENT) simpleN.jjtGetChildren()[1]).name + " ";
+
+                ASTTYPE typeN = (ASTTYPE)simpleN.jjtGetChildren()[0];
+                switch (typeN.typeID) {
+                    case STRING:
+                        tmp += "V\n";
+                        break;
+                    case INT:
+                        tmp += "I\n";
+                        break;
+                    case BOOL:
+                        tmp += "Z\n";
+                        break;
                 }
-                //get main method
-                for (Node n : grandChildren){
-                    SimpleNode simpleN = (SimpleNode) n;
-                    if (simpleN.toString().equals("MAINMETHOD")) {
+            }
+        }
+    }
 
-
-                    }
-                }
-
-
+    static void displayMainMethod(Node node[]) {
+        for (Node n : node){
+            SimpleNode simpleN = (SimpleNode) n;
+            if (simpleN.toString().equals("MAINMETHOD")) {
 
             }
-
         }
-        System.out.println(tmp);
-
-
-
     }
 
 }
+

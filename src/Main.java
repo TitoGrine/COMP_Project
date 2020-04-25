@@ -7,8 +7,6 @@ import java.io.PrintWriter;
 import java.util.SimpleTimeZone;
 
 public class Main {
-    
-    static String tmp = "";
     static CodeGenerator codeGenerator;
 
     public static void main(String[] args) throws ParseException {

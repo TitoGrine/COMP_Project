@@ -22,16 +22,18 @@ public class CodeGenerator {
 
         for(Node child: children) {
             if (child.getId() == 6) {
-                Node classChilds[] = displayClass(child);
-                displayVariables(classChilds);
-                displayMainMethod(classChilds);
+                Node classChilds[] = addClass(child);
+                addVariables(classChilds);
+                addMainMethod(classChilds);
+                addStandardInitializer();
+                addMainHeader();
             }
         }
         print();        
     }
 
 
-    static Node[] displayClass(Node node) {
+    static Node[] addClass(Node node) {
         SimpleNode classSimpleNode = (SimpleNode) node;
         Node[] classChilds = classSimpleNode.jjtGetChildren();
 
@@ -44,7 +46,7 @@ public class CodeGenerator {
     }
 
 
-    static void displayVariables(Node node[]) {
+    static void addVariables(Node node[]) {
         for (Node n : node) {
             SimpleNode simpleN = (SimpleNode) n;
 
@@ -63,7 +65,7 @@ public class CodeGenerator {
                         nl();
                         break;
                     case BOOL:
-                        generated += "Z\n";
+                        generated += "Z";
                         nl();
                         break;
                 }
@@ -72,13 +74,64 @@ public class CodeGenerator {
     }
 
 
-    static void displayMainMethod(Node node[]) {
+    static void addMainMethod(Node node[]) {
         for (Node n : node){
             SimpleNode simpleN = (SimpleNode) n;
             if (simpleN.toString().equals("MAINMETHOD")) {
                 //Do stuff
             }
         }
+    }
+
+
+    public static void addStandardInitializer() {
+        nl();
+        generated += ".method public<init>()V";
+        nl();
+        tab();
+        generated += "aload_0";
+        nl();
+        tab();
+        generated += "invokenonvirtual java/lang/Object/<init>()V";
+        nl();
+        tab();
+        generated += "return";
+        nl();
+        generated += ".end method";
+        nl();
+    }
+
+
+    public static void addMainHeader() {
+        nl();
+        generated += ".method public static main([Ljava/lang/String;)V"; 
+        nl();
+        tab();
+        generated += ".limit stack 99"; 
+        nl();
+        tab();
+        generated += ".limit locals 99"; 
+        nl();
+    }
+
+
+    public void print() {
+        System.out.println("\n\n" + this.generated);
+    }
+
+
+    public static void space() {
+        generated += " ";
+    }
+
+
+    public static void nl() {
+        generated += "\n";
+    }
+
+
+    public static void tab() {
+        generated += "\t";
     }
 
 
@@ -94,18 +147,5 @@ public class CodeGenerator {
 
         PrintWriter writer = new PrintWriter(file);
         return writer;
-    }
-
-
-    public void print() {
-        System.out.println("\n\n" + this.generated);
-    }
-
-    public static void space() {
-        generated += " ";
-    }
-
-    public static void nl() {
-        generated += "\n";
     }
 }

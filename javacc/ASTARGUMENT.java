@@ -32,6 +32,8 @@ class ASTARGUMENT extends SimpleNode {
 
     symbol.setInitialized(true);
 
+    this.type = symbol.getType();
+
     this.symbolTable.addSymbol(secondChild.name, symbol);
   }
 }

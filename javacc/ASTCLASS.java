@@ -27,26 +27,30 @@ class ASTCLASS extends SimpleNode {
     int childIndex = 1;
 
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
+    SimpleNode childNode;
 
     this.className = firstChild.name;
 
-    ClassSymbol classSymbol = new ClassSymbol(new ArrayList<>());
-
-    SimpleNode childNode = (SimpleNode) this.jjtGetChild(childIndex);
-
+    ClassSymbol classSymbol = new ClassSymbol();
     List<ASTMETHOD> methods = new ArrayList<>();
     ASTMAINMETHOD mainMethod = null;
 
-    if(childNode.id == ParserTreeConstants.JJTEXTENDS){
-      childNode.addSymbolTable(this.symbolTable);
-      childNode.eval(errors);
+    if(numChildren > childIndex){
+      childNode = (SimpleNode) this.jjtGetChild(childIndex);
 
-      classSymbol.setExtendedClass(((ASTEXTENDS) childNode).extendedClass);
+      if(childNode.id == ParserTreeConstants.JJTEXTENDS){
+        childNode.addSymbolTable(this.symbolTable);
+        childNode.eval(errors);
 
-      childIndex++;
+        classSymbol.setExtendedClass(((ASTEXTENDS) childNode).extendedClass);
+
+        childIndex++;
+      }
     }
 
     this.symbolTable.addSymbol(this.className, classSymbol);
+
+    String key;
 
     while(childIndex < numChildren){
       childNode = (SimpleNode) this.jjtGetChild(childIndex);
@@ -63,7 +67,9 @@ class ASTCLASS extends SimpleNode {
         method.preProcessMethod(errors);
         methods.add(method);
 
-        this.symbolTable.addSymbol(method.methodName, method.methodSymbol);
+        key = className + '.' + method.methodName;
+
+        this.symbolTable.addSymbol(key, method.methodSymbol);
       } else if (childNode.id == ParserTreeConstants.JJTMAINMETHOD){
         if(mainDeclared)
           errors.addError(this.getCoords(), "CLASS " + firstChild.name + " has more than one main method.");
@@ -72,7 +78,9 @@ class ASTCLASS extends SimpleNode {
 
         mainMethod.preProcessMethod();
 
-        this.symbolTable.addSymbol(mainMethod.methodName, mainMethod.methodSymbol);
+        key = className + '.' + mainMethod.methodName;
+
+        this.symbolTable.addSymbol(key, mainMethod.methodSymbol);
         mainDeclared = true;
       }
       childIndex++;

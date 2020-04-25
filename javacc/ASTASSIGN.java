@@ -26,8 +26,6 @@ class ASTASSIGN extends Operator {
     else
       varName = ((ASTIDENT) firstChild).name;
 
-    System.out.println("Var: " + varName);
-
     if(!this.symbolTable.existsSymbol(varName)){
 
       if(!this.symbolTable.existsSymbol("this." + varName)){

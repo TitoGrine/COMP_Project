@@ -1,13 +1,23 @@
 public class Symbol {
     TypeEnum type;
+    String classType;
     boolean initialized = false;
 
     public Symbol(TypeEnum type){
         this.type = type;
     }
 
+    public Symbol(TypeEnum type, String classType){
+        this.type = type;
+        this.classType = classType;
+    }
+
     public TypeEnum getType() {
         return type;
+    }
+
+    public String getClassType() {
+        return classType;
     }
 
     public void setType(TypeEnum type) {
@@ -24,6 +34,6 @@ public class Symbol {
 
     @Override
     public String toString() {
-        return this.type.toString();
+        return "       \033[1;37mType\033[0m: " + this.type.toString() + (classType == null ? "" : ("\n       \033[1;37mClass Type\033[0m: " + this.classType)) + "\n";
     }
 }

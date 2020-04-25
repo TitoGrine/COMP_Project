@@ -46,6 +46,8 @@ class ASTVARIABLE extends SimpleNode {
 
     if(type == TypeEnum.ARRAY)
       this.symbolTable.addSymbol(key, new ArraySymbol(TypeEnum.INT));
+    else if(type == TypeEnum.OBJECT)
+      this.symbolTable.addSymbol(key, new Symbol(type, ((ASTIDENT) firstChild).name));
     else
       this.symbolTable.addSymbol(key, new Symbol(type));
   }

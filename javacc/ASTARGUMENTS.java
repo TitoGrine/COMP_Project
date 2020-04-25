@@ -26,10 +26,21 @@ class ASTARGUMENTS extends Operator {
       childNode.addSymbolTable(this.symbolTable);
       childNode.eval(errors);
 
-      if(childNode.id == ParserTreeConstants.JJTARGUMENT)
+      if(childNode.id == ParserTreeConstants.JJTARGUMENT){
         this.arguments.add(((ASTARGUMENT) childNode).type);
-      else
+      }
+      else if (childNode.id == ParserTreeConstants.JJTFUNC_METHOD){
+        String call = ((ASTFUNC_METHOD) childNode).call;
+
+        if(!this.symbolTable.existsMethodSymbol(call))
+          errors.addError(this.getCoords(), "Method call " + call + " doesn't exist.");
+
+        MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(call);
+
+        this.arguments.add(methodSymbol.getReturnType());
+      } else{
         this.arguments.add(this.getType(childNode, errors));
+      }
 
       childIndex++;
     }

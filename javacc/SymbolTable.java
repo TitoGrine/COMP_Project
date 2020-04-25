@@ -80,7 +80,7 @@ public class SymbolTable {
         convert += "\033[0;34m  --------- Scope Table ---------\033[0m\n\n";
 
         for(String key : this.table.keySet())
-            convert += "    \uD83D\uDDDD \033[1;37mKey\033[0m: " + key + "\n       \033[1;37mSymbol\033[0m: " + this.table.get(key).toString() + "\n\n";
+            convert += "    \uD83D\uDDDD \033[1;37mKey\033[0m: " + key + "\n" + this.table.get(key).toString() + "\n";
 
         return convert;
     }
@@ -94,7 +94,7 @@ public class SymbolTable {
         convert += "\033[0;34m  --------- Parent Table ---------\033[0m\n\n";
 
         for(String key : this.table.keySet())
-            convert += "    \uD83D\uDDDD \033[1;37mKey\033[0m: " + key + "\n       \033[1;37mSymbol\033[0m: " + this.table.get(key).toString() + "\n\n";
+            convert += "    \uD83D\uDDDD \033[1;37mKey\033[0m: " + key + "\n" + this.table.get(key).toString() + "\n";
 
         return convert;
     }

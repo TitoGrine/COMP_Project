@@ -29,8 +29,6 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTFUNC_METHOD:
                 String call = ((ASTFUNC_METHOD) node).call;
 
-                System.out.println(call);
-
                 MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(call);
 
                 if(methodSymbol == null) // TODO: Check if the identifier is from the class.

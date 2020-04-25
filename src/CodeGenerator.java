@@ -35,8 +35,10 @@ public class CodeGenerator {
         SimpleNode classSimpleNode = (SimpleNode) node;
         Node[] classChilds = classSimpleNode.jjtGetChildren();
 
-        generated += ".public class " + ((ASTIDENT) classChilds[0]).name + '\n';
-        generated += ".super java/lang/Object\n";
+        generated += ".public class " + ((ASTIDENT) classChilds[0]).name;
+        nl();
+        generated += ".super java/lang/Object";
+        nl();
 
         return classChilds;
     }
@@ -47,18 +49,22 @@ public class CodeGenerator {
             SimpleNode simpleN = (SimpleNode) n;
 
             if (simpleN.toString().equals("VARIABLE")) {
-                generated += ".field " + ((ASTIDENT) simpleN.jjtGetChildren()[1]).name + " ";
+                generated += ".field " + ((ASTIDENT) simpleN.jjtGetChildren()[1]).name;
+                space();
 
                 ASTTYPE typeN = (ASTTYPE)simpleN.jjtGetChildren()[0];
                 switch (typeN.typeID) {
                     case STRING:
-                        generated += "V\n";
+                        generated += "V";
+                        nl();
                         break;
                     case INT:
-                        generated += "I\n";
+                        generated += "I";
+                        nl();
                         break;
                     case BOOL:
                         generated += "Z\n";
+                        nl();
                         break;
                 }
             }
@@ -92,6 +98,14 @@ public class CodeGenerator {
 
 
     public void print() {
-        System.out.println(this.generated);
+        System.out.println("\n\n" + this.generated);
+    }
+
+    public static void space() {
+        generated += " ";
+    }
+
+    public static void nl() {
+        generated += "\n";
     }
 }

@@ -28,7 +28,6 @@ public class Main {
 
             try{
                 root.eval();
-                System.out.println("\n"+root.getId()+ "\n");
                 root.dump(""); // prints the tree on the screen
                 codeGenerator = new CodeGenerator(root);
                 codeGenerator.generate();

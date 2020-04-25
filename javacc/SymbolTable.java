@@ -14,7 +14,7 @@ public class SymbolTable {
 
     public void addSymbol(String key, MethodSymbol symbol){
         if(table.containsKey(key))
-            ((MethodSymbol) table.get(key)).addParameters(symbol.parametersOverload);
+            ((MethodSymbol) table.get(key)).addParameters(symbol.getParametersOverload());
         else
             table.put(key, symbol);
     }
@@ -68,6 +68,18 @@ public class SymbolTable {
 
         if(symbol != null)
             symbol.setInitialized(true);
+    }
+
+    public String getClassType(String key){
+        Symbol symbol = this.getSymbol(key);
+
+        if(symbol.getType() != TypeEnum.OBJECT)
+            return null;
+
+        if(symbol instanceof ClassSymbol)
+            return key;
+        else
+            return symbol.getClassType();
     }
 
     @Override

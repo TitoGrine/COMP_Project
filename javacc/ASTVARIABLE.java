@@ -18,9 +18,10 @@ class ASTVARIABLE extends SimpleNode {
     ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
     TypeEnum type;
+    String name;
 
     if(firstChild.id == ParserTreeConstants.JJTIDENT){
-      String name = ((ASTIDENT) firstChild).name;
+      name = ((ASTIDENT) firstChild).name;
 
       Symbol symbol = this.symbolTable.getSymbol(name);
 
@@ -35,6 +36,7 @@ class ASTVARIABLE extends SimpleNode {
       firstChild.eval(errors);
 
       type = ((ASTTYPE) firstChild).typeID;
+      name = ((ASTTYPE) firstChild).varName;
     }
 
     String key = (classScope ? "this." : "") + secondChild.name;
@@ -46,8 +48,9 @@ class ASTVARIABLE extends SimpleNode {
 
     if(type == TypeEnum.ARRAY)
       this.symbolTable.addSymbol(key, new ArraySymbol(TypeEnum.INT));
-    else if(type == TypeEnum.OBJECT)
-      this.symbolTable.addSymbol(key, new Symbol(type, ((ASTIDENT) firstChild).name));
+    else if(type == TypeEnum.OBJECT){
+      this.symbolTable.addSymbol(key, new Symbol(type, name));
+    }
     else
       this.symbolTable.addSymbol(key, new Symbol(type));
   }

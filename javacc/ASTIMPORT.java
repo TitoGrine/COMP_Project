@@ -55,7 +55,10 @@ class ASTIMPORT extends SimpleNode {
       }
     }
 
-    this.symbolTable.addSymbol(key, classImport ? new ClassSymbol(parameters) : new MethodSymbol(returnType, parameters));
+    if(classImport)
+      this.symbolTable.addSymbol(key, new ClassSymbol(parameters));
+    else
+      this.symbolTable.addSymbol(key, new MethodSymbol(returnType, parameters));
   }
 }
 /* JavaCC - OriginalChecksum=88acf2e261b5ed8d1318a9e9015ad173 (do not edit this line) */

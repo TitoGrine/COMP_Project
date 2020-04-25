@@ -21,7 +21,7 @@ public class Main {
 
             errors.throwErrors();
 
-            //root.dump(""); // prints the tree on the screen
+            root.dump(""); // prints the tree on the screen
 
         } catch (Exception e) {
             throw e;

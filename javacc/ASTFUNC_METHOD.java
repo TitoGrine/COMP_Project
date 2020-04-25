@@ -17,7 +17,7 @@ class ASTFUNC_METHOD extends Operator {
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     ASTCALL secondChild = (ASTCALL) this.jjtGetChild(1);
 
-    String object = "";
+    String object;
     String extendedClass = null;
 
     firstChild.addSymbolTable(this.symbolTable);
@@ -37,7 +37,7 @@ class ASTFUNC_METHOD extends Operator {
         Symbol symbol = this.symbolTable.getSymbol(object);
 
         if(symbol.getType() == TypeEnum.OBJECT)
-          object = symbol.getClassType();
+          object = this.symbolTable.getClassType(object);
 
         if(this.symbolTable.existsClassSymbol(object))
           extendedClass = ((ClassSymbol) this.symbolTable.getSymbol(object)).getExtendedClass();
@@ -60,23 +60,33 @@ class ASTFUNC_METHOD extends Operator {
 
     String method = secondChild.method;
 
+    String message = "";
+
     boolean checkExtended = false;
+    boolean invalidParams = false;
 
     if(!this.symbolTable.existsMethodSymbol(object + method)){
       checkExtended = true;
+      message = "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object);
     } else {
       MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(object + method);
 
-      if(!methodSymbol.acceptedParameters(secondChild.arguments))
+      if(!methodSymbol.acceptedParameters(secondChild.arguments)){
         checkExtended = true;
+        invalidParams = true;
+        message = "No method " + method + " accepts the given arguments.";
+      }
     }
 
     if(checkExtended){
       if(extendedClass == null){
-        errors.addError(this.getCoords(), "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object));
+        errors.addError(this.getCoords(), message);
         return;
       } else if(!this.symbolTable.existsMethodSymbol(extendedClass + '.' + method)){
-        errors.addError(this.getCoords(), "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + " nor the extended class " + extendedClass);
+        if(invalidParams)
+          errors.addError(this.getCoords(), message);
+        else
+          errors.addError(this.getCoords(), "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + " nor the extended class " + extendedClass);
         return;
       }
 

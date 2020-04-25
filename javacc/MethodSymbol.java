@@ -51,6 +51,10 @@ public class MethodSymbol extends Symbol{
         return parametersOverload.contains(arguments) || parametersOverload.contains(new ArrayList<>(Collections.singleton(TypeEnum.VOID)));
     }
 
+    public ArrayList<ArrayList<TypeEnum>> getParametersOverload() {
+        return parametersOverload;
+    }
+
     @Override
     public String toString() {
         return super.toString() + "       \033[1;37mReturn Type\033[0m: " + this.returnType + '\n';

@@ -1,4 +1,4 @@
-import io.println(int);
+import static io.println(int);
 class Simple {
 
 	public static void main(String[] args) {

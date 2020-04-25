@@ -9,7 +9,8 @@ import java.util.SimpleTimeZone;
 public class Main {
     static CodeGenerator codeGenerator;
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws Exception {
+
 
 
         java.io.FileInputStream file = null;
@@ -24,13 +25,19 @@ public class Main {
         try {
             SimpleNode root = parser.Program(); // returns reference to root node
 
+            SemanticErrors errors = new SemanticErrors();
+
             try{
-                root.eval();
+                root.eval(errors);
+
+                errors.throwErrors();
+
                 root.dump(""); // prints the tree on the screen
                 codeGenerator = new CodeGenerator(root);
                 codeGenerator.generate();
             } catch (Exception e){
                 e.printStackTrace();
+                //throw e;
             }
 
             //root.dump(""); // prints the tree on the screen

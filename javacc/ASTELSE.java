@@ -11,11 +11,11 @@ class ASTELSE extends SimpleNode {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
 
     firstChild.addSymbolTable(this.symbolTable);
-    firstChild.eval();
+    firstChild.eval(errors);
   }
 }
 /* JavaCC - OriginalChecksum=ee889ff077a4e76bc82114aaed4651e5 (do not edit this line) */

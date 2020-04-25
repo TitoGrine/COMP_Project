@@ -11,28 +11,43 @@ class ASTASSIGN extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
-    ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
+  public void eval(SemanticErrors errors){
+    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
-    String varName = firstChild.name;
+    String varName;
+    TypeEnum compatibleType;
+
+    if(firstChild.id == ParserTreeConstants.JJTARRAY_ACCESS){
+      firstChild.addSymbolTable(this.symbolTable);
+      firstChild.eval(errors);
+      varName = ((ASTARRAY_ACCESS) firstChild).object;
+    }
+    else
+      varName = ((ASTIDENT) firstChild).name;
 
     if(!this.symbolTable.existsSymbol(varName)){
 
       if(!this.symbolTable.existsSymbol("this." + varName)){
-        throw new Exception("Trying to assign variable " + varName + " that wasn't previously declared.");
+        errors.addError(this.getCoords(), "Trying to assign variable " + varName + " that wasn't previously declared.");
+        return;
       }
 
       varName = "this." + varName;
     }
 
+    if(firstChild.id == ParserTreeConstants.JJTARRAY_ACCESS)
+      compatibleType = ((ArraySymbol) this.symbolTable.getSymbol(varName)).getReturnType();
+    else
+      compatibleType = this.symbolTable.getSymbol(varName).getType();
+
     secondChild.addSymbolTable(this.symbolTable);
-    secondChild.eval();
+    secondChild.eval(errors);
 
-    if(!this.validType(secondChild, this.symbolTable.getSymbol(varName).getType()))
-      throw new Exception("Assignment of variable " + firstChild.name + " to incompatible type.");
+    if(!this.validType(secondChild, compatibleType, errors))
+      errors.addError(this.getCoords(), "Assignment of variable " + varName + " to incompatible type.");
 
-    this.initializedUse(secondChild);
+    this.initializedUse(secondChild, errors);
 
     this.symbolTable.setInitialized(varName);
   }

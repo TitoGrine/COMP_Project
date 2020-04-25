@@ -17,25 +17,25 @@ class ASTMUL extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
     firstChild.addSymbolTable(this.symbolTable);
     secondChild.addSymbolTable(this.symbolTable);
 
-    firstChild.eval();
-    secondChild.eval();
+    firstChild.eval(errors);
+    secondChild.eval(errors);
 
-    if(!this.validType(firstChild, TypeEnum.INT))
-      throw new Exception("MUL must have left hand side expression returning an integer.");
+    if(!this.validType(firstChild, TypeEnum.INT, errors))
+      errors.addError(this.getCoords(), "MUL must have left hand side expression returning an integer.");
 
-    this.initializedUse(firstChild);
+    this.initializedUse(firstChild, errors);
 
-    if(!this.validType(secondChild, TypeEnum.INT))
-      throw new Exception("MUL must have right hand side expression returning an integer.");
+    if(!this.validType(secondChild, TypeEnum.INT, errors))
+      errors.addError(this.getCoords(), "MUL must have right hand side expression returning an integer.");
 
-    this.initializedUse(secondChild);
+    this.initializedUse(secondChild, errors);
   }
 }
 /* JavaCC - OriginalChecksum=a9d32d9eced931fe3abd638eec2fd617 (do not edit this line) */

@@ -3,6 +3,8 @@
 public
 class SimpleNode implements Node {
 
+  private SourceCoords myCoords;
+
   protected Node parent;
   protected Node[] children;
   protected int id;
@@ -18,6 +20,9 @@ class SimpleNode implements Node {
     this(i);
     parser = p;
   }
+
+  public void setCoords( SourceCoords toSet ) { myCoords = toSet ; }
+  public SourceCoords getCoords() { return myCoords ; }
 
   public void jjtOpen() {
   }
@@ -69,7 +74,7 @@ class SimpleNode implements Node {
     this.symbolTable = symbolTable;
   }
 
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors) {
   }
 
   /* Override this method if you want to customize how the node dumps

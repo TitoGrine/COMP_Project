@@ -13,7 +13,7 @@ class ASTFUNC_METHOD extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     ASTCALL secondChild = (ASTCALL) this.jjtGetChild(1);
 
@@ -23,40 +23,56 @@ class ASTFUNC_METHOD extends Operator {
     firstChild.addSymbolTable(this.symbolTable);
 
     if(firstChild.id == ParserTreeConstants.JJTTHIS){
-      firstChild.eval();
+      firstChild.eval(errors);
 
       ClassSymbol classSymbol = (ClassSymbol) this.symbolTable.getSymbol(((ASTTHIS) firstChild).className);
 
+      object = ((ASTTHIS) firstChild).className;
+
       extendedClass = classSymbol.getExtendedClass();
     } else if(firstChild.id == ParserTreeConstants.JJTIDENT){
-      object = ((ASTIDENT) firstChild).name + '.';
+      object = ((ASTIDENT) firstChild).name;
+
+      if(this.symbolTable.existsSymbol(object)){
+        Symbol symbol = this.symbolTable.getSymbol(object);
+
+        if(symbol.getType() == TypeEnum.OBJECT)
+          object = symbol.getClassType();
+
+      }
     } else if(firstChild.id == ParserTreeConstants.JJTNEW){
-      firstChild.eval();
-      object = ((ASTNEW) firstChild).object + '.';
+      firstChild.eval(errors);
+      object = ((ASTNEW) firstChild).object;
     } else if(firstChild.id == ParserTreeConstants.JJTFUNC_METHOD){
-      firstChild.eval();
-      object = ((ASTFUNC_METHOD) firstChild).call + '.';
-    } else
-      throw new Exception("Method call to an invalid object.");
+      firstChild.eval(errors);
+      object = ((ASTFUNC_METHOD) firstChild).call;
+    } else{
+      errors.addError(this.getCoords(), "Method call to an invalid object.");
+      return;
+    }
+
+    object += '.';
 
     secondChild.addSymbolTable(this.symbolTable);
-    secondChild.eval();
+    secondChild.eval(errors);
 
     String method = secondChild.method;
 
     if(!this.symbolTable.existsMethodSymbol(object + method)){
-      if(extendedClass == null)
-        throw new Exception("Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object));
-      else if(!this.symbolTable.existsMethodSymbol(extendedClass + method))
-        throw new Exception("Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + " nor the extended class " + extendedClass);
-
+      if(extendedClass == null){
+        errors.addError(this.getCoords(), "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + ".");
+        return;
+      }else if(!this.symbolTable.existsMethodSymbol(extendedClass + method)){
+        errors.addError(this.getCoords(), "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + " nor the extended class " + extendedClass + ".");
+        return;
+      }
       object = extendedClass + '.';
     }
 
     MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(object + method);
 
     if(!methodSymbol.acceptedParameters(secondChild.arguments))
-      throw new Exception("Method " + method + " doesn't accept the given arguments.");
+      errors.addError(this.getCoords(), "Method " + method + " doesn't accept the given arguments.");
 
     this.call = object + method;
   }

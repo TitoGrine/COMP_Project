@@ -13,14 +13,15 @@ class ASTLENGTH extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
       SimpleNode childNode = (SimpleNode) this.jjtGetChild(0);
 
       childNode.addSymbolTable(this.symbolTable);
-      childNode.eval();
+      childNode.eval(errors);
 
-      if(!this.validType(childNode, TypeEnum.OBJECT) && !this.validType(childNode, TypeEnum.ARRAY) && !this.validType(childNode, TypeEnum.STRING))
-        throw new Exception("Length method isn't applied to a sizable object.");
+      // TODO: Check if only these types can be sized!
+      if(!this.validType(childNode, TypeEnum.OBJECT, errors) && !this.validType(childNode, TypeEnum.ARRAY, errors) && !this.validType(childNode, TypeEnum.STRING, errors))
+          errors.addError(this.getCoords(), "Length method isn't applied to a sizable object.");
     }
   }
 /* JavaCC - OriginalChecksum=9340b1c9d0f3a7601be1ff8cdf1361a0 (do not edit this line) */

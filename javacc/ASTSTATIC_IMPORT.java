@@ -14,7 +14,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     int numChildren = this.jjtGetNumChildren();
 
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
@@ -28,7 +28,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
     if(numChildren > 2) {
       SimpleNode thirdChild = (SimpleNode) this.jjtGetChild(2);
       thirdChild.addSymbolTable(this.symbolTable);
-      thirdChild.eval();
+      thirdChild.eval(errors);
 
       if (thirdChild.id == ParserTreeConstants.JJTRETURN)
         returnType = ((ASTRETURN) thirdChild).type;
@@ -38,7 +38,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
       if (numChildren == 4) {
         ASTRETURN fourthChild = (ASTRETURN) this.jjtGetChild(3);
         fourthChild.addSymbolTable(this.symbolTable);
-        fourthChild.eval();
+        fourthChild.eval(errors);
         returnType = fourthChild.type;
       }
     }

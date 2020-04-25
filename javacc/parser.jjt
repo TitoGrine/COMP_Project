@@ -1,7 +1,8 @@
 options
 {
-    LOOKAHEAD=1;
+    LOOKAHEAD = 1;
     MULTI = true;
+    NODE_SCOPE_HOOK = true;
 }
 
 PARSER_BEGIN(Parser)
@@ -14,6 +15,14 @@ public class Parser
     private int nr_errors = 0;
     private static int MAX_ERRORS = 10;
     private int parenthesis_counter = 0;
+
+    void jjtreeOpenNodeScope(Node n) {
+        ((SimpleNode) n).setCoords( new SourceCoords(getToken(1)) ) ;
+    }
+
+    void jjtreeCloseNodeScope(Node n) {
+
+    }
 
     public int errorSkip() {
       Token error_t = getToken(1);

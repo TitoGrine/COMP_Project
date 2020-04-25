@@ -13,7 +13,7 @@ class ASTARRAY_ACCESS extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
@@ -21,30 +21,30 @@ class ASTARRAY_ACCESS extends Operator {
       this.object = ((ASTIDENT) firstChild).name;
     } else if(firstChild.id == ParserTreeConstants.JJTFUNC_METHOD) {
       firstChild.addSymbolTable(this.symbolTable);
-      firstChild.eval();
+      firstChild.eval(errors);
 
       this.object = ((ASTFUNC_METHOD) firstChild).call;
     } else
-      throw new Exception("Attempted to access a non array object like an array.");
+      errors.addError(this.getCoords(), "Attempted to access a non array object like an array.");
 
     if(!this.symbolTable.existsSymbol(this.object)){
 
       if(!this.symbolTable.existsSymbol("this." + this.object)){
-        throw new Exception("Trying to assign variable " + this.object + " that wasn't previously declared.");
+        errors.addError(this.getCoords(), "Trying to assign variable " + this.object + " that wasn't previously declared.");
       }
 
       this.object = "this." + this.object;
     }
 
-    if(!this.validType(firstChild, TypeEnum.ARRAY))
-      throw new Exception("Variable " + this.object + " isn't an array but it's being accessed as one.");
+    if(!this.validType(firstChild, TypeEnum.ARRAY, errors))
+      errors.addError(this.getCoords(), "Variable " + this.object + " isn't an array but it's being accessed as one.");
 
-    this.initializedUse(firstChild);
+    this.initializedUse(firstChild, errors);
 
-    if(!this.validType(secondChild, TypeEnum.INT))
-      throw new Exception("Access to array " + this.object + " with invalid index.");
+    if(!this.validType(secondChild, TypeEnum.INT, errors))
+      errors.addError(this.getCoords(), "Access to array " + this.object + " with invalid index.");
 
-    this.initializedUse(secondChild);
+    this.initializedUse(secondChild, errors);
   }
 }
 /* JavaCC - OriginalChecksum=22f8f358ed3b439b354e0322ba03ff68 (do not edit this line) */

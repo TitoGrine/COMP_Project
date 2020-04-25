@@ -16,13 +16,13 @@ class ASTCALL extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     int numChildren = this.jjtGetNumChildren();
 
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
 
     if(firstChild.id != ParserTreeConstants.JJTIDENT)
-      throw new Exception("First child of CALL must be an IDENT.");
+      errors.addError(this.getCoords(), "First child of CALL must be an IDENT.");
 
     this.method = ((ASTIDENT) firstChild).name;
 
@@ -32,10 +32,10 @@ class ASTCALL extends Operator {
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
     if(secondChild.id != ParserTreeConstants.JJTARGUMENTS)
-      throw new Exception("Second child of CALL must be ARGUMENTS.");
+      errors.addError(this.getCoords(), "Second child of CALL must be ARGUMENTS.");
 
     secondChild.addSymbolTable(this.symbolTable);
-    secondChild.eval();
+    secondChild.eval(errors);
 
     this.arguments = ((ASTARGUMENTS) secondChild).arguments;
   }

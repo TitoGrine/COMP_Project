@@ -15,12 +15,12 @@ class ASTMETHOD extends SimpleNode {
     super(p, id);
   }
 
-  public void preProcessMethod() throws Exception {
+  public void preProcessMethod(SemanticErrors errors){
     ASTRETURN firstChild = (ASTRETURN) this.jjtGetChild(0);
     ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
     firstChild.addSymbolTable(this.symbolTable);
-    firstChild.eval();
+    firstChild.eval(errors);
 
     TypeEnum returnType = firstChild.type;
     this.methodName = secondChild.name;
@@ -31,7 +31,7 @@ class ASTMETHOD extends SimpleNode {
       ASTARGUMENTS arguments = (ASTARGUMENTS) thirdChild;
 
       arguments.addSymbolTable(this.symbolTable);
-      arguments.eval();
+      arguments.eval(errors);
 
       methodSymbol = new MethodSymbol(returnType, arguments.arguments);
     } else {
@@ -45,7 +45,7 @@ class ASTMETHOD extends SimpleNode {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     int childIndex = 2;
 
     SimpleNode childNode = (SimpleNode) this.jjtGetChild(childIndex);
@@ -58,18 +58,16 @@ class ASTMETHOD extends SimpleNode {
     ASTMETHOD_BODY methodBody = (ASTMETHOD_BODY) childNode;
 
     methodBody.addSymbolTable(symbolTable);
-    methodBody.eval();
+    methodBody.eval(errors);
 
     childIndex++;
     ASTRETURN_EXP returnExp = (ASTRETURN_EXP) this.jjtGetChild(childIndex);
 
     returnExp.addSymbolTable(this.symbolTable);
-    returnExp.eval();
+    returnExp.eval(errors);
 
     if(returnExp.expType != methodSymbol.getReturnType())
-      throw new Exception("Method " + methodName + " returns type not compatible with declaration.");
-
-    System.out.println(this.symbolTable.toString());
+      errors.addError(this.getCoords(), "Method " + methodName + " returns type not compatible with declaration.");
   }
 }
 /* JavaCC - OriginalChecksum=ea7e13413ab21b460f76667a3725c2ac (do not edit this line) */

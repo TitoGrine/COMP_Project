@@ -15,7 +15,7 @@ class ASTPARAMETERS extends SimpleNode {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     int numChildren = this.jjtGetNumChildren();
     int childIndex = 0;
 
@@ -23,7 +23,7 @@ class ASTPARAMETERS extends SimpleNode {
       ASTTYPE childNode = (ASTTYPE) this.jjtGetChild(childIndex);
 
       childNode.addSymbolTable(this.symbolTable);
-      childNode.eval();
+      childNode.eval(errors);
 
       parameters.add(childNode.typeID);
 

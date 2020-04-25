@@ -17,16 +17,16 @@ class ASTNEGATION extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     SimpleNode childNode = (SimpleNode) this.jjtGetChild(0);
 
     childNode.addSymbolTable(this.symbolTable);
-    childNode.eval();
+    childNode.eval(errors);
 
-    if(!this.validType(childNode, TypeEnum.BOOL))
-      throw new Exception("NEGATION of a non boolean type.");
+    if(!this.validType(childNode, TypeEnum.BOOL, errors))
+      errors.addError(this.getCoords(), "NEGATION of a non boolean type.");
 
-    this.initializedUse(childNode);
+    this.initializedUse(childNode, errors);
   }
 }
 /* JavaCC - OriginalChecksum=4ffa54cb323c32b97a8d1dfeae6338b8 (do not edit this line) */

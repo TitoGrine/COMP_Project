@@ -25,7 +25,7 @@ public class Main {
                 root.dump(""); // prints the tree on the screen
             } catch (Exception e){
                 e.printStackTrace();
-                //throw e;
+                throw e;
             }
 
         } catch (ParseException e) {

@@ -47,6 +47,7 @@ class ASTASSIGN extends Operator {
     if(!this.validType(secondChild, compatibleType, errors))
       errors.addError(this.getCoords(), "Assignment of variable " + varName + " to incompatible type.");
 
+
     this.initializedUse(secondChild, errors);
 
     this.symbolTable.setInitialized(varName);

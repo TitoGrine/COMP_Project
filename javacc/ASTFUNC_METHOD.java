@@ -39,6 +39,8 @@ class ASTFUNC_METHOD extends Operator {
         if(symbol.getType() == TypeEnum.OBJECT)
           object = symbol.getClassType();
 
+        if(this.symbolTable.existsClassSymbol(object))
+          extendedClass = ((ClassSymbol) this.symbolTable.getSymbol(object)).getExtendedClass();
       }
     } else if(firstChild.id == ParserTreeConstants.JJTNEW){
       firstChild.eval(errors);
@@ -58,21 +60,33 @@ class ASTFUNC_METHOD extends Operator {
 
     String method = secondChild.method;
 
+    boolean checkExtended = false;
+
     if(!this.symbolTable.existsMethodSymbol(object + method)){
+      checkExtended = true;
+    } else {
+      MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(object + method);
+
+      if(!methodSymbol.acceptedParameters(secondChild.arguments))
+        checkExtended = true;
+    }
+
+    if(checkExtended){
       if(extendedClass == null){
         errors.addError(this.getCoords(), "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + ".");
         return;
-      }else if(!this.symbolTable.existsMethodSymbol(extendedClass + method)){
+      } else if(!this.symbolTable.existsMethodSymbol(extendedClass + '.' + method)){
         errors.addError(this.getCoords(), "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + " nor the extended class " + extendedClass + ".");
         return;
       }
+
       object = extendedClass + '.';
+
+      MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(object + method);
+
+      if(!methodSymbol.acceptedParameters(secondChild.arguments))
+        errors.addError(this.getCoords(), "No method " + method + " accepts the given arguments.");
     }
-
-    MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(object + method);
-
-    if(!methodSymbol.acceptedParameters(secondChild.arguments))
-      errors.addError(this.getCoords(), "Method " + method + " doesn't accept the given arguments.");
 
     this.call = object + method;
   }

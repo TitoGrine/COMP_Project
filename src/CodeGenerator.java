@@ -8,6 +8,7 @@ import java.util.SimpleTimeZone;
 public class CodeGenerator {
     static String generated;
     private SimpleNode root;
+    static int localIndex = 1;
     
 
     public CodeGenerator(SimpleNode root) {
@@ -24,9 +25,9 @@ public class CodeGenerator {
             if (child.getId() == 6) {
                 Node classChilds[] = addClass(child);
                 addVariables(classChilds);
-                addMainMethod(classChilds);
                 addStandardInitializer();
                 addMainHeader();
+                addMainMethod(classChilds);
             }
         }
         print();        
@@ -78,9 +79,57 @@ public class CodeGenerator {
         for (Node n : node){
             SimpleNode simpleN = (SimpleNode) n;
             if (simpleN.toString().equals("MAINMETHOD")) {
-                //Do stuff
+                Node mainMethodChilds[] = simpleN.jjtGetChildren();
+                for (Node mainBodyCandidate: mainMethodChilds) {
+                    SimpleNode mainSimpleNode = (SimpleNode) mainBodyCandidate;
+                    if (mainSimpleNode.toString().equals("METHOD_BODY"))
+                        // Node mainNode = (Node) mainSimpleNode;
+                        // Node methodBodyChilds = mainNode.get
+                        addAssigns(mainSimpleNode.jjtGetChildren());
+                }
             }
         }
+    }
+
+    static void addAssigns(Node methodBodyChilds[]) {
+        for (Node candidate :methodBodyChilds)
+            if (candidate.toString().equals("ASSIGN")) {
+                switch(candidate.jjtGetChild(1).toString()) {
+                    case "NEW":
+                        //TODO
+                        break;
+                    case "SUB":
+                        //TODO
+                        break;
+                    case "FUNC_METHOD":
+                        //TODO
+                        break;
+                    default:
+                        addVariableAllocation(candidate);
+                        break;
+                }
+            }
+    }
+
+
+    public static void addVariableAllocation(Node assign) {
+        Node value = assign.jjtGetChild(1);
+        int valueString = ((ASTNUM) value).value;
+
+        nl();
+        tab();
+        generated += "bipush";
+        space();
+        generated += valueString;
+
+        nl();
+        tab();
+        generated += "istore";
+        space();
+        generated += localIndex;
+        nl();
+
+        localIndex++;
     }
 
 

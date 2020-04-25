@@ -215,7 +215,7 @@ void Type() #void : {}
 {
     NonIdentifierType()
     |
-    Identifier() #TYPE
+    Identifier() #TYPE(1)
 }
 
 void NonIdentifierType() #TYPE : {}
@@ -261,11 +261,11 @@ void MainMethod() #MAINMETHOD : {}
     <RBRACKET>
 }
 
-void MethodBody() #void : {Token t;}
+void MethodBody() #void : {}
 {
     NonIdentifierVarDeclaration() MethodBody()
     |
-    Identifier() (IdentifierVarDeclaration() MethodBody() | IdentifierStatements() (Statement())*)
+    Identifier() ( IdentifierVarDeclaration() MethodBody() | IdentifierStatements() (Statement())*)
     |
     NonIdentifierStatements() (Statement())*
     |

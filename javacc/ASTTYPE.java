@@ -17,22 +17,14 @@ class ASTTYPE extends SimpleNode {
     if(typeID != null)
       return;
 
-    int numChildren = this.jjtGetNumChildren();
-
-    if(numChildren != 1)
-      throw new Exception("TYPE can only have at most one child.");
-
     SimpleNode child = (SimpleNode) this.jjtGetChild(0);
-
-    if(child.id != ParserTreeConstants.JJTIDENT)
-      throw new Exception("TYPE can only a child of type IDENT");
 
     String name = ((ASTIDENT) child).name;
 
     Symbol symbol = this.symbolTable.getSymbol(name);
 
     if(symbol == null)
-      throw new Exception("Could not resolve identifier of name " + name);
+      throw new Exception("Unrecognized type " + name);
 
     this.typeID = symbol.getType();
   }

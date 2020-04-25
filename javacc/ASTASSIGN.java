@@ -32,8 +32,7 @@ class ASTASSIGN extends Operator {
     if(!this.validType(secondChild, this.symbolTable.getSymbol(varName).getType()))
       throw new Exception("Assignment of variable " + firstChild.name + " to incompatible type.");
 
-    if(!this.initializedUse(secondChild))
-      throw new Exception("Assignment of variable " + firstChild.name + " to uninstantiated object.");
+    this.initializedUse(secondChild);
 
     this.symbolTable.setInitialized(varName);
   }

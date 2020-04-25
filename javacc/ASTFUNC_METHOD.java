@@ -29,20 +29,19 @@ class ASTFUNC_METHOD extends Operator {
 
       extendedClass = classSymbol.getExtendedClass();
     } else if(firstChild.id == ParserTreeConstants.JJTIDENT){
-      object = ((ASTIDENT) firstChild).name;
+      object = ((ASTIDENT) firstChild).name + '.';
     } else if(firstChild.id == ParserTreeConstants.JJTNEW){
       firstChild.eval();
-      object = ((ASTNEW) firstChild).object;
+      object = ((ASTNEW) firstChild).object + '.';
     } else if(firstChild.id == ParserTreeConstants.JJTFUNC_METHOD){
       firstChild.eval();
-      object = ((ASTFUNC_METHOD) firstChild).call;
+      object = ((ASTFUNC_METHOD) firstChild).call + '.';
     } else
       throw new Exception("Method call to an invalid object.");
 
     secondChild.addSymbolTable(this.symbolTable);
     secondChild.eval();
 
-    object += '.';
     String method = secondChild.method;
 
     if(!this.symbolTable.existsMethodSymbol(object + method)){

@@ -30,14 +30,12 @@ class ASTMUL extends Operator {
     if(!this.validType(firstChild, TypeEnum.INT))
       throw new Exception("MUL must have left hand side expression returning an integer.");
 
-    if(!this.initializedUse(firstChild))
-      throw new Exception("Multiplying a non initialized variable.");
+    this.initializedUse(firstChild);
 
     if(!this.validType(secondChild, TypeEnum.INT))
       throw new Exception("MUL must have right hand side expression returning an integer.");
 
-    if(!this.initializedUse(secondChild))
-      throw new Exception("Multiplying a non initialized variable.");
+    this.initializedUse(secondChild);
   }
 }
 /* JavaCC - OriginalChecksum=a9d32d9eced931fe3abd638eec2fd617 (do not edit this line) */

@@ -29,14 +29,13 @@ class ASTAND extends Operator {
     if(!this.validType(firstChild, TypeEnum.BOOL))
       throw new Exception("AND must have left hand side expression returning a boolean.");
 
-    if(!this.initializedUse(firstChild))
-      throw new Exception("Evaluating a non initialized variable.");
+    this.initializedUse(firstChild);
 
     if(!this.validType(secondChild, TypeEnum.BOOL))
       throw new Exception("AND must have right hand side expression returning a boolean.");
 
-    if(!this.initializedUse(secondChild))
-      throw new Exception("Evaluating a non initialized variable.");
+    this.initializedUse(secondChild);
+
   }
 }
 /* JavaCC - OriginalChecksum=93bee1d279b1b3198c3ca0603cca2ed4 (do not edit this line) */

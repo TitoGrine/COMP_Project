@@ -68,6 +68,8 @@ class ASTMETHOD extends SimpleNode {
 
     if(returnExp.expType != methodSymbol.getReturnType())
       throw new Exception("Method " + methodName + " returns type not compatible with declaration.");
+
+    System.out.println(this.symbolTable.toString());
   }
 }
 /* JavaCC - OriginalChecksum=ea7e13413ab21b460f76667a3725c2ac (do not edit this line) */

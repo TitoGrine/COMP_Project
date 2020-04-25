@@ -92,14 +92,14 @@ public class CodeGenerator {
     }
 
     static void addAssigns(Node methodBodyChilds[]) {
-        for (Node candidate :methodBodyChilds)
+        for (Node candidate : methodBodyChilds)
             if (candidate.toString().equals("ASSIGN")) {
                 switch(candidate.jjtGetChild(1).toString()) {
                     case "NEW":
                         //TODO
                         break;
                     case "SUB":
-                        //TODO
+                        addOperation(candidate);
                         break;
                     case "FUNC_METHOD":
                         //TODO
@@ -109,6 +109,25 @@ public class CodeGenerator {
                         break;
                 }
             }
+    }
+
+    private static void addOperation(Node candidate) {
+        SimpleNode operation = (SimpleNode)candidate.jjtGetChild(1);
+        tab();
+        generated += "ldc " + ((ASTNUM) operation.jjtGetChild(0)).value;
+        nl();
+        tab();
+        generated += "ldc " + ((ASTNUM) operation.jjtGetChild(1)).value;
+        nl();
+        tab();
+        generated += "isub"; //TODO verificar o tipo de variavel
+        nl();
+        tab();
+        generated += "istore " + localIndex;
+        localIndex++;
+        nl();
+
+
     }
 
 

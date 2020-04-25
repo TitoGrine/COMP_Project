@@ -41,8 +41,13 @@ class ASTARRAY_ACCESS extends Operator {
 
     this.initializedUse(firstChild, errors);
 
-    if(!this.validType(secondChild, TypeEnum.INT, errors))
+    secondChild.addSymbolTable(this.symbolTable);
+    secondChild.eval(errors);
+
+    if(!this.validType(secondChild, TypeEnum.INT, errors)){
+      System.out.println("Second child: " + secondChild);
       errors.addError(this.getCoords(), "Access to array " + this.object + " with invalid index.");
+    }
 
     this.initializedUse(secondChild, errors);
   }

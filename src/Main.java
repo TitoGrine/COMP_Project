@@ -10,10 +10,8 @@ public class Main {
     static CodeGenerator codeGenerator;
 
     public static void main(String[] args) throws Exception {
-
-
-
         java.io.FileInputStream file = null;
+
         try {
             file = new java.io.FileInputStream(new java.io.File(args[0]));
         } catch (FileNotFoundException e) {
@@ -27,26 +25,18 @@ public class Main {
 
             SemanticErrors errors = new SemanticErrors();
 
-            try{
-                root.eval(errors);
+            root.eval(errors);
 
-                errors.throwErrors();
+            errors.throwErrors();
 
-                root.dump(""); // prints the tree on the screen
-                codeGenerator = new CodeGenerator(root);
-                codeGenerator.generate();
-            } catch (Exception e){
-                e.printStackTrace();
-                //throw e;
-            }
-
-            //root.dump(""); // prints the tree on the screen
-
-        } catch (ParseException e) {
+            root.dump(""); // prints the tree on the screen
+            codeGenerator = new CodeGenerator(root);
+            codeGenerator.generate();
+        } catch (Exception e){
             e.printStackTrace();
-            throw new ParseException("Parser error");
+            //throw e;
         }
+
+        //root.dump(""); // prints the tree on the screen
     }
-
 }
-

@@ -16,7 +16,7 @@ public class SemanticError {
     }
 
     public void printError(){
-        System.out.println(RED_BOLD + " ⚠ " + RESET + "Error on " + WHITE_UNDERLINED + "line " + this.sourceCoords.getTokenLine() + RESET + ":");
+        System.out.println(RED_BOLD + " ⚠ " + RESET + "Error on " + "line " + WHITE_UNDERLINED + this.sourceCoords.getTokenLine() + RESET + " column " + WHITE_UNDERLINED + this.sourceCoords.getTokenColumn() + RESET + ":");
         System.out.println("   · \"" + exception + "\"\n");
     }
 }

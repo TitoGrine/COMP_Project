@@ -8,4 +8,6 @@ public class SourceCoords {
     public int getTokenLine(){
         return this.token.beginLine;
     }
+
+    public int getTokenColumn() { return this.token.beginColumn; }
 }

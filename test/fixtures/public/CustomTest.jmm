@@ -5,6 +5,7 @@ import ioPlus.plus(int, int, boolean);
 import ioPlus.plus(int, int, int);
 import Test;
 import Stonk;
+import Stonk.stonk(boolean) boolean;
 
 class CustomTest extends Test{
     int something;
@@ -15,7 +16,7 @@ class CustomTest extends Test{
 	public int stonk(int[] args, int nut) {
         int num;
         boolean star;
-        Milf num;
+        CustomTest test;
 
         args[5] + 2;
         num = 5;
@@ -35,7 +36,7 @@ class CustomTest extends Test{
         }
 
         if((2*3-4) < (num+4/2)){
-            ioPlus.plus(2, 3, 2);
+            ioPlus.plus(2, 3, star);
             (args[3] < 3) && star;
         } else {
             args[5];

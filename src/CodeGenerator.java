@@ -4,11 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.SimpleTimeZone;
+import java.util.ArrayList;
+
 
 public class CodeGenerator {
     static String generated;
     private SimpleNode root;
     static int localIndex = 1;
+    private String[] locals = new String[999];
     
 
     public CodeGenerator(SimpleNode root) {
@@ -116,11 +119,14 @@ public class CodeGenerator {
         Node value = assign.jjtGetChild(1);
         int valueString = ((ASTNUM) value).value;
 
-        nl();
+        nl();   
         tab();
         generated += "bipush";
         space();
         generated += valueString;
+
+        // locals[localIndex] = 
+        TypeEnum type = getVariableType(assign);
 
         nl();
         tab();
@@ -130,6 +136,28 @@ public class CodeGenerator {
         nl();
 
         localIndex++;
+    }
+
+
+    static TypeEnum getVariableType(Node assign) {
+        Node identificationNode = assign.jjtGetChild(0);
+        String identification = ((ASTIDENT)identificationNode).name;
+
+        Node methodBodyNode = assign.jjtGetParent();
+        Node methodBodyChilds[] = ((SimpleNode)methodBodyNode).jjtGetChildren();
+
+        for (Node n: methodBodyChilds) {
+            if (n.toString().equals("VARIABLE")) {
+                Node identNode = n.jjtGetChild(1);
+                String nodeID =((ASTIDENT)identNode).name;
+
+                if (identification.equals(nodeID)) {
+                    Node typeNode = n.jjtGetChild(0);
+                    return ((ASTTYPE)typeNode).typeID;
+                }
+            }
+        }
+        return null;
     }
 
 

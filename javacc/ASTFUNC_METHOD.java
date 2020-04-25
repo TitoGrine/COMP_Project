@@ -73,10 +73,10 @@ class ASTFUNC_METHOD extends Operator {
 
     if(checkExtended){
       if(extendedClass == null){
-        errors.addError(this.getCoords(), "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + ".");
+        errors.addError(this.getCoords(), "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object));
         return;
       } else if(!this.symbolTable.existsMethodSymbol(extendedClass + '.' + method)){
-        errors.addError(this.getCoords(), "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + " nor the extended class " + extendedClass + ".");
+        errors.addError(this.getCoords(), "Method " + method + " doesn't exist for object " + (object.isEmpty() ? ((ASTTHIS) firstChild).className : object) + " nor the extended class " + extendedClass);
         return;
       }
 

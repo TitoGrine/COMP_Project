@@ -17,20 +17,14 @@ public class Main {
 
             SemanticErrors errors = new SemanticErrors();
 
-            try{
-                root.eval(errors);
+            root.eval(errors);
 
-                errors.throwErrors();
+            errors.throwErrors();
 
-                root.dump(""); // prints the tree on the screen
-            } catch (Exception e){
-                e.printStackTrace();
-                throw e;
-            }
+            //root.dump(""); // prints the tree on the screen
 
-        } catch (ParseException e) {
-            e.printStackTrace();
-            throw new ParseException("Parser error");
+        } catch (Exception e) {
+            throw e;
         }
     }
 }

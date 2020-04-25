@@ -13,15 +13,15 @@ class ASTRETURN_EXP extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     SimpleNode childNode = (SimpleNode) this.jjtGetChild(0);
 
     childNode.addSymbolTable(this.symbolTable);
-    childNode.eval();
+    childNode.eval(errors);
 
-    this.initializedUse(childNode);
+    this.initializedUse(childNode, errors);
 
-    this.expType = this.getType(childNode);
+    this.expType = this.getType(childNode, errors);
   }
 }
 /* JavaCC - OriginalChecksum=8faf53b79b26fa1318455054445c390c (do not edit this line) */

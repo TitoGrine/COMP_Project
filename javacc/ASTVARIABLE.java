@@ -13,7 +13,7 @@ class ASTVARIABLE extends SimpleNode {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
@@ -24,18 +24,25 @@ class ASTVARIABLE extends SimpleNode {
 
       Symbol symbol = this.symbolTable.getSymbol(name);
 
-      if(symbol == null)
-        throw new Exception("Unrecognized type " + name);
+      if(symbol == null){
+        errors.addError(this.getCoords(), "Unrecognized type " + name + ".");
+        return;
+      }
 
       type = symbol.getType();
     } else {
       firstChild.addSymbolTable(this.symbolTable);
-      firstChild.eval();
+      firstChild.eval(errors);
 
       type = ((ASTTYPE) firstChild).typeID;
     }
 
     String key = (classScope ? "this." : "") + secondChild.name;
+
+    if(this.symbolTable.existsSymbol(key)){
+      errors.addError(this.getCoords(), "Variable " + key + " already declared.");
+      return;
+    }
 
     if(type == TypeEnum.ARRAY)
       this.symbolTable.addSymbol(key, new ArraySymbol(TypeEnum.INT));

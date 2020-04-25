@@ -24,6 +24,9 @@ public class SymbolTable {
     }
 
     public Symbol getSymbol(String key){
+        if(key == null)
+            return null;
+
         Symbol symbol = table.get(key);
 
         if(symbol != null)
@@ -36,22 +39,31 @@ public class SymbolTable {
     }
 
     public boolean existsSymbol(String key){
-        return (this.getSymbol(key) != null);
+        return (key != null && this.getSymbol(key) != null);
     }
 
     public boolean existsMethodSymbol(String key){
+        if(key == null)
+            return false;
+
         Symbol symbol = this.getSymbol(key);
 
         return symbol != null && symbol.type == TypeEnum.METHOD;
     }
 
     public boolean existsClassSymbol(String key){
+        if(key == null)
+            return false;
+
         Symbol symbol = this.getSymbol(key);
 
         return symbol != null && symbol.type == TypeEnum.OBJECT;
     }
 
     public void setInitialized(String key){
+        if(key == null)
+            return;
+
         Symbol symbol = this.getSymbol(key);
 
         if(symbol != null)

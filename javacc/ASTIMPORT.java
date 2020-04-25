@@ -13,7 +13,7 @@ class ASTIMPORT extends SimpleNode {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     int numChildren = this.jjtGetNumChildren();
 
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
@@ -30,7 +30,7 @@ class ASTIMPORT extends SimpleNode {
 
       if(nextChild.id == ParserTreeConstants.JJTIDENT){
         if(!this.symbolTable.existsClassSymbol(key))
-          throw new Exception("Non static method " + ((ASTIDENT) nextChild).name + " import declaration without the import for class " + firstChild.name);
+          errors.addError(this.getCoords(), "Non static method " + ((ASTIDENT) nextChild).name + " import declaration without the import for class " + firstChild.name);
 
         key += '.' + ((ASTIDENT) nextChild).name;
 
@@ -42,14 +42,14 @@ class ASTIMPORT extends SimpleNode {
       while(numChildren > childIndex){
         nextChild = (SimpleNode) this.jjtGetChild(childIndex);
         nextChild.addSymbolTable(this.symbolTable);
-        nextChild.eval();
+        nextChild.eval(errors);
 
         if (nextChild.id == ParserTreeConstants.JJTPARAMETERS)
           parameters = ((ASTPARAMETERS) nextChild).parameters;
         else if (!classImport)
           returnType = ((ASTRETURN) nextChild).type;
         else
-          throw new Exception("Class import declaration can't have return type");
+          errors.addError(this.getCoords(), "Class import declaration can't have return type");
 
         childIndex++;
       }

@@ -11,11 +11,11 @@ class ASTNEW_ARRAY extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     SimpleNode childNode = (SimpleNode) this.jjtGetChild(0);
 
-    if(!this.validType(childNode, TypeEnum.INT))
-      throw new Exception("Integer array initialized with invalid size.");
+    if(!this.validType(childNode, TypeEnum.INT, errors))
+      errors.addError(this.getCoords(), "Integer array initialized with invalid size.");
   }
 }
 /* JavaCC - OriginalChecksum=5b8f02a40100dbc10f6cbbb183dccada (do not edit this line) */

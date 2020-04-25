@@ -238,10 +238,6 @@ public class CompUtils {
         return success;
     }
 
-
-
-
-
     public static void testParser(String jmmResource, boolean mustFail, String classWithMain) {
         // Copy contents of resource to a temporary file
         File tempFolder = CompUtils.getTempFolder("comp_jmm_test");

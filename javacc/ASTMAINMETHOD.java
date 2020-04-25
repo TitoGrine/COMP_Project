@@ -16,17 +16,17 @@ class ASTMAINMETHOD extends SimpleNode {
     super(p, id);
   }
 
+  public void preProcessMethod() {
+    methodSymbol = new MethodSymbol(TypeEnum.VOID, new ArrayList<TypeEnum>(Collections.singleton(TypeEnum.ARRAY)));
+  }
+
   @Override
   public void addSymbolTable(SymbolTable symbolTable){
     this.symbolTable = new SymbolTable(symbolTable);
   }
 
-  public void preProcessMethod() throws Exception {
-    methodSymbol = new MethodSymbol(TypeEnum.VOID, new ArrayList<TypeEnum>(Collections.singleton(TypeEnum.ARRAY)));
-  }
-
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
     ArraySymbol arraySymbol = new ArraySymbol(TypeEnum.STRING);
@@ -40,7 +40,7 @@ class ASTMAINMETHOD extends SimpleNode {
     ASTMETHOD_BODY methodBody = (ASTMETHOD_BODY) childNode;
 
     methodBody.addSymbolTable(symbolTable);
-    methodBody.eval();
+    methodBody.eval(errors);
   }
 }
 /* JavaCC - OriginalChecksum=929a511142c3eb4332a56f5c02fad9ec (do not edit this line) */

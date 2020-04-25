@@ -11,7 +11,7 @@ class ASTMETHOD_BODY extends SimpleNode {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     int numChildren = this.jjtGetNumChildren();
     int childIndex = 0;
     SimpleNode childNode;
@@ -20,7 +20,7 @@ class ASTMETHOD_BODY extends SimpleNode {
       childNode = (SimpleNode) this.jjtGetChild(childIndex);
 
       childNode.addSymbolTable(this.symbolTable);
-      childNode.eval();
+      childNode.eval(errors);
 
       childIndex++;
     }

@@ -21,7 +21,7 @@ class ASTCLASS extends SimpleNode {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     int numChildren = this.jjtGetNumChildren();
     boolean mainDeclared = false;
     int childIndex = 1;
@@ -39,7 +39,7 @@ class ASTCLASS extends SimpleNode {
 
     if(childNode.id == ParserTreeConstants.JJTEXTENDS){
       childNode.addSymbolTable(this.symbolTable);
-      childNode.eval();
+      childNode.eval(errors);
 
       classSymbol.setExtendedClass(((ASTEXTENDS) childNode).extendedClass);
 
@@ -56,17 +56,17 @@ class ASTCLASS extends SimpleNode {
       if (childNode.id == ParserTreeConstants.JJTVARIABLE) {
         ((ASTVARIABLE) childNode).classScope = true;
 
-        childNode.eval();
+        childNode.eval(errors);
       } else if (childNode.id == ParserTreeConstants.JJTMETHOD) {
         ASTMETHOD method = (ASTMETHOD) childNode;
 
-        method.preProcessMethod();
+        method.preProcessMethod(errors);
         methods.add(method);
 
         this.symbolTable.addSymbol(method.methodName, method.methodSymbol);
       } else if (childNode.id == ParserTreeConstants.JJTMAINMETHOD){
         if(mainDeclared)
-          throw new Exception("CLASS " + firstChild.name + " has more than one main method.");
+          errors.addError(this.getCoords(), "CLASS " + firstChild.name + " has more than one main method.");
 
         mainMethod = (ASTMAINMETHOD) childNode;
 
@@ -79,11 +79,11 @@ class ASTCLASS extends SimpleNode {
     }
 
     for(ASTMETHOD method : methods){
-      method.eval();
+      method.eval(errors);
     }
 
     if(mainMethod != null)
-      mainMethod.eval();
+      mainMethod.eval(errors);
   }
 }
 /* JavaCC - OriginalChecksum=4f01d04b73ea000fe01d2c7f87d2a603 (do not edit this line) */

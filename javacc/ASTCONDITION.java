@@ -11,14 +11,14 @@ class ASTCONDITION extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     SimpleNode childNode = (SimpleNode) this.jjtGetChild(0);
 
     childNode.addSymbolTable(this.symbolTable);
-    childNode.eval();
+    childNode.eval(errors);
 
-    if(!this.validType(childNode, TypeEnum.BOOL))
-      throw new Exception("Expression in condition doesn't return a boolean value.");
+    if(!this.validType(childNode, TypeEnum.BOOL, errors))
+      errors.addError(this.getCoords(), "Expression in condition doesn't return a boolean value.");
   }
 }
 /* JavaCC - OriginalChecksum=58fa4c516c1f33d07663e796cee56418 (do not edit this line) */

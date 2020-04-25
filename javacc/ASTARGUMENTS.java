@@ -15,7 +15,7 @@ class ASTARGUMENTS extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     int numChildren = this.jjtGetNumChildren();
     int childIndex = 0;
     SimpleNode childNode;
@@ -24,12 +24,12 @@ class ASTARGUMENTS extends Operator {
       childNode = (SimpleNode) this.jjtGetChild(childIndex);
 
       childNode.addSymbolTable(this.symbolTable);
-      childNode.eval();
+      childNode.eval(errors);
 
       if(childNode.id == ParserTreeConstants.JJTARGUMENT)
         this.arguments.add(((ASTARGUMENT) childNode).type);
       else
-        this.arguments.add(this.getType(childNode));
+        this.arguments.add(this.getType(childNode, errors));
 
       childIndex++;
     }

@@ -11,15 +11,15 @@ class ASTWHILE extends SimpleNode {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     ASTCONDITION firstChild = (ASTCONDITION) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
     firstChild.addSymbolTable(this.symbolTable);
-    firstChild.eval();
+    firstChild.eval(errors);
 
     secondChild.addSymbolTable(this.symbolTable);
-    secondChild.eval();
+    secondChild.eval(errors);
   }
 }
 /* JavaCC - OriginalChecksum=2515247992b3ab99f36c09855e8843b0 (do not edit this line) */

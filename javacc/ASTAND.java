@@ -16,25 +16,25 @@ class ASTAND extends Operator {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
     firstChild.addSymbolTable(this.symbolTable);
     secondChild.addSymbolTable(this.symbolTable);
 
-    firstChild.eval();
-    secondChild.eval();
+    firstChild.eval(errors);
+    secondChild.eval(errors);
 
-    if(!this.validType(firstChild, TypeEnum.BOOL))
-      throw new Exception("AND must have left hand side expression returning a boolean.");
+    if(!this.validType(firstChild, TypeEnum.BOOL, errors))
+      errors.addError(this.getCoords(), "AND must have left hand side expression returning a boolean.");
 
-    this.initializedUse(firstChild);
+    this.initializedUse(firstChild, errors);
 
-    if(!this.validType(secondChild, TypeEnum.BOOL))
-      throw new Exception("AND must have right hand side expression returning a boolean.");
+    if(!this.validType(secondChild, TypeEnum.BOOL, errors))
+      errors.addError(this.getCoords(), "AND must have right hand side expression returning a boolean.");
 
-    this.initializedUse(secondChild);
+    this.initializedUse(secondChild, errors);
 
   }
 }

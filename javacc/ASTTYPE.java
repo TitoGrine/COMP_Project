@@ -13,7 +13,7 @@ class ASTTYPE extends SimpleNode {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticErrors errors){
     if(typeID != null)
       return;
 
@@ -24,7 +24,7 @@ class ASTTYPE extends SimpleNode {
     Symbol symbol = this.symbolTable.getSymbol(name);
 
     if(symbol == null)
-      throw new Exception("Unrecognized type " + name);
+      errors.addError(this.getCoords(), "Unrecognized type " + name);
 
     this.typeID = symbol.getType();
   }

@@ -45,6 +45,11 @@ class ASTSTATIC_IMPORT extends SimpleNode {
 
     MethodSymbol methodSymbol = new MethodSymbol(returnType, parameters);
 
+    if(this.symbolTable.repeatedMethod(key, returnType, parameters)){
+      errors.addError(this.getCoords(), "Method " + key + " was already imported.");
+      return;
+    }
+
     this.symbolTable.addSymbol(key, methodSymbol);
   }
 }

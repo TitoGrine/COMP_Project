@@ -55,10 +55,16 @@ class ASTIMPORT extends SimpleNode {
       }
     }
 
-    if(classImport)
+    if(classImport) {
       this.symbolTable.addSymbol(key, new ClassSymbol(parameters));
-    else
-      this.symbolTable.addSymbol(key, new MethodSymbol(returnType, parameters));
+    }
+    else{
+      if(this.symbolTable.repeatedMethod(key, returnType, parameters)){
+        errors.addError(this.getCoords(), "Method " + key + " was already imported.");
+        return;
+      }
+
+      this.symbolTable.addSymbol(key, new MethodSymbol(returnType, parameters));}
   }
 }
 /* JavaCC - OriginalChecksum=88acf2e261b5ed8d1318a9e9015ad173 (do not edit this line) */

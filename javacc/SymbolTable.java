@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class SymbolTable {
@@ -49,6 +50,13 @@ public class SymbolTable {
         Symbol symbol = this.getSymbol(key);
 
         return symbol != null && symbol.type == TypeEnum.METHOD;
+    }
+
+    public boolean repeatedMethod(String key, TypeEnum returnType, ArrayList<TypeEnum> arguments){
+        if(existsMethodSymbol(key))
+            return ((MethodSymbol) this.getSymbol(key)).repeatedMethod(returnType, arguments);
+
+        return false;
     }
 
     public boolean existsClassSymbol(String key){

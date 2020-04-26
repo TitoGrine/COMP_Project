@@ -9,9 +9,11 @@ import java.util.ArrayList;
 
 public class CodeGenerator {
     static String generated;
-    private SimpleNode root;
+    private static SimpleNode root;
     static int localIndex = 1;
-    private String[] locals = new String[999];
+    private static String[] locals = new String[99];
+    private static String classIdent="";
+    private static Node classNode;
     
 
     public CodeGenerator(SimpleNode root) {
@@ -26,6 +28,7 @@ public class CodeGenerator {
 
         for(Node child: children) {
             if (child.getId() == 6) {
+                this.classNode = child;
                 Node classChilds[] = addClass(child);
                 addVariables(classChilds);
                 addStandardInitializer();
@@ -36,12 +39,12 @@ public class CodeGenerator {
         print();        
     }
 
-
     static Node[] addClass(Node node) {
         SimpleNode classSimpleNode = (SimpleNode) node;
         Node[] classChilds = classSimpleNode.jjtGetChildren();
 
-        generated += ".public class " + ((ASTIDENT) classChilds[0]).name;
+        classIdent = ((ASTIDENT) classChilds[0]).name;
+        generated += ".public class " + classIdent;
         nl();
         generated += ".super java/lang/Object";
         nl();
@@ -105,7 +108,7 @@ public class CodeGenerator {
                         addOperation(candidate);
                         break;
                     case "FUNC_METHOD":
-                        //TODO
+                        addMethodCall(candidate);
                         break;
                     default:
                         addVariableAllocation(candidate);
@@ -113,6 +116,86 @@ public class CodeGenerator {
                 }
             }
     }
+
+
+    static void addMethodCall(Node candidate) {
+        String varIdent = (((ASTIDENT)candidate.jjtGetChild(0)).name);
+        // System.out.println(varIdent);
+
+        Node callNode = candidate.jjtGetChild(1).jjtGetChild(1);
+        String funcName = ((ASTIDENT)callNode.jjtGetChild(0)).name;
+
+        Node[] args = ((SimpleNode)callNode.jjtGetChild(1)).jjtGetChildren();
+        ArrayList<String> localVars = getFunctionLocals(args);
+
+        nl();
+        for(String s: localVars) {
+            tab();
+            generated += "iload ";
+            generated += s;
+            nl();
+        }
+
+        tab();
+        generated += "invokenonvirtual";
+        space();
+        generated += classIdent;
+        generated += "/";
+        generated += funcName;
+        generated += "(";
+        for (int i=0; i < args.length; i++)
+            generated += "I"; //hard coded for now
+        generated += ")";
+
+        TypeEnum returnType = getMethodReturnType(funcName);        
+        generated += parseType(returnType);
+    }
+
+    private static String parseType(TypeEnum returnType) {
+        switch(returnType) {
+            case INT:
+                return "I";
+            //TODO
+            default:
+                return "";
+        }
+
+    }
+
+    static TypeEnum getMethodReturnType(String methodIdent) {
+        Node[] classChilds = ((SimpleNode)classNode).jjtGetChildren();
+
+        for (Node classChild: classChilds) {
+            if (classChild.toString().equals("METHOD")) {
+                if (((ASTIDENT)((SimpleNode)classChild).jjtGetChild(1)).name.equals(methodIdent)) {
+                    return (((ASTTYPE)((SimpleNode)(((SimpleNode) classChild).jjtGetChild(0))).jjtGetChild(0)).typeID);
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+    static ArrayList<String> getFunctionLocals(Node args[]) {
+        ArrayList<String> localVars = new ArrayList<String>();
+        int counter = 0;
+        for (Node n: args) {
+            for (int i= 1; i < 99; i++) {
+                if (locals[i] != null)
+                    if (((ASTIDENT)n).name.equals(locals[i])) {
+                        // System.out.println(i);
+                        // System.out.println(((ASTIDENT)n).name);
+                        localVars.add(Integer.toString(i));
+                        counter++;
+                    }
+            }
+
+        }
+
+        return localVars;
+    }
+
 
     private static void addOperation(Node candidate) {
         SimpleNode operation = (SimpleNode)candidate.jjtGetChild(1);
@@ -127,6 +210,7 @@ public class CodeGenerator {
         nl();
         tab();
         generated += "istore " + localIndex;
+        locals[localIndex] = ((ASTIDENT)candidate.jjtGetChild(0)).name;
         localIndex++;
         nl();
 
@@ -144,8 +228,10 @@ public class CodeGenerator {
         space();
         generated += valueString;
 
-        // locals[localIndex] = 
-        TypeEnum type = getVariableType(assign);
+        Node identificationNode = assign.jjtGetChild(0);
+        String identification = ((ASTIDENT)identificationNode).name;
+
+        TypeEnum type = getVariableType(identification);
 
         nl();
         tab();
@@ -154,15 +240,13 @@ public class CodeGenerator {
         generated += localIndex;
         nl();
 
+        locals[localIndex] = identification;
         localIndex++;
     }
 
 
-    static TypeEnum getVariableType(Node assign) {
-        Node identificationNode = assign.jjtGetChild(0);
-        String identification = ((ASTIDENT)identificationNode).name;
-
-        Node methodBodyNode = assign.jjtGetParent();
+    static TypeEnum getVariableType(String identification) {
+        Node methodBodyNode = root.jjtGetChild(1).jjtGetChild(1).jjtGetChild(1);
         Node methodBodyChilds[] = ((SimpleNode)methodBodyNode).jjtGetChildren();
 
         for (Node n: methodBodyChilds) {

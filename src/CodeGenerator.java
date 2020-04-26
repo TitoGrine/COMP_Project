@@ -1,18 +1,15 @@
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.SimpleTimeZone;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 
 public class CodeGenerator {
     static String generated;
     private SimpleNode root;
     static int localIndex = 1;
     private String[] locals = new String[999];
-    
+
 
     public CodeGenerator(SimpleNode root) {
         this.root = root;
@@ -31,9 +28,61 @@ public class CodeGenerator {
                 addStandardInitializer();
                 addMainHeader();
                 addMainMethod(classChilds);
+                checkMethods(classChilds);
             }
         }
-        print();        
+        print();
+    }
+
+    private void checkMethods(Node[] classChilds) {
+        for (Node n : classChilds){
+            SimpleNode simpleN = (SimpleNode) n;
+            if (simpleN.toString().equals("METHOD")) {
+                Node methodChilds[] = simpleN.jjtGetChildren();
+                addMethod(methodChilds);
+            }
+        }
+    }
+
+    private void addMethod(Node[] methodChilds) {
+        ArrayList<TypeEnum> argsType = getArgsType(methodChilds[2]);
+        nl();
+        generated += ".method public ";
+        generated += ((ASTIDENT)methodChilds[1]).name;
+        generated += "(";
+        printTypes(argsType);
+
+    }
+
+    private void printTypes(ArrayList<TypeEnum> argsType) {
+        for(TypeEnum type: argsType){
+            getJType(type);
+        }
+        generated += ')';
+
+    }
+
+    public static String getJType(TypeEnum type) {
+        switch(type) {
+            case INT:
+                generated += "I";
+        }
+
+        return "";
+    }
+
+    private ArrayList<TypeEnum> getArgsType(Node argNode) {
+        ArrayList<TypeEnum> buff = new ArrayList<TypeEnum>();
+        SimpleNode args = (SimpleNode) argNode;
+        Node[] argsChildren = args.jjtGetChildren();
+        for(Node n : argsChildren){
+            SimpleNode node = (SimpleNode) n;
+            Node type =  node.jjtGetChild(0);
+            buff.add(((ASTTYPE) type).typeID);
+
+
+        }
+        return buff;
     }
 
 
@@ -138,13 +187,13 @@ public class CodeGenerator {
         Node value = assign.jjtGetChild(1);
         int valueString = ((ASTNUM) value).value;
 
-        nl();   
+        nl();
         tab();
         generated += "bipush";
         space();
         generated += valueString;
 
-        // locals[localIndex] = 
+        // locals[localIndex] =
         TypeEnum type = getVariableType(assign);
 
         nl();
@@ -200,13 +249,13 @@ public class CodeGenerator {
 
     public static void addMainHeader() {
         nl();
-        generated += ".method public static main([Ljava/lang/String;)V"; 
+        generated += ".method public static main([Ljava/lang/String;)V";
         nl();
         tab();
-        generated += ".limit stack 99"; 
+        generated += ".limit stack 99";
         nl();
         tab();
-        generated += ".limit locals 99"; 
+        generated += ".limit locals 99";
         nl();
     }
 

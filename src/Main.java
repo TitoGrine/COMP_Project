@@ -1,10 +1,6 @@
 // import sun.java2d.pipe.SpanShapeRenderer;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.SimpleTimeZone;
 
 public class Main {
     static CodeGenerator codeGenerator;

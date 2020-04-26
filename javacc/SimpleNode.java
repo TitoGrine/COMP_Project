@@ -96,20 +96,7 @@ class SimpleNode implements Node {
     return id;
   }
 
-  public static String getJType(String type) {
-    switch(type) {
-      case "void":
-        return "V";
-      case "int[]":
-        return "[I";
-      case "int":
-        return "I";
-      case "bool":
-        return "Z";
-    }
 
-    return "";
-  }
 
   String getJasmin() {
     return "";

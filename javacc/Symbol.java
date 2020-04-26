@@ -1,3 +1,8 @@
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
 public class Symbol {
     TypeEnum type;
     String classType;
@@ -36,4 +41,6 @@ public class Symbol {
     public String toString() {
         return "       \033[1;37mType\033[0m: " + this.type.toString() + (classType == null ? "" : ("\n       \033[1;37mClass Type\033[0m: " + this.classType)) + "\n";
     }
+
+
 }

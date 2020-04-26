@@ -120,7 +120,7 @@ public class CodeGenerator {
         generated += "ldc " + ((ASTNUM) operation.jjtGetChild(1)).value;
         nl();
         tab();
-        generated += "isub"; //TODO verificar o tipo de variavel
+        generated += "isub"; //TODO verificar o tipo de variavel e operação
         nl();
         tab();
         generated += "istore " + localIndex;

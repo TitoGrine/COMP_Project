@@ -89,8 +89,13 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTVOID:
                 break;
             case ParserTreeConstants.JJTFUNC_METHOD:
-                if(!this.symbolTable.getSymbol(((ASTFUNC_METHOD) node).call).isInitialized())
-                    errors.addError(this.getCoords(), "Method " + ((ASTFUNC_METHOD) node).call + "() called but isn't initialized.");
+                String call = ((ASTFUNC_METHOD) node).call;
+
+                if(call == null)
+                    return;
+
+                if(!this.symbolTable.getSymbol(call).isInitialized())
+                    errors.addError(this.getCoords(), "Method " + call + "() called but isn't initialized.");
                 break;
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 String object = ((ASTARRAY_ACCESS) node).object;

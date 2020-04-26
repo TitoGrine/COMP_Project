@@ -27,6 +27,7 @@ class ASTMAINMETHOD extends SimpleNode {
 
   @Override
   public void eval(SemanticErrors errors){
+
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
     ArraySymbol arraySymbol = new ArraySymbol(TypeEnum.STRING);
@@ -41,8 +42,6 @@ class ASTMAINMETHOD extends SimpleNode {
 
     methodBody.addSymbolTable(symbolTable);
     methodBody.eval(errors);
-
-    //System.out.println(this.symbolTable.toString());
   }
 }
 /* JavaCC - OriginalChecksum=929a511142c3eb4332a56f5c02fad9ec (do not edit this line) */

@@ -3,6 +3,7 @@
 public
 class ASTTYPE extends SimpleNode {
   public TypeEnum typeID = null;
+  public String varName;
 
   public ASTTYPE(int id) {
     super(id);
@@ -19,12 +20,14 @@ class ASTTYPE extends SimpleNode {
 
     SimpleNode child = (SimpleNode) this.jjtGetChild(0);
 
-    String name = ((ASTIDENT) child).name;
+    varName = ((ASTIDENT) child).name;
 
-    Symbol symbol = this.symbolTable.getSymbol(name);
+    Symbol symbol = this.symbolTable.getSymbol(varName);
 
-    if(symbol == null)
-      errors.addError(this.getCoords(), "Unrecognized type " + name);
+    if(symbol == null){
+      errors.addError(this.getCoords(), "Unrecognized type " + varName);
+      return;
+    }
 
     this.typeID = symbol.getType();
   }

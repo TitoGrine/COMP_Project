@@ -76,7 +76,7 @@ public class CodeGenerator {
         SimpleNode operation = (SimpleNode) operationNode;
         SimpleNode oper1 = (SimpleNode) operation.jjtGetChild(0);
         SimpleNode oper2 = (SimpleNode) operation.jjtGetChild(1);
-        if(oper1.toString().equals("ADD") || oper1.toString().equals("MUL") || oper1.toString().equals("SUB"))
+        if(oper1.id == ParserTreeConstants.JJTADD || oper1.toString().equals("MUL") || oper1.toString().equals("SUB"))
             makeOperation(operation.jjtGetChild(0));
         else
             ;
@@ -146,7 +146,7 @@ public class CodeGenerator {
             SimpleNode simpleN = (SimpleNode) n;
 
             if (simpleN.toString().equals("VARIABLE")) {
-                generated += ".field " + ((ASTIDENT) simpleN.jjtGetChildren()[1]).name;
+                generated += '\n' + ".field " + ((ASTIDENT) simpleN.jjtGetChildren()[1]).name;
                 space();
 
                 ASTTYPE typeN = (ASTTYPE)simpleN.jjtGetChildren()[0];
@@ -183,6 +183,11 @@ public class CodeGenerator {
                 }
             }
         }
+        nl();
+        tab();
+        generated += "return";
+        nl();
+        generated += ".end method\n";
     }
 
     static void addAssigns(Node methodBodyChilds[]) {
@@ -195,7 +200,7 @@ public class CodeGenerator {
                     case "SUB":
                         subOperation(candidate);
                         break;
-                    case "add":
+                    case "ADD":
                         addOperation(candidate);
                         break;
                     case "FUNC_METHOD":

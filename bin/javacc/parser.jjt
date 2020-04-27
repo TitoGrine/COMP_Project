@@ -1,0 +1,570 @@
+options
+{
+    LOOKAHEAD = 1;
+    MULTI = true;
+    NODE_SCOPE_HOOK = true;
+}
+
+PARSER_BEGIN(Parser)
+
+import java.io.IOException;
+import java.io.FileNotFoundException;
+
+public class Parser
+{
+    private int nr_errors = 0;
+    private static int MAX_ERRORS = 10;
+    private int parenthesis_counter = 0;
+
+    void jjtreeOpenNodeScope(Node n) {
+        ((SimpleNode) n).setCoords( new SourceCoords(getToken(1)) ) ;
+    }
+
+    void jjtreeCloseNodeScope(Node n) {
+
+    }
+
+    public int errorSkip() {
+      Token error_t = getToken(1);
+
+      do {
+        if(error_t == null || error_t.kind == LBRACKET || parenthesis_counter == 0)
+            break;
+
+        if(error_t.kind == LPRTHSIS)
+            parenthesis_counter++;
+        else if (error_t.kind == RPRTHSIS)
+            parenthesis_counter--;
+
+        getNextToken();
+        error_t = getToken(1);
+      } while (true);
+
+      if(error_t.kind == RPRTHSIS)
+          getNextToken();
+
+      int missing_parethesis = parenthesis_counter;
+
+      parenthesis_counter = java.lang.Math.min(parenthesis_counter, 0);
+
+      return missing_parethesis;
+    }
+
+
+    public void displayError(ParseException exception) throws ParseException{
+
+        System.out.println("Error occurred. Found \"" + exception.currentToken.next.image + "\" on line " +
+        exception.currentToken.beginLine + " and column " +
+        exception.currentToken.beginColumn);
+
+        System.out.println("Expected one of the tokens:");
+        for(int i = 0; i < exception.expectedTokenSequences.length; i++) {
+            for(int k = 0; k < exception.expectedTokenSequences[i].length; k++) {
+                System.out.println(tokenImage[exception.expectedTokenSequences[i][k]]);
+            }
+        }
+
+        int missing_parenthesis = errorSkip();
+
+        if(missing_parenthesis > 0){
+            System.out.println("There are " + missing_parenthesis + " parenthesis missing.");
+        }
+
+        System.out.println("\n");
+
+        nr_errors++;
+
+
+        if (MAX_ERRORS <= nr_errors) {
+          throw new ParseException("The program has reached the maximum number of errors ("+ MAX_ERRORS +").");
+
+        }
+      }
+}
+
+PARSER_END(Parser)
+
+// ==================================== SKIP ==================================== //
+
+SKIP :
+{
+    " "                         |
+    "\r"                        |
+    "\t"                        |
+    "\n"                        |
+    < "//" (~["\r", "\n"])* >   |
+    "/*" : MULTILINE_COMMENT
+}
+
+<MULTILINE_COMMENT> SKIP :
+{
+  "*/" : DEFAULT                |
+  < ~[] >
+}
+
+// =================================== TOKENS =================================== //
+
+TOKEN : {
+    < AND: "&&" >               |
+    < LESS: "<" >               |
+    < MULT: "*" >               |
+    < DIV: "/" >                |
+    < SUM: "+" >                |
+    < SUB: "-" >                |
+    < ASSIGN: "=" >             |
+    < NEG: "!" >                        
+}
+
+TOKEN :
+{
+    < IMPORT: "import" >        |
+    < CLASS: "class" >          |
+    < EXTENDS: "extends" >      |
+    < PUBLIC: "public" >        |
+    < RETURN: "return" >        |
+    < STATIC: "static" >        |
+    < VOID: "void" >            |
+    < MAIN: "main" >            |
+    < NEW: "new" >            
+}
+
+TOKEN :
+{
+    < WHILE: "while" >          |
+    < IF: "if" >                |
+    < ELSE: "else" >            |
+    < TRUE: "true" >            |
+    < FALSE: "false" >        
+}
+
+TOKEN :
+{
+    < INT: "int" >              |
+    < BOOL: "boolean" >         |
+    < STRING: "String" >      
+}
+
+TOKEN:
+{
+    < THIS: "this" >            |
+    < LENGTH: "length" >      
+}
+
+TOKEN :
+{
+    < LBRACKET: "{" >           |
+    < RBRACKET: "}" >           |
+    < LSQBRACKET: "[" >         |
+    < RSQBRACKET: "]" >         |
+    < LPRTHSIS: "(">            |
+    < RPRTHSIS: ")">            |
+    < DOT: "." >                |
+    < COMMA: "," >              |
+    < SEMICOLON: ";" >        
+}
+
+TOKEN: {
+    < INTEGERLITERAL: (["0"-"9"])+ >                                                |
+    < IDENTIFIER: ["a"-"z","A"-"Z", "$", "_"](["a"-"z","A"-"Z", "$", "_"]|["0"-"9"]|"_")* >
+}
+
+// ================================= EXPRESSIONS ================================= //
+
+SimpleNode Program() #PROGRAM : {}
+{
+    {this.parenthesis_counter = 0; this.nr_errors = 0;}
+
+    ImportDeclaration() ClassDeclaration() <EOF>
+
+    {
+        if(this.nr_errors > 0){
+            throw new ParseException("Error in while statements.");
+        }
+    }
+
+    {return jjtThis;}
+}
+
+void ImportDeclaration() #void : {}
+{
+    (<IMPORT> ImportExpression() <SEMICOLON>)*
+}
+
+void ImportExpression() #void: {Token t1, t2=null;}
+{
+    (<STATIC> Identifier() <DOT> Identifier() [<LPRTHSIS> {parenthesis_counter++;} [(Type() (<COMMA> Type())*) #PARAMETERS]  <RPRTHSIS>{parenthesis_counter--;} [Type() #RETURN]]) #STATIC_IMPORT
+    |
+    (Identifier() [<DOT> Identifier()] [<LPRTHSIS> {parenthesis_counter++;} [(Type() (<COMMA> Type())*) #PARAMETERS] <RPRTHSIS>{parenthesis_counter--;} [Type() #RETURN]]) #IMPORT
+}
+
+void ClassDeclaration() #CLASS : {}
+{
+    <CLASS> Identifier() [<EXTENDS> Identifier() #EXTENDS] <LBRACKET>
+    (VarDeclaration())*
+    (MethodDeclaration())*
+    <RBRACKET>
+}
+
+void VarDeclaration() #VARIABLE: {}
+{
+    Type() Identifier() <SEMICOLON>
+}
+
+void NonIdentifierVarDeclaration() #VARIABLE : {}
+{
+    NonIdentifierType() Identifier() <SEMICOLON>
+}
+
+void IdentifierVarDeclaration() #VARIABLE(2) : {}
+{
+    Identifier() <SEMICOLON>
+}
+
+void Type() #void : {}
+{
+    NonIdentifierType()
+    |
+    Identifier() #TYPE(1)
+}
+
+void NonIdentifierType() #TYPE : {}
+{
+    <BOOL> {jjtThis.typeID = TypeEnum.BOOL;}
+    |
+    <INT> (<LSQBRACKET> <RSQBRACKET> {jjtThis.typeID = TypeEnum.ARRAY;} | {jjtThis.typeID = TypeEnum.INT;})
+    |
+    <STRING> {jjtThis.typeID = TypeEnum.STRING;}
+    |
+    <VOID> {jjtThis.typeID = TypeEnum.VOID;}
+}
+
+void MethodDeclaration() #void : {}
+{
+    <PUBLIC> (RegularMethod() | MainMethod())
+}
+
+void RegularMethod() #METHOD : {}
+{
+    Type() #RETURN Identifier() Arguments()
+    <LBRACKET>
+    MethodBody() #METHOD_BODY
+    <RETURN> (Expression0()) #RETURN_EXP <SEMICOLON>
+    <RBRACKET>
+}
+
+void Arguments() #void : {}
+{
+    <LPRTHSIS> {parenthesis_counter++;} [(Argument() (<COMMA> Argument())*) #ARGUMENTS] <RPRTHSIS> {parenthesis_counter--;}
+}
+
+void Argument() #ARGUMENT : {}
+{
+    Type() Identifier()
+}
+
+void MainMethod() #MAINMETHOD : {}
+{
+    <STATIC> <VOID> <MAIN> <LPRTHSIS> {parenthesis_counter++;} <STRING> <LSQBRACKET> <RSQBRACKET> Identifier() <RPRTHSIS> {parenthesis_counter--;}
+    <LBRACKET>
+    MethodBody() #METHOD_BODY
+    <RBRACKET>
+}
+
+void MethodBody() #void : {}
+{
+    NonIdentifierVarDeclaration() MethodBody()
+    |
+    Identifier() ( IdentifierVarDeclaration() MethodBody() | IdentifierStatements() (Statement())*)
+    |
+    NonIdentifierStatements() (Statement())*
+    |
+    {}
+}
+
+void Statement() #void : {}
+{
+    NonIdentifierStatements()
+    |
+    Identifier() IdentifierStatements()
+}
+
+void NonIdentifierStatements() #void : {}
+{
+    EnclosedStatement()
+    |
+    IfElseStatement()
+    |
+    WhileStatement()
+    |
+    ExpressionStatement()
+}
+
+void EnclosedStatement() #SCOPE : {}
+{
+    <LBRACKET> (Statement())* <RBRACKET>
+}
+
+void IfElseStatement() #void : {}
+{
+    IfStatement() ElseStatement()
+}
+
+void IfStatement() #IF : {}
+{
+    <IF> Condition() Statement()
+}
+
+void ElseStatement() #ELSE : {}
+{
+    <ELSE> Statement()
+}
+
+void WhileStatement() #WHILE : {}
+{
+    try {
+        <WHILE> Condition()
+    } catch(ParseException e) {
+        displayError(e);
+    }
+    Statement()
+}
+
+void Condition() #CONDITION : {}
+{
+    <LPRTHSIS> {parenthesis_counter++;}
+    Expression0()
+    <RPRTHSIS> {parenthesis_counter--;}
+}
+
+void ExpressionStatement() #void : {}
+{
+    NIExpression0() <SEMICOLON>
+}
+
+void IdentifierStatements() #void : {}
+{
+     (AssignStatement() | (ArrayAccess() (AssignStatement() | NTExpression0())) | NAExpression0()) <SEMICOLON>
+}
+
+void ArrayAccess() #ARRAY_ACCESS(2) : {}
+{
+    <LSQBRACKET> Expression0() <RSQBRACKET>
+}
+
+void AssignStatement() #ASSIGN(2) : {}
+{
+     <ASSIGN> Expression0()
+}
+
+// ============================== Expressions 0 ============================== //
+
+void Expression0() #void : {}
+{
+    Expression1() Expression0_alt()
+}
+
+void NIExpression0() #void : {}
+{
+    NIExpression1() Expression0_alt()
+}
+
+void NAExpression0() #void : {}
+{
+    NAExpression1() Expression0_alt()
+}
+
+void NTExpression0() #void : {}
+{
+    NTExpression1() Expression0_alt()
+}
+
+void Expression0_alt() #void : {}
+{
+    <AND> Expression1() #AND(2) Expression0_alt()
+    |
+    {}
+}
+
+// ============================== Expressions 1 ============================== //
+
+void Expression1() #void : {}
+{
+    Expression2() Expression1_alt()
+}
+
+void NIExpression1() #void : {}
+{
+    NIExpression2() Expression1_alt()
+}
+
+void NAExpression1() #void : {}
+{
+    NAExpression2() Expression1_alt()
+}
+
+void NTExpression1() #void : {}
+{
+    NTExpression2() Expression1_alt()
+}
+
+void Expression1_alt() #void : {}
+{
+    <LESS> Expression2() #LESSTHAN(2) Expression1_alt()
+    |
+    {}
+}
+
+// ============================== Expressions 2 ============================== //
+
+void Expression2() #void : {}
+{
+    Expression3() Expression2_alt()
+}
+
+void NIExpression2() #void : {}
+{
+    NIExpression3() Expression2_alt()
+}
+
+void NAExpression2() #void : {}
+{
+    NAExpression3() Expression2_alt()
+}
+
+void NTExpression2() #void : {}
+{
+    NTExpression3() Expression2_alt()
+}
+
+void Expression2_alt() #void : {}
+{
+    <SUM> Expression3() #ADD(2) Expression2_alt()
+    |
+    <SUB> Expression3() #SUB(2) Expression2_alt()
+    |
+    {}
+}
+
+// ============================== Expressions 3 ============================== //
+
+void Expression3() #void : {}
+{
+    Expression4() Expression3_alt()
+}
+
+void NIExpression3() #void : {}
+{
+    NIExpression4() Expression3_alt()
+}
+
+void NAExpression3() #void : {}
+{
+    NAExpression4() Expression3_alt()
+}
+
+void NTExpression3() #void : {}
+{
+    NTExpression4() Expression3_alt()
+}
+
+void Expression3_alt() #void : {}
+{
+    <MULT> Expression4() #MUL(2) Expression3_alt()
+    |
+    <DIV> Expression4() #DIV(2) Expression3_alt()
+    |
+    {}
+}
+
+// ============================== Expressions 4 ============================== //
+
+void Expression4() #void : {}
+{
+    Expression5() Expression4_alt()
+}
+
+void NIExpression4() #void : {}
+{
+    NIExpression5() Expression4_alt()
+}
+
+void NAExpression4() #void : {}
+{
+    NAExpression4_alt()
+}
+
+void NTExpression4() #void : {}
+{
+    Expression4_alt()
+}
+
+void Expression4_alt() #void : {}
+{
+    ArrayAccess() Expression4_alt()
+    |
+    NAExpression4_alt()
+}
+
+void NAExpression4_alt() #void : {}
+{
+    DotOperator() Expression4_alt()
+    |
+    {}
+}
+
+void DotOperator() #void : {}
+{
+    <DOT> (<LENGTH> #LENGTH(1) | MethodCall() #FUNC_METHOD(2))
+}
+
+void MethodCall() #CALL: {}
+{
+     Identifier()  <LPRTHSIS> {parenthesis_counter++;} [(Expression0() (<COMMA> Expression0())*) #ARGUMENTS] <RPRTHSIS> {parenthesis_counter--;}
+}
+
+// ============================== Expressions 5 ============================== //
+
+void Expression5() #void : {}
+{
+    TerminalExpression()
+}
+
+void NIExpression5() #void : {}
+{
+    NITerminalExpression()
+//    |
+//    {}
+}
+
+// ========================== Terminal Expressions ========================== //
+
+void TerminalExpression() #void: {}
+{
+    NITerminalExpression()
+    |
+    Identifier()
+}
+
+void NITerminalExpression() #void : {Token t;}
+{
+    t = <INTEGERLITERAL> {jjtThis.value = Integer.parseInt(t.image);} #NUM
+    |
+    t = <TRUE> {jjtThis.truth_value = true;} #BOOL
+    |
+    t = <FALSE> {jjtThis.truth_value = false;} #BOOL
+    |
+    <THIS> #THIS
+    |
+    <NEW> ((<INT> <LSQBRACKET> Expression0() <RSQBRACKET>) #NEW_ARRAY | (Identifier() <LPRTHSIS> {parenthesis_counter++;} <RPRTHSIS> {parenthesis_counter--;}) #NEW)
+    |
+    <NEG> Expression4() #NEGATION
+    |
+    <LPRTHSIS> {parenthesis_counter++;} Expression0() <RPRTHSIS> {parenthesis_counter--;}
+}
+
+void Identifier() #void : {Token t;}
+{
+    t = <IDENTIFIER> {jjtThis.name = t.image;} #IDENT
+}
+
+

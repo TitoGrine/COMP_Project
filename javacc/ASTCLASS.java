@@ -21,7 +21,7 @@ class ASTCLASS extends SimpleNode {
   }
 
   @Override
-  public void eval(SemanticErrors errors){
+  public void eval(SemanticAnalysis analysis){
     int numChildren = this.jjtGetNumChildren();
     boolean mainDeclared = false;
     int childIndex = 1;
@@ -40,7 +40,7 @@ class ASTCLASS extends SimpleNode {
 
       if(childNode.id == ParserTreeConstants.JJTEXTENDS){
         childNode.addSymbolTable(this.symbolTable);
-        childNode.eval(errors);
+        childNode.eval(analysis);
 
         classSymbol.setExtendedClass(((ASTEXTENDS) childNode).extendedClass);
 
@@ -49,6 +49,9 @@ class ASTCLASS extends SimpleNode {
     }
 
     this.symbolTable.addSymbol(this.className, classSymbol);
+
+    if(ControlVars.PRINT_SYMBOLTABLE)
+      this.symbolTable.print(this.className);
 
     String key;
 
@@ -60,11 +63,11 @@ class ASTCLASS extends SimpleNode {
       if (childNode.id == ParserTreeConstants.JJTVARIABLE) {
         ((ASTVARIABLE) childNode).classScope = true;
 
-        childNode.eval(errors);
+        childNode.eval(analysis);
       } else if (childNode.id == ParserTreeConstants.JJTMETHOD) {
         ASTMETHOD method = (ASTMETHOD) childNode;
 
-        method.preProcessMethod(errors);
+        method.preProcessMethod(analysis);
         methods.add(method);
 
         key = className + '.' + method.methodName;
@@ -72,7 +75,7 @@ class ASTCLASS extends SimpleNode {
         this.symbolTable.addSymbol(key, method.methodSymbol);
       } else if (childNode.id == ParserTreeConstants.JJTMAINMETHOD){
         if(mainDeclared)
-          errors.addError(this.getCoords(), "CLASS " + firstChild.name + " has more than one main method.");
+          analysis.addError(this.getCoords(), "CLASS " + firstChild.name + " has more than one main method.");
 
         mainMethod = (ASTMAINMETHOD) childNode;
 
@@ -87,11 +90,11 @@ class ASTCLASS extends SimpleNode {
     }
 
     for(ASTMETHOD method : methods){
-      method.eval(errors);
+      method.eval(analysis);
     }
 
     if(mainMethod != null)
-      mainMethod.eval(errors);
+      mainMethod.eval(analysis);
   }
 }
 /* JavaCC - OriginalChecksum=4f01d04b73ea000fe01d2c7f87d2a603 (do not edit this line) */

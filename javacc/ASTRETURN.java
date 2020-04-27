@@ -13,11 +13,11 @@ class ASTRETURN extends SimpleNode {
   }
 
   @Override
-  public void eval(SemanticErrors errors){
+  public void eval(SemanticAnalysis analysis){
     ASTTYPE childNode = (ASTTYPE) this.jjtGetChild(0);
 
     childNode.addSymbolTable(this.symbolTable);
-    childNode.eval(errors);
+    childNode.eval(analysis);
 
     this.type = childNode.typeID;
   }

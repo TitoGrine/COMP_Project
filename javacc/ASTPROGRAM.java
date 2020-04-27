@@ -10,7 +10,7 @@ class ASTPROGRAM extends SimpleNode {
     super(p, id);
   }
 
-  public void eval(SemanticErrors errors){
+  public void eval(SemanticAnalysis analysis){
     int numChildren = this.jjtGetNumChildren();
     int childIndex = 0;
     this.symbolTable = new SymbolTable();
@@ -20,7 +20,7 @@ class ASTPROGRAM extends SimpleNode {
       SimpleNode childNode = (SimpleNode) this.jjtGetChild(childIndex);
 
       childNode.addSymbolTable(this.symbolTable);
-      childNode.eval(errors);
+      childNode.eval(analysis);
 
       childIndex++;
     }

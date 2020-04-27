@@ -13,7 +13,7 @@ class ASTIMPORT extends SimpleNode {
   }
 
   @Override
-  public void eval(SemanticErrors errors){
+  public void eval(SemanticAnalysis analysis){
     int numChildren = this.jjtGetNumChildren();
 
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
@@ -30,7 +30,7 @@ class ASTIMPORT extends SimpleNode {
 
       if(nextChild.id == ParserTreeConstants.JJTIDENT){
         if(!this.symbolTable.existsClassSymbol(key))
-          errors.addError(this.getCoords(), "Non static method " + ((ASTIDENT) nextChild).name + " import declaration without the import for class " + firstChild.name);
+          analysis.addError(this.getCoords(), "Non static method " + ((ASTIDENT) nextChild).name + " import declaration without the import for class " + firstChild.name);
 
         key += '.' + ((ASTIDENT) nextChild).name;
 
@@ -42,23 +42,29 @@ class ASTIMPORT extends SimpleNode {
       while(numChildren > childIndex){
         nextChild = (SimpleNode) this.jjtGetChild(childIndex);
         nextChild.addSymbolTable(this.symbolTable);
-        nextChild.eval(errors);
+        nextChild.eval(analysis);
 
         if (nextChild.id == ParserTreeConstants.JJTPARAMETERS)
           parameters = ((ASTPARAMETERS) nextChild).parameters;
         else if (!classImport)
           returnType = ((ASTRETURN) nextChild).type;
         else
-          errors.addError(this.getCoords(), "Class import declaration can't have return type");
+          analysis.addError(this.getCoords(), "Class import declaration can't have return type");
 
         childIndex++;
       }
     }
 
-    if(classImport)
+    if(classImport) {
       this.symbolTable.addSymbol(key, new ClassSymbol(parameters));
-    else
-      this.symbolTable.addSymbol(key, new MethodSymbol(returnType, parameters));
+    }
+    else{
+      if(this.symbolTable.repeatedMethod(key, returnType, parameters)){
+        analysis.addError(this.getCoords(), "Method " + key + " was already imported.");
+        return;
+      }
+
+      this.symbolTable.addSymbol(key, new MethodSymbol(returnType, parameters));}
   }
 }
 /* JavaCC - OriginalChecksum=88acf2e261b5ed8d1318a9e9015ad173 (do not edit this line) */

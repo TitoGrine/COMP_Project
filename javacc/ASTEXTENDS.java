@@ -13,13 +13,13 @@ class ASTEXTENDS extends SimpleNode {
   }
 
   @Override
-  public void eval(SemanticErrors errors){
+  public void eval(SemanticAnalysis analysis){
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
     extendedClass = firstChild.name;
 
     if(!this.symbolTable.existsClassSymbol(extendedClass))
-      errors.addError(this.getCoords(), "Extending class " + extendedClass + " that wasn't previously imported.");
+      analysis.addError(this.getCoords(), "Extending class " + extendedClass + " that wasn't previously imported.");
   }
 }
 /* JavaCC - OriginalChecksum=cf18fd1f3efb0740e47c2bdf53bca72e (do not edit this line) */

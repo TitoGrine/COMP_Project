@@ -19,18 +19,24 @@ public class Main {
         try {
             SimpleNode root = parser.Program(); // returns reference to root node
 
-            SemanticErrors errors = new SemanticErrors();
+            SemanticAnalysis analysis = new SemanticAnalysis();
 
-            root.eval(errors);
+            root.eval(analysis);
 
-            errors.throwErrors();
+            analysis.throwErrors();
 
-            root.dump(""); // prints the tree on the screen
+            if(ControlVars.PRINT_AST){
+                System.out.println(ControlVars.CYAN + "\n ++++++++++++++ AST ++++++++++++++\n" + ControlVars.RESET);
+                root.dump(""); // prints the tree on the screen
+            }
+
             codeGenerator = new CodeGenerator(root);
             codeGenerator.generate();
-        } catch (Exception e){
-            e.printStackTrace();
-            //throw e;
+
+            analysis.showWarnings(true);
+
+        } catch (Exception e) {
+            throw e;
         }
 
         //root.dump(""); // prints the tree on the screen

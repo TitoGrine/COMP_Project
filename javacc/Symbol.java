@@ -39,7 +39,7 @@ public class Symbol {
 
     @Override
     public String toString() {
-        return "       \033[1;37mType\033[0m: " + this.type.toString() + (classType == null ? "" : ("\n       \033[1;37mClass Type\033[0m: " + this.classType)) + "\n";
+        return "       " + ControlVars.WHITE_BOLD + "Type: " + ControlVars.RESET + this.type.toString() + '\n' + ControlVars.WHITE_BOLD + "       Initialized: " + (this.isInitialized() ? ControlVars.GREEN_BRIGHT + " ✓ " : ControlVars.RED_BRIGHT + " ❌ ") + ControlVars.RESET + (classType == null ? "" : ("\n       " + ControlVars.WHITE_BOLD + "Class Type: " + ControlVars.RESET + this.classType)) + "\n";
     }
 
 

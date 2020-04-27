@@ -13,15 +13,15 @@ class ASTARGUMENT extends SimpleNode {
   }
 
   @Override
-  public void eval(SemanticErrors errors){
+  public void eval(SemanticAnalysis analysis){
     ASTTYPE firstChild = (ASTTYPE) this.jjtGetChild(0);
     ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
     firstChild.addSymbolTable(this.symbolTable);
-    firstChild.eval(errors);
+    firstChild.eval(analysis);
 
     secondChild.addSymbolTable(this.symbolTable);
-    secondChild.eval(errors);
+    secondChild.eval(analysis);
 
     Symbol symbol;
 

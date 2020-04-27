@@ -44,6 +44,10 @@ public class MethodSymbol extends Symbol{
         }
     }
 
+    public boolean repeatedMethod(TypeEnum returnType, ArrayList<TypeEnum> arguments){
+        return returnType != this.returnType && acceptedParameters(arguments); // TODO: check if it matters if return type is the same
+    }
+
     public boolean acceptedParameters(ArrayList<TypeEnum> arguments){
         if(!arguments.isEmpty())
             return parametersOverload.contains(arguments);
@@ -57,6 +61,6 @@ public class MethodSymbol extends Symbol{
 
     @Override
     public String toString() {
-        return super.toString() + "       \033[1;37mReturn Type\033[0m: " + this.returnType + '\n';
+        return "       " + ControlVars.WHITE_BOLD + "Type: " + ControlVars.RESET + this.type.toString() + '\n' + "       " + ControlVars.WHITE_BOLD + "Return Type:" + ControlVars.RESET + this.returnType + '\n';
     }
 }

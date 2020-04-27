@@ -26,7 +26,7 @@ class ASTMAINMETHOD extends SimpleNode {
   }
 
   @Override
-  public void eval(SemanticErrors errors){
+  public void eval(SemanticAnalysis analysis){
 
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
@@ -41,7 +41,10 @@ class ASTMAINMETHOD extends SimpleNode {
     ASTMETHOD_BODY methodBody = (ASTMETHOD_BODY) childNode;
 
     methodBody.addSymbolTable(symbolTable);
-    methodBody.eval(errors);
+    methodBody.eval(analysis);
+
+    if(ControlVars.PRINT_SYMBOLTABLE)
+      this.symbolTable.print(this.methodName);
   }
 }
 /* JavaCC - OriginalChecksum=929a511142c3eb4332a56f5c02fad9ec (do not edit this line) */

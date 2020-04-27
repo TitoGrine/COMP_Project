@@ -98,6 +98,12 @@ public class SymbolTable {
             return symbol.getClassType();
     }
 
+    public void clearInitialized(){
+        for(String key : this.table.keySet()){
+            this.table.get(key).setInitialized(false);
+        }
+    }
+
     public void print(String scopeName) {
         String convert = ControlVars.PURPLE + " ========== "+ (scopeName == null ? "" : scopeName + "\'s ") + "SYMBOL TABLE ==========\n\n" + ControlVars.RESET;
         Symbol symbol;

@@ -91,6 +91,7 @@ class ASTCLASS extends SimpleNode {
 
     for(ASTMETHOD method : methods){
       method.eval(analysis);
+      // this.symbolTable.clearInitialized(); // TODO: Check for initialized class variables?
     }
 
     if(mainMethod != null)

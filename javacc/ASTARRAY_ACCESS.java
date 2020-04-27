@@ -30,14 +30,17 @@ class ASTARRAY_ACCESS extends TypeSensitive {
     if(!this.symbolTable.existsSymbol(this.object)){
 
       if(!this.symbolTable.existsSymbol("this." + this.object)){
-        analysis.addError(this.getCoords(), "Trying to assign variable " + this.object + " that wasn't previously declared.");
+        if(this.object != null)
+          analysis.addError(this.getCoords(), "Trying to assign variable " + this.object + " that wasn't previously declared.");
       }
-
-      this.object = "this." + this.object;
+      if(this.object != null)
+        this.object = "this." + this.object;
     }
 
-    if(!this.validType(firstChild, TypeEnum.ARRAY, analysis))
-      analysis.addError(this.getCoords(), "Variable " + this.object + " isn't an array but it's being accessed as one.");
+    if(!this.validType(firstChild, TypeEnum.ARRAY, analysis)){
+      if(this.object != null)
+        analysis.addError(this.getCoords(), "Variable " + this.object + " isn't an array but it's being accessed as one.");
+    }
 
     this.initializedUse(firstChild, analysis);
 

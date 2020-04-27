@@ -50,9 +50,6 @@ class ASTCLASS extends SimpleNode {
 
     this.symbolTable.addSymbol(this.className, classSymbol);
 
-    if(ControlVars.PRINT_SYMBOLTABLE)
-      this.symbolTable.print(this.className);
-
     String key;
 
     while(childIndex < numChildren){
@@ -88,6 +85,9 @@ class ASTCLASS extends SimpleNode {
       }
       childIndex++;
     }
+
+    if(ControlVars.PRINT_SYMBOLTABLE)
+      this.symbolTable.print(this.className);
 
     for(ASTMETHOD method : methods){
       method.eval(analysis);

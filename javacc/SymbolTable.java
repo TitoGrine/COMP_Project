@@ -100,28 +100,37 @@ public class SymbolTable {
 
     public void print(String scopeName) {
         String convert = ControlVars.PURPLE + " ========== "+ (scopeName == null ? "" : scopeName + "\'s ") + "SYMBOL TABLE ==========\n\n" + ControlVars.RESET;
+        Symbol symbol;
 
         if(parent != null)
             convert += parent.toStringParent();
 
         convert += ControlVars.BLUE + "  --------- Scope Table ---------\n\n" + ControlVars.RESET;
 
-        for(String key : this.table.keySet())
-            convert += "    \uD83D\uDDDD " + ControlVars.WHITE_BOLD + "Key: " + ControlVars.RESET + key + "\n" + this.table.get(key).toString() + "\n";
+        for(String key : this.table.keySet()){
+            symbol = this.table.get(key);
+
+            convert += symbol == null ? "" : "    \uD83D\uDDDD " + ControlVars.WHITE_BOLD + "Key: " + ControlVars.RESET + key + "\n" + symbol.toString() + "\n";
+        }
 
         System.out.println(convert);
     }
 
     public String toStringParent() {
         String convert = "";
+        Symbol symbol;
 
         if(parent != null)
             convert += parent.toStringParent();
 
         convert += ControlVars.BLUE + "  --------- Parent Table ---------\n\n" + ControlVars.RESET;
 
-        for(String key : this.table.keySet())
-            convert += "    \uD83D\uDDDD " + ControlVars.WHITE_BOLD + "Key: " + ControlVars.RESET + key + "\n" + this.table.get(key).toString() + "\n";
+        for(String key : this.table.keySet()){
+            symbol = this.table.get(key);
+
+            if(symbol != null)
+                convert += "    \uD83D\uDDDD " + ControlVars.WHITE_BOLD + "Key: " + ControlVars.RESET + key + "\n" + symbol.toString() + "\n";
+        }
 
         return convert;
     }

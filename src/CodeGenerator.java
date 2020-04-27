@@ -102,7 +102,7 @@ public class CodeGenerator {
             if (candidate.toString().equals("ASSIGN")) {
                 switch(candidate.jjtGetChild(1).toString()) {
                     case "NEW":
-                        //TODO
+                        addNew(candidate);
                         break;
                     case "SUB":
                         addOperation(candidate);
@@ -115,6 +115,28 @@ public class CodeGenerator {
                         break;
                 }
             }
+    }
+
+    
+    static void addNew(Node candidate) {
+        String varIdent = ((ASTIDENT)((SimpleNode)candidate).jjtGetChild(0)).name;
+        String classIdent = ((ASTIDENT)((SimpleNode)((SimpleNode)candidate).jjtGetChild(1)).jjtGetChild(0)).name;
+
+        nl();
+        tab();
+        generated += "new";
+        space();
+        generated += classIdent;
+        nl();
+        tab();
+        generated += "dup";
+        nl();
+        tab();
+        generated += "invokespecial";
+        space();
+        generated += classIdent;
+        generated += "/<init>()V";
+        nl();        
     }
 
 

@@ -13,7 +13,7 @@ class ASTTHIS extends SimpleNode {
   }
 
   @Override
-  public void eval(SemanticErrors errors){
+  public void eval(SemanticAnalysis analysis){
     SimpleNode parentNode = (SimpleNode) this.jjtGetParent();
     boolean foundClass = false;
 

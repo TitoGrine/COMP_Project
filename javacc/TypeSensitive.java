@@ -1,14 +1,14 @@
-public class Operator extends SimpleNode {
+public class TypeSensitive extends SimpleNode {
 
-    public Operator(int i) {
+    public TypeSensitive(int i) {
         super(i);
     }
 
-    public Operator(Parser p, int id) {
+    public TypeSensitive(Parser p, int id) {
         super(p, id);
     }
 
-    public TypeEnum getType(SimpleNode node, SemanticErrors errors){
+    public TypeEnum getType(SimpleNode node, SemanticAnalysis analysis){
         switch(node.id){
             case ParserTreeConstants.JJTADD:
             case ParserTreeConstants.JJTSUB:
@@ -38,13 +38,16 @@ public class Operator extends SimpleNode {
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 String object = ((ASTARRAY_ACCESS) node).object;
 
+                if(!this.symbolTable.existsArraySymbol(object) && !this.symbolTable.existsArraySymbol("this." + object))
+                    return null;
+
                 ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(object);
 
                 if(arraySymbol == null)
                     arraySymbol = (ArraySymbol) this.symbolTable.getSymbol("this." + object);
 
                 if(arraySymbol == null){
-                    errors.addError(this.getCoords(), "Array " + object + "[] used, but isn't previously declared.");
+                    analysis.addError(this.getCoords(), "Array " + object + "[] used, but isn't previously declared.");
                     return null;
                 }
 
@@ -58,7 +61,7 @@ public class Operator extends SimpleNode {
                     symbol = this.symbolTable.getSymbol("this." + name);
 
                 if(symbol == null){
-                    errors.addError(this.getCoords(), "Variable " + name + " used, but isn't previously declared.");
+                    analysis.addError(this.getCoords(), "Variable " + name + " used, but isn't previously declared.");
                     return null;
                 }
 
@@ -72,7 +75,10 @@ public class Operator extends SimpleNode {
         return null;
     }
 
-    public void initializedUse(SimpleNode node, SemanticErrors errors){
+    public void initializedUse(SimpleNode node, SemanticAnalysis analysis){
+        if(!ControlVars.ANALYSE_VAR_INIT)
+            return;
+
         switch(node.id){
             case ParserTreeConstants.JJTADD:
             case ParserTreeConstants.JJTSUB:
@@ -95,10 +101,13 @@ public class Operator extends SimpleNode {
                     return;
 
                 if(!this.symbolTable.getSymbol(call).isInitialized())
-                    errors.addError(this.getCoords(), "Method " + call + "() called but isn't initialized.");
+                    analysis.addWarning(this.getCoords(), "Method " + call + "() called but isn't initialized.");
                 break;
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 String object = ((ASTARRAY_ACCESS) node).object;
+
+                if(!this.symbolTable.existsArraySymbol(object) && !this.symbolTable.existsArraySymbol("this." + object))
+                    return;
 
                 ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(object);
 
@@ -109,7 +118,7 @@ public class Operator extends SimpleNode {
                     return;
 
                 if(!arraySymbol.isInitialized()){
-                    errors.addError(this.getCoords(), "Array " + object + "[] used, but isn't previously initialized.");
+                    analysis.addWarning(this.getCoords(), "Array " + object + "[] used, but isn't previously initialized.");
                     return;
                 }
 
@@ -126,19 +135,19 @@ public class Operator extends SimpleNode {
                     return;
 
                 if(!symbol.isInitialized()){
-                    errors.addError(this.getCoords(), "Variable " + name + " used, but isn't previously initialized.");
+                    analysis.addWarning(this.getCoords(), "Variable " + name + " used, but isn't previously initialized.");
                     return;
                 }
 
                 break;
             default:
-                errors.addError(this.getCoords(), "Unrecognized node.");
+                analysis.addError(this.getCoords(), "Unrecognized node.");
         }
     }
 
-    public boolean validType(SimpleNode node, TypeEnum type, SemanticErrors errors){
+    public boolean validType(SimpleNode node, TypeEnum type, SemanticAnalysis analysis){
 
-        TypeEnum expType = this.getType(node, errors);
+        TypeEnum expType = this.getType(node, analysis);
 
         return expType != null && expType == type;
     }

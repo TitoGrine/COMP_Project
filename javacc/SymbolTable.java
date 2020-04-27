@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class SymbolTable {
-
     SymbolTable parent = null;
     Hashtable<String, Symbol> table = new Hashtable<>();
 
@@ -43,6 +42,15 @@ public class SymbolTable {
         return (key != null && this.getSymbol(key) != null);
     }
 
+    public boolean existsArraySymbol(String key){
+        if(key == null)
+            return false;
+
+        Symbol symbol = this.getSymbol(key);
+
+        return symbol != null && symbol.type == TypeEnum.ARRAY;
+    }
+
     public boolean existsMethodSymbol(String key){
         if(key == null)
             return false;
@@ -50,13 +58,6 @@ public class SymbolTable {
         Symbol symbol = this.getSymbol(key);
 
         return symbol != null && symbol.type == TypeEnum.METHOD;
-    }
-
-    public boolean repeatedMethod(String key, TypeEnum returnType, ArrayList<TypeEnum> arguments){
-        if(existsMethodSymbol(key))
-            return ((MethodSymbol) this.getSymbol(key)).repeatedMethod(returnType, arguments);
-
-        return false;
     }
 
     public boolean existsClassSymbol(String key){
@@ -78,6 +79,13 @@ public class SymbolTable {
             symbol.setInitialized(true);
     }
 
+    public boolean repeatedMethod(String key, TypeEnum returnType, ArrayList<TypeEnum> arguments){
+        if(existsMethodSymbol(key))
+            return ((MethodSymbol) this.getSymbol(key)).repeatedMethod(returnType, arguments);
+
+        return false;
+    }
+
     public String getClassType(String key){
         Symbol symbol = this.getSymbol(key);
 
@@ -90,19 +98,18 @@ public class SymbolTable {
             return symbol.getClassType();
     }
 
-    @Override
-    public String toString() {
-        String convert = "\n\033[1;35m ========== SYMBOL TABLE ==========\033[0m\n\n";
+    public void print(String scopeName) {
+        String convert = ControlVars.PURPLE + " ========== "+ (scopeName == null ? "" : scopeName + "\'s ") + "SYMBOL TABLE ==========\n\n" + ControlVars.RESET;
 
         if(parent != null)
             convert += parent.toStringParent();
 
-        convert += "\033[0;34m  --------- Scope Table ---------\033[0m\n\n";
+        convert += ControlVars.BLUE + "  --------- Scope Table ---------\n\n" + ControlVars.RESET;
 
         for(String key : this.table.keySet())
-            convert += "    \uD83D\uDDDD \033[1;37mKey\033[0m: " + key + "\n" + this.table.get(key).toString() + "\n";
+            convert += "    \uD83D\uDDDD " + ControlVars.WHITE_BOLD + "Key: " + ControlVars.RESET + key + "\n" + this.table.get(key).toString() + "\n";
 
-        return convert;
+        System.out.println(convert);
     }
 
     public String toStringParent() {
@@ -111,10 +118,10 @@ public class SymbolTable {
         if(parent != null)
             convert += parent.toStringParent();
 
-        convert += "\033[0;34m  --------- Parent Table ---------\033[0m\n\n";
+        convert += ControlVars.BLUE + "  --------- Parent Table ---------\n\n" + ControlVars.RESET;
 
         for(String key : this.table.keySet())
-            convert += "    \uD83D\uDDDD \033[1;37mKey\033[0m: " + key + "\n" + this.table.get(key).toString() + "\n";
+            convert += "    \uD83D\uDDDD " + ControlVars.WHITE_BOLD + "Key: " + ControlVars.RESET + key + "\n" + this.table.get(key).toString() + "\n";
 
         return convert;
     }

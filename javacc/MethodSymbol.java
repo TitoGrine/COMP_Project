@@ -61,6 +61,6 @@ public class MethodSymbol extends Symbol{
 
     @Override
     public String toString() {
-        return super.toString() + "       \033[1;37mReturn Type\033[0m: " + this.returnType + '\n';
+        return "       " + ControlVars.WHITE_BOLD + "Type: " + ControlVars.RESET + this.type.toString() + '\n' + "       " + ControlVars.WHITE_BOLD + "Return Type:" + ControlVars.RESET + this.returnType + '\n';
     }
 }

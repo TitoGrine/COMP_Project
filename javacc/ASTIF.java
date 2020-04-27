@@ -11,15 +11,15 @@ class ASTIF extends SimpleNode {
   }
 
   @Override
-  public void eval(SemanticErrors errors){
+  public void eval(SemanticAnalysis analysis){
     ASTCONDITION firstChild = (ASTCONDITION) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
     firstChild.addSymbolTable(this.symbolTable);
-    firstChild.eval(errors);
+    firstChild.eval(analysis);
 
     secondChild.addSymbolTable(this.symbolTable);
-    secondChild.eval(errors);
+    secondChild.eval(analysis);
   }
 }
 /* JavaCC - OriginalChecksum=21bbd7f7d1c38606ab1a5d16f7da009d (do not edit this line) */

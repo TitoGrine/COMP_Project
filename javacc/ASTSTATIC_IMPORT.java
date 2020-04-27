@@ -14,7 +14,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
   }
 
   @Override
-  public void eval(SemanticErrors errors){
+  public void eval(SemanticAnalysis analysis){
     int numChildren = this.jjtGetNumChildren();
 
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
@@ -28,7 +28,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
     if(numChildren > 2) {
       SimpleNode thirdChild = (SimpleNode) this.jjtGetChild(2);
       thirdChild.addSymbolTable(this.symbolTable);
-      thirdChild.eval(errors);
+      thirdChild.eval(analysis);
 
       if (thirdChild.id == ParserTreeConstants.JJTRETURN)
         returnType = ((ASTRETURN) thirdChild).type;
@@ -38,7 +38,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
       if (numChildren == 4) {
         ASTRETURN fourthChild = (ASTRETURN) this.jjtGetChild(3);
         fourthChild.addSymbolTable(this.symbolTable);
-        fourthChild.eval(errors);
+        fourthChild.eval(analysis);
         returnType = fourthChild.type;
       }
     }
@@ -46,7 +46,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
     MethodSymbol methodSymbol = new MethodSymbol(returnType, parameters);
 
     if(this.symbolTable.repeatedMethod(key, returnType, parameters)){
-      errors.addError(this.getCoords(), "Method " + key + " was already imported.");
+      analysis.addError(this.getCoords(), "Method " + key + " was already imported.");
       return;
     }
 

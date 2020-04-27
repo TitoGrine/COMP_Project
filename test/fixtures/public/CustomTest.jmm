@@ -3,7 +3,6 @@ import static ioPlus.print();
 import ioPlus;
 import ioPlus.plus(int, int, boolean);
 import ioPlus.plus(int, int, int) int;
-import ioPlus.print() boolean;
 import Test;
 import Stonk;
 import Stonk.stonk(boolean) boolean;
@@ -20,12 +19,12 @@ class CustomTest extends Test{
         CustomTest test;
 
         args[5] + 2;
-        num = 5;
         star = false;
         truth = !star;
+        num = 2;
 
         //if((num < 1 && num < 1)){
-        if(5*3+4/num < args[2] && (2-3/45*34+5) < 4/4*1){
+        if(5*3+4/num < num && (2-3/45*34+5) < 4/4*1){
             num = 5;
         } else {
             num = 7;

@@ -70,7 +70,7 @@ class SimpleNode implements Node {
     this.symbolTable = symbolTable;
   }
 
-  public void eval(SemanticErrors errors) {
+  public void eval(SemanticAnalysis analysis) {
   }
 
   /* Override this method if you want to customize how the node dumps

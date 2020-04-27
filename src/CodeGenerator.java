@@ -47,6 +47,7 @@ public class CodeGenerator {
     }
 
     private void addMethod(Node[] methodChilds) {
+
         ArrayList<TypeEnum> argsType = getArgsType(methodChilds[2]);
         nl();
         nl();
@@ -58,9 +59,41 @@ public class CodeGenerator {
         getJType(returnType);
         nl();
         tab();
+        generated += ".limit stack 99";
+        nl();
+        tab();
+        generated += ".limit locals 99";
+        nl();
+
+        methodReturn(methodChilds[methodChilds.length -1]);
 
 
 
+    }
+
+
+    private void makeOperation(Node operationNode){
+        SimpleNode operation = (SimpleNode) operationNode;
+        SimpleNode oper1 = (SimpleNode) operation.jjtGetChild(0);
+        SimpleNode oper2 = (SimpleNode) operation.jjtGetChild(1);
+        if(oper1.toString().equals("ADD") || oper1.toString().equals("MUL") || oper1.toString().equals("SUB"))
+            makeOperation(operation.jjtGetChild(0));
+        else
+            ;
+        if(oper2.toString().equals("ADD") || oper2.toString().equals("MUL") || oper2.toString().equals("SUB"))
+            makeOperation(operation.jjtGetChild(1));
+        else
+            ;
+
+
+    }
+
+    private void methodReturn(Node returnNode) {
+        SimpleNode node = (SimpleNode) returnNode;
+        if((node.jjtGetChild(0)).toString().equals("ADD")){
+            makeOperation(node.jjtGetChild(0));
+
+        }
     }
 
     private void printTypes(ArrayList<TypeEnum> argsType) {
@@ -160,6 +193,9 @@ public class CodeGenerator {
                         addNew(candidate);
                         break;
                     case "SUB":
+                        subOperation(candidate);
+                        break;
+                    case "add":
                         addOperation(candidate);
                         break;
                     case "FUNC_METHOD":
@@ -172,7 +208,11 @@ public class CodeGenerator {
             }
     }
 
-    
+    private static void addOperation(Node candidate) {
+
+    }
+
+
     static void addNew(Node candidate) {
         String varIdent = ((ASTIDENT)((SimpleNode)candidate).jjtGetChild(0)).name;
         String classIdent = ((ASTIDENT)((SimpleNode)((SimpleNode)candidate).jjtGetChild(1)).jjtGetChild(0)).name;
@@ -227,12 +267,6 @@ public class CodeGenerator {
         TypeEnum returnType = getMethodReturnType(funcName);        
         generated += parseType(returnType);
 
-        generated += ".limit stack 99";
-        nl();
-        tab();
-        generated += ".limit locals 99";
-        nl();
-
 
     }
 
@@ -282,7 +316,7 @@ public class CodeGenerator {
     }
 
 
-    private static void addOperation(Node candidate) {
+    private static void subOperation(Node candidate) {
         SimpleNode operation = (SimpleNode)candidate.jjtGetChild(1);
         tab();
         generated += "ldc " + ((ASTNUM) operation.jjtGetChild(0)).value;

@@ -57,6 +57,8 @@ public class CodeGenerator {
         TypeEnum returnType = ((ASTTYPE)((SimpleNode)methodChilds[0]).jjtGetChild(0)).typeID;
         getJType(returnType);
         nl();
+        tab();
+
 
 
     }
@@ -224,6 +226,14 @@ public class CodeGenerator {
 
         TypeEnum returnType = getMethodReturnType(funcName);        
         generated += parseType(returnType);
+
+        generated += ".limit stack 99";
+        nl();
+        tab();
+        generated += ".limit locals 99";
+        nl();
+
+
     }
 
     private static String parseType(TypeEnum returnType) {

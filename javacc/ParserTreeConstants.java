@@ -18,28 +18,29 @@ public interface ParserTreeConstants
   public int JJTARGUMENT = 14;
   public int JJTMAINMETHOD = 15;
   public int JJTSCOPE = 16;
-  public int JJTIF = 17;
-  public int JJTELSE = 18;
-  public int JJTWHILE = 19;
-  public int JJTCONDITION = 20;
-  public int JJTARRAY_ACCESS = 21;
-  public int JJTASSIGN = 22;
-  public int JJTAND = 23;
-  public int JJTLESSTHAN = 24;
-  public int JJTADD = 25;
-  public int JJTSUB = 26;
-  public int JJTMUL = 27;
-  public int JJTDIV = 28;
-  public int JJTLENGTH = 29;
-  public int JJTFUNC_METHOD = 30;
-  public int JJTCALL = 31;
-  public int JJTNUM = 32;
-  public int JJTBOOL = 33;
-  public int JJTTHIS = 34;
-  public int JJTNEW_ARRAY = 35;
-  public int JJTNEW = 36;
-  public int JJTNEGATION = 37;
-  public int JJTIDENT = 38;
+  public int JJTIF_ELSE = 17;
+  public int JJTIF = 18;
+  public int JJTELSE = 19;
+  public int JJTWHILE = 20;
+  public int JJTCONDITION = 21;
+  public int JJTARRAY_ACCESS = 22;
+  public int JJTASSIGN = 23;
+  public int JJTAND = 24;
+  public int JJTLESSTHAN = 25;
+  public int JJTADD = 26;
+  public int JJTSUB = 27;
+  public int JJTMUL = 28;
+  public int JJTDIV = 29;
+  public int JJTLENGTH = 30;
+  public int JJTFUNC_METHOD = 31;
+  public int JJTCALL = 32;
+  public int JJTNUM = 33;
+  public int JJTBOOL = 34;
+  public int JJTTHIS = 35;
+  public int JJTNEW_ARRAY = 36;
+  public int JJTNEW = 37;
+  public int JJTNEGATION = 38;
+  public int JJTIDENT = 39;
 
 
   public String[] jjtNodeName = {
@@ -60,6 +61,7 @@ public interface ParserTreeConstants
     "ARGUMENT",
     "MAINMETHOD",
     "SCOPE",
+    "IF_ELSE",
     "IF",
     "ELSE",
     "WHILE",
@@ -84,4 +86,4 @@ public interface ParserTreeConstants
     "IDENT",
   };
 }
-/* JavaCC - OriginalChecksum=ee5bc8d9d6903caa18fe6367765e1847 (do not edit this line) */
+/* JavaCC - OriginalChecksum=e301c6a182e5c2e47ef696517272164c (do not edit this line) */

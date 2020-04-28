@@ -76,21 +76,7 @@ public class SymbolTable {
         Symbol symbol = this.getSymbol(key);
 
         if(symbol != null)
-            symbol.setInitialized(true);
-    }
-
-    public void setAsVolatile(String key, boolean dec){
-        if(key == null)
-            return;
-
-        Symbol symbol = this.getSymbol(key);
-
-        if(symbol != null) {
-            if (dec)
-                symbol.decVolatily();
-            else
-                symbol.incVolatily();
-        }
+            symbol.incInitialized();
     }
 
     public boolean repeatedMethod(String key, TypeEnum returnType, ArrayList<TypeEnum> arguments){
@@ -112,9 +98,15 @@ public class SymbolTable {
             return symbol.getClassType();
     }
 
-    public void clearInitialized(){
-        for(String key : this.table.keySet()){
-            this.table.get(key).setInitialized(false);
+    public void clearInitialized(ArrayList<String> unstableVars){
+        for(String key : unstableVars){
+            if(key != null){
+                Symbol symbol = this.getSymbol(key);
+                symbol.decInitialized();
+
+                if(!symbol.isInitialized())
+                    symbol.setAsVolatile(true);
+            }
         }
     }
 

@@ -40,6 +40,7 @@ class ASTARGUMENTS extends TypeSensitive {
 
         this.arguments.add(methodSymbol.getReturnType(funcMethod.arguments));
       } else{
+        this.initializedUse(childNode, analysis);
         this.arguments.add(this.getType(childNode, analysis));
       }
 

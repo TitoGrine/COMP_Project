@@ -29,7 +29,7 @@ class ASTMAINMETHOD extends SimpleNode {
 
     ArraySymbol arraySymbol = new ArraySymbol(TypeEnum.STRING);
 
-    arraySymbol.setInitialized(true);
+    arraySymbol.incInitialized();
 
     this.symbolTable.addSymbol(firstChild.name, arraySymbol);
 

@@ -22,7 +22,7 @@ public class Main {
             analysis.throwErrors();
 
             if(ControlVars.PRINT_AST){
-                System.out.println(ControlVars.CYAN + "\n ++++++++++++++ AST ++++++++++++++\n" + ControlVars.RESET);
+                System.out.println(ControlVars.CYAN + "\n +++++++++++ Abstract Syntax Tree +++++++++++\n" + ControlVars.RESET);
                 root.dump(""); // prints the tree on the screen
             }
 

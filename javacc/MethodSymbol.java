@@ -20,13 +20,11 @@ public class MethodSymbol extends Symbol{
 
     public MethodSymbol(TypeEnum returnType) {
         super(TypeEnum.METHOD);
-        this.initialized = true;
         this.addParameter(returnType);
     }
 
     public MethodSymbol(TypeEnum returnType, ArrayList<TypeEnum> parameters) {
         super(TypeEnum.METHOD);
-        this.initialized = true;
         this.addParameter(parameters, returnType);
     }
 
@@ -55,6 +53,16 @@ public class MethodSymbol extends Symbol{
             return parametersOverload.contains(arguments);
 
         return parametersOverload.contains(arguments) || parametersOverload.contains(new ArrayList<>(Collections.singleton(TypeEnum.VOID)));
+    }
+
+    @Override
+    public boolean isInitialized() {
+        return true;
+    }
+
+    @Override
+    public boolean isVolatile() {
+        return false;
     }
 
     @Override

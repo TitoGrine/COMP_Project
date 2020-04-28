@@ -20,15 +20,14 @@ class CustomTest extends Test{
         CustomTest test;
 
         args[5] + 2;
-        star = false;
-
-        num = 2;
 
         //if((num < 1 && num < 1)){
         if(5*3+4/num < this.test() && (2-3/45*34+5) < 4/4*1){
             num = 5;
+            star = false;
         } else {
             num = 7;
+            //star = true;
         }
 
         while(num < 4){

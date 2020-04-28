@@ -126,17 +126,16 @@ public class TypeSensitive extends SimpleNode {
 
                 if(!arraySymbol.isInitialized()){
                     if(ControlVars.THROW_VAR_INIT_ERROR)
-                        analysis.addError(this.getCoords(), "Array " + object + "[] used, but isn't previously initialized.");
+                        if(arraySymbol.isVolatile())
+                            analysis.addError(this.getCoords(), "Array " + object + "[] used, but but might not be initialized.");
+                        else
+                            analysis.addError(this.getCoords(), "Array " + object + "[] used, but isn't previously initialized.");
                     else
-                        analysis.addWarning(this.getCoords(), "Array " + object + "[] used, but isn't previously initialized.");
+                        if(arraySymbol.isVolatile())
+                            analysis.addWarning(this.getCoords(), "Array " + object + "[] used, but but might not be initialized.");
+                        else
+                            analysis.addWarning(this.getCoords(), "Array " + object + "[] used, but isn't previously initialized.");
                     return;
-                }
-
-                if(arraySymbol.isVolatile()){
-                    if(ControlVars.THROW_VAR_INIT_ERROR)
-                        analysis.addError(this.getCoords(), "Array " + object + " might not be initialize when used.");
-                    else
-                        analysis.addWarning(this.getCoords(), "Array " + object + " might not be initialize when used.");
                 }
 
                 break;
@@ -155,18 +154,20 @@ public class TypeSensitive extends SimpleNode {
                     return;
 
                 if(!symbol.isInitialized()){
-                    if(ControlVars.THROW_VAR_INIT_ERROR)
-                        analysis.addError(this.getCoords(), "Variable " + name + " used, but isn't previously initialized.");
-                    else
-                        analysis.addWarning(this.getCoords(), "Variable " + name + " used, but isn't previously initialized.");
-                    return;
-                }
+                    if(ControlVars.THROW_VAR_INIT_ERROR){
+                        if(symbol.isVolatile())
+                            analysis.addError(this.getCoords(), "Variable " + name + " used, but might not be initialized.");
+                        else
+                            analysis.addError(this.getCoords(), "Variable " + name + " used, but isn't previously initialized.");
+                    }
+                    else{
+                        if(symbol.isVolatile())
+                            analysis.addWarning(this.getCoords(), "Variable " + name + " used, but might not be initialized.");
+                        else
+                            analysis.addWarning(this.getCoords(), "Variable " + name + " used, but isn't previously initialized.");
+                    }
 
-                if(symbol.isVolatile()){
-                    if(ControlVars.THROW_VAR_INIT_ERROR)
-                        analysis.addError(this.getCoords(), "Variable " + name + " might not be initialize when used.");
-                    else
-                        analysis.addWarning(this.getCoords(), "Variable " + name + " might not be initialize when used.");
+                    return;
                 }
 
                 break;

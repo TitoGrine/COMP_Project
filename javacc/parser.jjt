@@ -304,7 +304,7 @@ void EnclosedStatement() #SCOPE : {}
     <LBRACKET> (Statement())* <RBRACKET>
 }
 
-void IfElseStatement() #void : {}
+void IfElseStatement() #IF_ELSE : {}
 {
     IfStatement() ElseStatement()
 }

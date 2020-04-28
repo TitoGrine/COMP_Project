@@ -24,6 +24,6 @@ public class ClassSymbol extends Symbol{
 
     @Override
     public String toString() {
-        return "       " + ControlVars.WHITE_BOLD + "Type: " + ControlVars.RESET + this.type.toString() + '\n' + (extendedClass == null ? "" : ("       " + ControlVars.WHITE_BOLD + "Extends: " + ControlVars.RESET + this.extendedClass + '\n'));
+        return ControlVars.WHITE_BOLD + (this.type == null ? "" : "       " + "Type: " + ControlVars.RESET + this.type.toString() + '\n') + (extendedClass == null ? "" : ("       " + ControlVars.WHITE_BOLD + "Extends: " + ControlVars.RESET + this.extendedClass + '\n'));
     }
 }

@@ -28,12 +28,15 @@ class ASTASSIGN extends TypeSensitive {
 
     if(!this.symbolTable.existsSymbol(varName)){
 
-      if(!this.symbolTable.existsSymbol("this." + varName)){
-        analysis.addError(this.getCoords(), "Trying to assign variable " + varName + " that wasn't previously declared.");
+      if(!this.symbolTable.existsSymbol("this." + varName) ){
+        if(varName != null)
+          analysis.addError(this.getCoords(), "Trying to assign variable " + varName + " that wasn't previously declared.");
+
         return;
       }
 
-      varName = "this." + varName;
+      if(varName != null)
+        varName = "this." + varName;
     }
 
     if(firstChild.id == ParserTreeConstants.JJTARRAY_ACCESS)
@@ -44,8 +47,10 @@ class ASTASSIGN extends TypeSensitive {
     secondChild.addSymbolTable(this.symbolTable);
     secondChild.eval(analysis);
 
-    if(!this.validType(secondChild, compatibleType, analysis))
-      analysis.addError(this.getCoords(), "Assignment of variable " + varName + " to incompatible type.");
+    if(!this.validType(secondChild, compatibleType, analysis)){
+      if(varName != null)
+        analysis.addError(this.getCoords(), "Assignment of variable " + varName + " to incompatible type.");
+    }
 
     this.initializedUse(secondChild, analysis);
 

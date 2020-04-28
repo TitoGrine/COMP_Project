@@ -54,4 +54,12 @@ class CustomTest extends Test{
 
 		return num;
 	}
+
+	public boolean parade() {
+	    boolean stonky;
+
+	    stonky = !truth;
+
+	    return stonky;
+	}
 }

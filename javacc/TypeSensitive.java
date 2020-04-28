@@ -29,6 +29,9 @@ public class TypeSensitive extends SimpleNode {
             case ParserTreeConstants.JJTFUNC_METHOD:
                 String call = ((ASTFUNC_METHOD) node).call;
 
+                if(!this.symbolTable.existsMethodSymbol(call))
+                    return null;
+
                 MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(call);
 
                 if(methodSymbol == null) // TODO: Check if the identifier is from the class.
@@ -38,36 +41,51 @@ public class TypeSensitive extends SimpleNode {
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 String object = ((ASTARRAY_ACCESS) node).object;
 
-                if(!this.symbolTable.existsArraySymbol(object) && !this.symbolTable.existsArraySymbol("this." + object))
-                    return null;
+                if(!this.symbolTable.existsArraySymbol(object) && !this.symbolTable.existsArraySymbol("this." + object)){
+                    if(object == null)
+                        return null;
+
+                    if(!this.symbolTable.existsSymbol(object) && !this.symbolTable.existsSymbol("this." + object))
+                        analysis.addError(this.getCoords(), "Variable " + object + " used, but isn't previously declared.");
+
+                }
 
                 ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(object);
 
                 if(arraySymbol == null)
                     arraySymbol = (ArraySymbol) this.symbolTable.getSymbol("this." + object);
 
-                if(arraySymbol == null){
-                    analysis.addError(this.getCoords(), "Array " + object + "[] used, but isn't previously declared.");
+                if(arraySymbol == null)
                     return null;
-                }
 
                 return arraySymbol.getReturnType();
             case ParserTreeConstants.JJTIDENT:
                 String name = ((ASTIDENT) node).name;
+
+                if(!this.symbolTable.existsSymbol(name) && !this.symbolTable.existsSymbol("this." + name)){
+                    if(name != null)
+                        analysis.addError(this.getCoords(), "Variable " + name + " used, but isn't previously declared.");
+
+                    return null;
+                }
 
                 Symbol symbol = this.symbolTable.getSymbol(name);
 
                 if(symbol == null)
                     symbol = this.symbolTable.getSymbol("this." + name);
 
-                if(symbol == null){
-                    analysis.addError(this.getCoords(), "Variable " + name + " used, but isn't previously declared.");
+                if(symbol == null)
                     return null;
-                }
 
                 return symbol.getType();
             case ParserTreeConstants.JJTNEW:
-                return this.symbolTable.getSymbol(((ASTNEW) node).object).getType();
+
+                String newObject = ((ASTNEW) node).object;
+
+                if(!this.symbolTable.existsSymbol(newObject))
+                    return null;
+
+                return this.symbolTable.getSymbol(newObject).getType();
             default:
                 break;
         }
@@ -93,20 +111,12 @@ public class TypeSensitive extends SimpleNode {
             case ParserTreeConstants.JJTBOOL:
             case ParserTreeConstants.JJTNEW:
             case ParserTreeConstants.JJTVOID:
-                break;
             case ParserTreeConstants.JJTFUNC_METHOD:
-                String call = ((ASTFUNC_METHOD) node).call;
-
-                if(call == null)
-                    return;
-
-                if(!this.symbolTable.getSymbol(call).isInitialized())
-                    analysis.addWarning(this.getCoords(), "Method " + call + "() called but isn't initialized.");
                 break;
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 String object = ((ASTARRAY_ACCESS) node).object;
 
-                if(!this.symbolTable.existsArraySymbol(object) && !this.symbolTable.existsArraySymbol("this." + object))
+                if(object == null || (!this.symbolTable.existsArraySymbol(object) && !this.symbolTable.existsArraySymbol("this." + object)))
                     return;
 
                 ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(object);
@@ -125,6 +135,9 @@ public class TypeSensitive extends SimpleNode {
                 break;
             case ParserTreeConstants.JJTIDENT:
                 String name = ((ASTIDENT) node).name;
+
+                if(name == null || (!this.symbolTable.existsSymbol(name) && !this.symbolTable.existsSymbol("this." + name)))
+                    return;
 
                 Symbol symbol = this.symbolTable.getSymbol(name);
 

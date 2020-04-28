@@ -2,7 +2,7 @@ public class ControlVars {
     public static final boolean ANALYSE_SEMANTICS = true;
     public static final boolean ANALYSE_VAR_INIT = true;
     public static final boolean PRINT_SYMBOLTABLE = true;
-    public static final boolean PRINT_AST = true;
+    public static final boolean PRINT_AST = false;
 
     // Terminal Colors
     public static final String RESET = "\033[0m";  // Text Reset

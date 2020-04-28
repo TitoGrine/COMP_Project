@@ -69,18 +69,17 @@ class ASTCLASS extends SimpleNode {
 
         key = className + '.' + method.methodName;
 
-        this.symbolTable.addSymbol(key, method.methodSymbol);
+        this.symbolTable.addMethodSymbol(key, method.parameters, method.returnType);
       } else if (childNode.id == ParserTreeConstants.JJTMAINMETHOD){
         if(mainDeclared)
           analysis.addError(this.getCoords(), "CLASS " + firstChild.name + " has more than one main method.");
 
         mainMethod = (ASTMAINMETHOD) childNode;
 
-        mainMethod.preProcessMethod();
-
         key = className + '.' + mainMethod.methodName;
 
-        this.symbolTable.addSymbol(key, mainMethod.methodSymbol);
+        this.symbolTable.addMethodSymbol(key, mainMethod.parameters, mainMethod.returnType);
+
         mainDeclared = true;
       }
       childIndex++;

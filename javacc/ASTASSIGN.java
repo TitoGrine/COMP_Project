@@ -2,6 +2,9 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTASSIGN extends TypeSensitive {
+  protected boolean unstableVar = false;
+  protected boolean elseScope = false;
+
   public ASTASSIGN(int id) {
     super(id);
   }
@@ -55,6 +58,9 @@ class ASTASSIGN extends TypeSensitive {
     this.initializedUse(secondChild, analysis);
 
     this.symbolTable.setInitialized(varName);
+
+    if(this.unstableVar)
+      this.symbolTable.setAsVolatile(varName, elseScope);
   }
 }
 /* JavaCC - OriginalChecksum=cbade18a4c362fe9b5729b12bfc068fc (do not edit this line) */

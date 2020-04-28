@@ -6,7 +6,8 @@ import java.util.Collections;
 public
 class ASTMAINMETHOD extends SimpleNode {
   protected String methodName = "main";
-  protected MethodSymbol methodSymbol;
+  protected TypeEnum returnType = TypeEnum.VOID;
+  protected ArrayList<TypeEnum> parameters = new ArrayList<>(Collections.singleton(TypeEnum.ARRAY));
 
   public ASTMAINMETHOD(int id) {
     super(id);
@@ -14,10 +15,6 @@ class ASTMAINMETHOD extends SimpleNode {
 
   public ASTMAINMETHOD(Parser p, int id) {
     super(p, id);
-  }
-
-  public void preProcessMethod() {
-    methodSymbol = new MethodSymbol(TypeEnum.VOID, new ArrayList<TypeEnum>(Collections.singleton(TypeEnum.ARRAY)));
   }
 
   @Override

@@ -14,6 +14,16 @@ class ASTELSE extends SimpleNode {
   public void eval(SemanticAnalysis analysis){
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
 
+    if(firstChild.id == ParserTreeConstants.JJTASSIGN){
+      ((ASTASSIGN) firstChild).unstableVar = true;
+      ((ASTASSIGN) firstChild).elseScope = true;
+    }
+    else if (firstChild.id == ParserTreeConstants.JJTSCOPE){
+      ((ASTSCOPE) firstChild).unstableScope = true;
+      ((ASTSCOPE) firstChild).elseScope = true;
+
+    }
+
     firstChild.addSymbolTable(this.symbolTable);
     firstChild.eval(analysis);
   }

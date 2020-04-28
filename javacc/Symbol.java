@@ -2,6 +2,7 @@ public class Symbol {
     TypeEnum type;
     String classType;
     boolean initialized = false;
+    int volatileVar = 0;
 
     public Symbol(TypeEnum type){
         this.type = type;
@@ -28,8 +29,20 @@ public class Symbol {
         this.initialized = initialized;
     }
 
+    public void incVolatily(){
+        this.volatileVar++;
+    }
+
+    public void decVolatily(){
+        this.volatileVar--;
+    }
+
     public boolean isInitialized() {
         return initialized;
+    }
+
+    public boolean isVolatile() {
+        return false; // TODO: change when fixed
     }
 
     @Override

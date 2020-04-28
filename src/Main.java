@@ -26,7 +26,7 @@ public class Main {
                 root.dump(""); // prints the tree on the screen
             }
 
-            analysis.showWarnings(true);
+            analysis.showWarnings(ControlVars.THROW_WARNING_EXCEPTION);
 
         } catch (Exception e) {
             throw e;

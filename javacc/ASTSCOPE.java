@@ -2,6 +2,9 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTSCOPE extends SimpleNode {
+  protected boolean unstableScope = false;
+  protected boolean elseScope = false;
+
   public ASTSCOPE(int id) {
     super(id);
   }
@@ -18,6 +21,11 @@ class ASTSCOPE extends SimpleNode {
 
     while(childIndex < numChildren){
       childNode = (SimpleNode) this.jjtGetChild(childIndex);
+
+      if(unstableScope && childNode.id == ParserTreeConstants.JJTASSIGN){
+        ((ASTASSIGN) childNode).unstableVar = true;
+        ((ASTASSIGN) childNode).elseScope = this.elseScope;
+      }
 
       childNode.addSymbolTable(this.symbolTable);
       childNode.eval(analysis);

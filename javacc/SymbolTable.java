@@ -12,11 +12,11 @@ public class SymbolTable {
         this.parent = parent;
     }
 
-    public void addSymbol(String key, MethodSymbol symbol){
+    public void addMethodSymbol(String key, ArrayList<TypeEnum> parameters, TypeEnum returnType){
         if(table.containsKey(key))
-            ((MethodSymbol) table.get(key)).addParameters(symbol.getParametersOverload());
+            ((MethodSymbol) table.get(key)).addParameters(parameters, returnType);
         else
-            table.put(key, symbol);
+            table.put(key, new MethodSymbol(returnType, parameters));
     }
 
     public void addSymbol(String key, Symbol symbol){
@@ -77,6 +77,20 @@ public class SymbolTable {
 
         if(symbol != null)
             symbol.setInitialized(true);
+    }
+
+    public void setAsVolatile(String key, boolean dec){
+        if(key == null)
+            return;
+
+        Symbol symbol = this.getSymbol(key);
+
+        if(symbol != null) {
+            if (dec)
+                symbol.decVolatily();
+            else
+                symbol.incVolatily();
+        }
     }
 
     public boolean repeatedMethod(String key, TypeEnum returnType, ArrayList<TypeEnum> arguments){

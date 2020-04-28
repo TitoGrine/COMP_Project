@@ -18,6 +18,11 @@ class ASTWHILE extends SimpleNode {
     firstChild.addSymbolTable(this.symbolTable);
     firstChild.eval(analysis);
 
+    if(secondChild.id == ParserTreeConstants.JJTASSIGN)
+      ((ASTASSIGN) secondChild).unstableVar = true;
+    else if (secondChild.id == ParserTreeConstants.JJTSCOPE)
+      ((ASTSCOPE) secondChild).unstableScope = true;
+
     secondChild.addSymbolTable(this.symbolTable);
     secondChild.eval(analysis);
   }

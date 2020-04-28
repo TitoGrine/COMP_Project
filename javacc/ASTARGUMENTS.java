@@ -30,14 +30,15 @@ class ASTARGUMENTS extends TypeSensitive {
         this.arguments.add(((ASTARGUMENT) childNode).type);
       }
       else if (childNode.id == ParserTreeConstants.JJTFUNC_METHOD){
-        String call = ((ASTFUNC_METHOD) childNode).call;
+        ASTFUNC_METHOD funcMethod = ((ASTFUNC_METHOD) childNode);
+        String call = funcMethod.call;
 
         if(!this.symbolTable.existsMethodSymbol(call))
           analysis.addError(this.getCoords(), "Method call " + call + " doesn't exist.");
 
         MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(call);
 
-        this.arguments.add(methodSymbol.getReturnType());
+        this.arguments.add(methodSymbol.getReturnType(funcMethod.arguments));
       } else{
         this.arguments.add(this.getType(childNode, analysis));
       }

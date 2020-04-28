@@ -2,50 +2,52 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class MethodSymbol extends Symbol{
-    TypeEnum returnType;
+    ArrayList<TypeEnum> returnType = new ArrayList<>();
     ArrayList<ArrayList<TypeEnum>> parametersOverload = new ArrayList<>();
 
-    private void addParameter(){
+    private void addParameter(TypeEnum returnType){
         ArrayList<TypeEnum> parameters = new ArrayList<>(Collections.singleton(TypeEnum.VOID));
 
-        addParameter(parameters);
+        addParameter(parameters, returnType);
     }
 
-    private void addParameter(ArrayList<TypeEnum> parameter){
-        if(!this.acceptedParameters(parameter))
+    private void addParameter(ArrayList<TypeEnum> parameter, TypeEnum returnType){
+        if(!this.acceptedParameters(parameter)){
+            this.returnType.add(returnType);
             this.parametersOverload.add(parameter);
+        }
     }
 
     public MethodSymbol(TypeEnum returnType) {
         super(TypeEnum.METHOD);
-        this.returnType = returnType;
         this.initialized = true;
-        this.addParameter();
+        this.addParameter(returnType);
     }
 
     public MethodSymbol(TypeEnum returnType, ArrayList<TypeEnum> parameters) {
         super(TypeEnum.METHOD);
-        this.returnType = returnType;
         this.initialized = true;
-        this.addParameter(parameters);
+        this.addParameter(parameters, returnType);
     }
 
-    public TypeEnum getReturnType() {
-        return returnType;
+    public TypeEnum getReturnType(ArrayList<TypeEnum> parameters) {
+        int index = this.parametersOverload.indexOf(parameters);
+
+        if(index == -1)
+            return null;
+
+        return returnType.get(index);
     }
 
-    public void addParameters(ArrayList<ArrayList<TypeEnum>> parametersOverload){
-        for(ArrayList<TypeEnum> parameters : parametersOverload){
-            if (parameters.isEmpty()) {
-                this.addParameter();
-            } else {
-                this.addParameter(parameters);
-            }
-        }
+    public void addParameters(ArrayList<TypeEnum> parameters, TypeEnum returnType){
+        if(parameters.isEmpty())
+            this.addParameter(returnType);
+        else
+            this.addParameter(parameters, returnType);
     }
 
     public boolean repeatedMethod(TypeEnum returnType, ArrayList<TypeEnum> arguments){
-        return returnType != this.returnType && acceptedParameters(arguments); // TODO: check if it matters if return type is the same
+        return acceptedParameters(arguments) && returnType != this.getReturnType(arguments);
     }
 
     public boolean acceptedParameters(ArrayList<TypeEnum> arguments){
@@ -53,10 +55,6 @@ public class MethodSymbol extends Symbol{
             return parametersOverload.contains(arguments);
 
         return parametersOverload.contains(arguments) || parametersOverload.contains(new ArrayList<>(Collections.singleton(TypeEnum.VOID)));
-    }
-
-    public ArrayList<ArrayList<TypeEnum>> getParametersOverload() {
-        return parametersOverload;
     }
 
     @Override

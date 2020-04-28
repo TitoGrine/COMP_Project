@@ -214,7 +214,21 @@ public class CodeGenerator {
     }
 
     private static void addOperation(Node candidate) {
-
+        SimpleNode operation = (SimpleNode)candidate.jjtGetChild(1);
+        tab();
+        generated += "ldc " + ((ASTNUM) operation.jjtGetChild(0)).value;
+        nl();
+        tab();
+        generated += "ldc " + ((ASTNUM) operation.jjtGetChild(1)).value;
+        nl();
+        tab();
+        generated += "iadd"; //TODO verificar o tipo de variavel e operação
+        nl();
+        tab();
+        generated += "istore " + localIndex;
+        locals[localIndex] = ((ASTIDENT)candidate.jjtGetChild(0)).name;
+        localIndex++;
+        nl();
     }
 
 
@@ -337,8 +351,6 @@ public class CodeGenerator {
         locals[localIndex] = ((ASTIDENT)candidate.jjtGetChild(0)).name;
         localIndex++;
         nl();
-
-
     }
 
 

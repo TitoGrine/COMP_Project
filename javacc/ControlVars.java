@@ -1,7 +1,7 @@
 public class ControlVars {
     public static final boolean ANALYSE_SEMANTICS = true;
     public static final boolean ANALYSE_VAR_INIT = true;
-    public static final boolean PRINT_SYMBOLTABLE = true;
+    public static final boolean PRINT_SYMBOLTABLE = false;
     public static final boolean PRINT_AST = true;
 
     // Terminal Colors

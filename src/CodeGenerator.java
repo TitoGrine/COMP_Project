@@ -65,35 +65,74 @@ public class CodeGenerator {
         generated += ".limit locals 99";
         nl();
 
-        methodReturn(methodChilds[methodChilds.length -1]);
+        methodReturn(methodChilds[methodChilds.length -1], returnType);
 
 
 
     }
 
 
-    private void makeOperation(Node operationNode){
+    static void makeOperation(Node operationNode){
         SimpleNode operation = (SimpleNode) operationNode;
         SimpleNode oper1 = (SimpleNode) operation.jjtGetChild(0);
         SimpleNode oper2 = (SimpleNode) operation.jjtGetChild(1);
-        if(oper1.id == ParserTreeConstants.JJTADD || oper1.toString().equals("MUL") || oper1.toString().equals("SUB"))
-            makeOperation(operation.jjtGetChild(0));
-        else
-            ;
-        if(oper2.toString().equals("ADD") || oper2.toString().equals("MUL") || oper2.toString().equals("SUB"))
-            makeOperation(operation.jjtGetChild(1));
-        else
-            ;
+        if (oper1.id == ParserTreeConstants.JJTADD ||
+            oper1.id == ParserTreeConstants.JJTMUL ||
+            oper1.id == ParserTreeConstants.JJTSUB ||
+            oper1.id == ParserTreeConstants.JJTDIV) {
+          makeOperation(operation.jjtGetChild(0));
 
+        } else {
+          if (oper1.id == ParserTreeConstants.JJTNUM) {
+            System.out.println(oper1.id + '\n');
+            generated += "\n\tbipush " + ((ASTNUM)oper1).value;
+          }else
+            generated += "\n\tiload " + "placeholder";
+        }
 
+        if (oper2.id == ParserTreeConstants.JJTADD ||
+            oper2.id == ParserTreeConstants.JJTMUL ||
+            oper2.id == ParserTreeConstants.JJTSUB ||
+            oper2.id == ParserTreeConstants.JJTDIV) {
+          makeOperation(operation.jjtGetChild(1));
+        } else 
+        if (oper2.id == ParserTreeConstants.JJTNUM) {
+          System.out.println(oper1.id + '\n');
+          generated += "\n\tbipush " + ((ASTNUM) oper2).value;
+        } else {
+            generated += "\n\tiload " + "placeholder";
+        }
+
+        switch(operation.id){
+            case ParserTreeConstants.JJTADD: 
+                generated += "\n\tiadd";
+                break;
+            case ParserTreeConstants.JJTSUB:
+              generated += "\n\tisub";
+              break;
+            case ParserTreeConstants.JJTDIV:
+              generated += "\n\tidiv";
+              break;
+            case ParserTreeConstants.JJTMUL:
+              generated += "\n\timul";
+              break;
+        }
     }
 
-    private void methodReturn(Node returnNode) {
+    private void methodReturn(Node returnNode, TypeEnum typeReturn) {
         SimpleNode node = (SimpleNode) returnNode;
-        if((node.jjtGetChild(0)).toString().equals("ADD")){
+        if(node.id != ParserTreeConstants.JJTIDENT)
             makeOperation(node.jjtGetChild(0));
-
-        }
+        nl();
+        nl();
+        tab();
+        if(typeReturn == TypeEnum.INT) 
+                generated += "ireturn";
+        if (typeReturn == TypeEnum.VOID)
+              generated += "return";
+        nl();
+        generated += ".end method";
+        
     }
 
     private void printTypes(ArrayList<TypeEnum> argsType) {
@@ -192,13 +231,13 @@ public class CodeGenerator {
 
     static void addAssigns(Node methodBodyChilds[]) {
         for (Node candidate : methodBodyChilds)
-            if (candidate.toString().equals("ASSIGN")) {
+            if (((SimpleNode) candidate).id == ParserTreeConstants.JJTASSIGN) {
                 switch(candidate.jjtGetChild(1).toString()) {
                     case "NEW":
                         addNew(candidate);
                         break;
                     case "SUB":
-                        subOperation(candidate);
+                        makeOperation(candidate);
                         break;
                     case "ADD":
                         addOperation(candidate);

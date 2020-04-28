@@ -42,12 +42,10 @@ public class TypeSensitive extends SimpleNode {
                 String object = ((ASTARRAY_ACCESS) node).object;
 
                 if(!this.symbolTable.existsArraySymbol(object) && !this.symbolTable.existsArraySymbol("this." + object)){
-                    if(object == null)
-                        return null;
-
-                    if(!this.symbolTable.existsSymbol(object) && !this.symbolTable.existsSymbol("this." + object))
+                    if(object != null && !this.symbolTable.existsSymbol(object) && !this.symbolTable.existsSymbol("this." + object))
                         analysis.addError(this.getCoords(), "Variable " + object + " used, but isn't previously declared.");
 
+                    return null;
                 }
 
                 ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(object);

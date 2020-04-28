@@ -4,6 +4,7 @@ import ioPlus;
 import ioPlus.plus(int, int, boolean);
 import ioPlus.plus(int, int, int) int;
 import Test;
+import Test.test() int;
 import Stonk;
 import Stonk.stonk(boolean) boolean;
 
@@ -24,7 +25,7 @@ class CustomTest extends Test{
         num = 2;
 
         //if((num < 1 && num < 1)){
-        if(5*3+4/num < num && (2-3/45*34+5) < 4/4*1){
+        if(5*3+4/num < this.test() && (2-3/45*34+5) < 4/4*1){
             num = 5;
         } else {
             num = 7;
@@ -43,7 +44,7 @@ class CustomTest extends Test{
             num = 7*3;
         }
 
-        a = 8 / 2 + 4 * 5 / 2 - 2;
+        a = 8 / 2 + num * 5 / 2 - 2;
 
         new int[5];
         new Stonk();

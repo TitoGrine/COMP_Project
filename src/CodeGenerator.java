@@ -84,7 +84,7 @@ public class CodeGenerator {
 
         } else {
           if (oper1.id == ParserTreeConstants.JJTNUM) {
-            System.out.println(oper1.id + '\n');
+            // System.out.println(oper1.id + '\n');
             generated += "\n\tbipush " + ((ASTNUM)oper1).value;
           }else
             generated += "\n\tiload " + "placeholder";
@@ -97,7 +97,7 @@ public class CodeGenerator {
           makeOperation(operation.jjtGetChild(1));
         } else 
         if (oper2.id == ParserTreeConstants.JJTNUM) {
-          System.out.println(oper1.id + '\n');
+        //   System.out.println(oper1.id + '\n');
           generated += "\n\tbipush " + ((ASTNUM) oper2).value;
         } else {
             generated += "\n\tiload " + "placeholder";
@@ -215,10 +215,9 @@ public class CodeGenerator {
                 Node mainMethodChilds[] = simpleN.jjtGetChildren();
                 for (Node mainBodyCandidate: mainMethodChilds) {
                     SimpleNode mainSimpleNode = (SimpleNode) mainBodyCandidate;
-                    if (mainSimpleNode.toString().equals("METHOD_BODY"))
-                        // Node mainNode = (Node) mainSimpleNode;
-                        // Node methodBodyChilds = mainNode.get
-                        addAssigns(mainSimpleNode.jjtGetChildren());
+                    if (mainSimpleNode.toString().equals("METHOD_BODY")) {
+                        methodBody(mainSimpleNode.jjtGetChildren());
+                    }
                 }
             }
         }
@@ -229,27 +228,63 @@ public class CodeGenerator {
         generated += ".end method\n";
     }
 
-    static void addAssigns(Node methodBodyChilds[]) {
+    static void methodBody(Node methodBodyChilds[]) {
         for (Node candidate : methodBodyChilds)
             if (((SimpleNode) candidate).id == ParserTreeConstants.JJTASSIGN) {
                 switch(candidate.jjtGetChild(1).toString()) {
                     case "NEW":
-                        addNew(candidate);
+                        addNew(candidate.jjtGetChild(1));
+                        storeAddress(((ASTIDENT)candidate.jjtGetChild(0)).name);
                         break;
                     case "SUB":
                         makeOperation(candidate);
+                        storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                         break;
                     case "ADD":
                         addOperation(candidate);
                         break;
                     case "FUNC_METHOD":
-                        addMethodCall(candidate);
+                        addMethodCall(candidate.jjtGetChild(1));
+                        generated += "\n\t[istore of return value into var index]\n";
                         break;
                     default:
                         addVariableAllocation(candidate);
                         break;
                 }
+            } else if (((SimpleNode) candidate).id == ParserTreeConstants.JJTFUNC_METHOD) {
+                addMethodCall(candidate);
             }
+            else if (((SimpleNode) candidate).id == ParserTreeConstants.JJTNEW) {
+                addNew(candidate);
+                popReturn(((ASTIDENT)candidate.jjtGetChild(0)).name);
+            }
+    }
+
+    static void popReturn(String ident) {
+        if (getMethodReturnType(ident) == TypeEnum.VOID) return;
+
+        tab();
+        generated += "pop";
+        nl();
+    }
+
+
+    static void storeAddress(String addr) {
+        tab();
+        generated += "astore ";
+        generated += localIndex;
+        nl();
+        locals[localIndex] = addr;
+        localIndex++;
+    }
+
+    static void storeLocal(String id) {
+        nl();
+        tab();
+        generated += "istore " + localIndex;
+        locals[localIndex] = id;
+        localIndex++;
+        nl();
     }
 
     private static void addOperation(Node candidate) {
@@ -272,8 +307,7 @@ public class CodeGenerator {
 
 
     static void addNew(Node candidate) {
-        String varIdent = ((ASTIDENT)((SimpleNode)candidate).jjtGetChild(0)).name;
-        String classIdent = ((ASTIDENT)((SimpleNode)((SimpleNode)candidate).jjtGetChild(1)).jjtGetChild(0)).name;
+        String classIdent = ((ASTIDENT)((SimpleNode)candidate).jjtGetChild(0)).name;
 
         nl();
         tab();
@@ -293,11 +327,10 @@ public class CodeGenerator {
     }
 
 
-    static void addMethodCall(Node candidate) {
-        String varIdent = (((ASTIDENT)candidate.jjtGetChild(0)).name);
+    static void addMethodCall(Node funcMethod) {
         // System.out.println(varIdent);
 
-        Node callNode = candidate.jjtGetChild(1).jjtGetChild(1);
+        Node callNode = funcMethod.jjtGetChild(1);
         String funcName = ((ASTIDENT)callNode.jjtGetChild(0)).name;
 
         Node[] args = ((SimpleNode)callNode.jjtGetChild(1)).jjtGetChildren();
@@ -324,8 +357,7 @@ public class CodeGenerator {
 
         TypeEnum returnType = getMethodReturnType(funcName);        
         generated += parseType(returnType);
-
-
+        nl();
     }
 
     private static String parseType(TypeEnum returnType) {

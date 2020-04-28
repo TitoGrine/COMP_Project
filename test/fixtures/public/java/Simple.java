@@ -1,8 +1,11 @@
-import static io.println(int);
+import java.io.*; 
+
 class Simple {
 
 	public static void main(String[] args) {
-		int a;
+		PrintStream stream = new PrintStream(System.out); 
+
+        int a;
 		int b;
 		Simple simple;
 		int c;
@@ -11,7 +14,8 @@ class Simple {
 		b = 0-10;
 
 		simple = new Simple();
-		
+
+
 	}
 
 	public int add(int a, int b){

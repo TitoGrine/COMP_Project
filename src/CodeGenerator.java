@@ -65,12 +65,7 @@ public class CodeGenerator {
         generated += ".limit locals 99";
         nl();
 
-        for(Node node : methodChilds){
-
-            if(((SimpleNode)node).id == ParserTreeConstants.JJTMETHOD_BODY) 
-                methodBody(((SimpleNode) node).jjtGetChildren());
-        }
-
+        
         methodReturn(methodChilds[methodChilds.length -1], returnType);
 
 
@@ -102,7 +97,7 @@ public class CodeGenerator {
               tab();
               generated += "iload ";
               generated += s;
-            //   nl();
+              nl();
             }
           }
         }
@@ -197,7 +192,7 @@ public class CodeGenerator {
         Node[] classChilds = classSimpleNode.jjtGetChildren();
 
         classIdent = ((ASTIDENT) classChilds[0]).name;
-        generated += ".class public" + classIdent;
+        generated += ".public class " + classIdent;
         nl();
         generated += ".super java/lang/Object";
         nl();
@@ -267,20 +262,11 @@ public class CodeGenerator {
                         storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                         break;
                     case "ADD":
-                        makeOperation(candidate);
-                        storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
-                        break;
-                    case "MUL":
-                        makeOperation(candidate);
-                        storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
-                        break;
-                    case "DIV":
-                        makeOperation(candidate);
-                        storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                        addOperation(candidate);
                         break;
                     case "FUNC_METHOD":
                         addMethodCall(candidate.jjtGetChild(1));
-                        storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                        generated += "\n\t[istore of return value into var index]\n";
                         break;
                     default:
                         addVariableAllocation(candidate);
@@ -395,7 +381,7 @@ public class CodeGenerator {
         TypeEnum ret = getMethodReturnType(funcMethod);
         System.out.println(ret);      
         generated += parseType(ret);
-        // nl();
+        nl();
     }
 
     private static String parseType(TypeEnum returnType) {
@@ -523,7 +509,7 @@ public class CodeGenerator {
 
     public static void addStandardInitializer() {
         nl();
-        generated += ".method <init>()V";
+        generated += ".method public<init>()V";
         nl();
         tab();
         generated += "aload_0";

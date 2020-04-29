@@ -381,7 +381,6 @@ public class CodeGenerator {
         generated += ")";
 
         TypeEnum ret = getMethodReturnType(funcMethod);
-        System.out.println(ret);      
         generated += parseType(ret);
     }
 
@@ -409,7 +408,6 @@ public class CodeGenerator {
 
         String key = ((ASTFUNC_METHOD)funcMethod).call;
         ArrayList<TypeEnum> args = ((ASTFUNC_METHOD)funcMethod).arguments;
-        System.out.println(key);
         
         SymbolTable st = ((SimpleNode)funcMethod).symbolTable;
         if (st.existsMethodSymbol(key)) {
@@ -462,6 +460,7 @@ public class CodeGenerator {
 
 
     public static void addVariableAllocation(Node assign) {
+        System.out.println(assign.toString());
         Node value = assign.jjtGetChild(1);
         int valueString = ((ASTNUM) value).value;
 
@@ -471,11 +470,8 @@ public class CodeGenerator {
         space();
         generated += valueString;
 
-
         Node identificationNode = assign.jjtGetChild(0);
         String identification = ((ASTIDENT)identificationNode).name;
-
-        TypeEnum type = getVariableType(identification);
 
         nl();
         tab();
@@ -485,25 +481,6 @@ public class CodeGenerator {
 
         locals[localIndex] = identification;
         localIndex++;
-    }
-
-
-    static TypeEnum getVariableType(String identification) {
-        Node methodBodyNode = root.jjtGetChild(1).jjtGetChild(1).jjtGetChild(1);
-        Node methodBodyChilds[] = ((SimpleNode)methodBodyNode).jjtGetChildren();
-
-        for (Node n: methodBodyChilds) {
-            if (n.toString().equals("VARIABLE")) {
-                Node identNode = n.jjtGetChild(1);
-                String nodeID =((ASTIDENT)identNode).name;
-
-                if (identification.equals(nodeID)) {
-                    Node typeNode = n.jjtGetChild(0);
-                    return ((ASTTYPE)typeNode).typeID;
-                }
-            }
-        }
-        return null;
     }
 
 

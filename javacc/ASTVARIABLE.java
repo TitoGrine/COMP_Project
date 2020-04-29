@@ -46,13 +46,32 @@ class ASTVARIABLE extends SimpleNode {
       return;
     }
 
-    if(type == TypeEnum.ARRAY)
-      this.symbolTable.addSymbol(key, new ArraySymbol(TypeEnum.INT));
-    else if(type == TypeEnum.OBJECT){
-      this.symbolTable.addSymbol(key, new Symbol(type, name));
+    Symbol symbol;
+
+    if(type == TypeEnum.ARRAY){
+      symbol = new ArraySymbol(TypeEnum.INT);
+
+      if(classScope)
+        symbol.incInitialized();
+
+      this.symbolTable.addSymbol(key, symbol);
     }
-    else
-      this.symbolTable.addSymbol(key, new Symbol(type));
+    else if(type == TypeEnum.OBJECT){
+      symbol = new Symbol(type, name);
+
+      if(classScope)
+        symbol.incInitialized();
+
+      this.symbolTable.addSymbol(key, symbol);
+    }
+    else{
+      symbol = new Symbol(type);
+
+      if(classScope)
+        symbol.incInitialized();
+
+      this.symbolTable.addSymbol(key, symbol);
+    }
   }
 }
 /* JavaCC - OriginalChecksum=f4f029f02b50c27d11f0009ca087d42c (do not edit this line) */

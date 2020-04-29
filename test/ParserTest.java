@@ -185,8 +185,21 @@ public class ParserTest {
 
     // CUSTOM MADE TESTS
 
-/*    @Test
+    @Test
     public void testCustomTest() {
-        test("fixtures/public/CustomTest.jmm", false);
-    }*/
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/CustomTest.jmm", false);
+    }
+
+    @Test
+    public void testAwfulCode() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/GodAwfulCode.jmm", true);
+    }
+
+    @Test
+    public void testScopeVarInit() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/ScopeVarInit.jmm", true);
+    }
 }

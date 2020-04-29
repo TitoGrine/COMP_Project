@@ -43,7 +43,6 @@ public class Symbol {
     }
 
     public boolean isInitialized() {
-        System.out.println("Init value: " + this.initialized);
         return initialized > 0;
     }
 

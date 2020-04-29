@@ -78,7 +78,7 @@ class ASTCLASS extends SimpleNode {
 
         key = className + '.' + mainMethod.methodName;
 
-        this.symbolTable.addMethodSymbol(key, mainMethod.parameters, mainMethod.returnType);
+        this.symbolTable.addStaticMethodSymbol(key, mainMethod.parameters, mainMethod.returnType);
 
         mainDeclared = true;
       }

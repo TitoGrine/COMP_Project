@@ -266,7 +266,8 @@ public class CodeGenerator {
                         break;
                     case "FUNC_METHOD":
                         addMethodCall(candidate.jjtGetChild(1));
-                        generated += "\n\t[istore of return value into var index]\n";
+                        // generated += "\n\t[istore of return value into var index]\n";
+                        storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                         break;
                     default:
                         addVariableAllocation(candidate);
@@ -293,6 +294,7 @@ public class CodeGenerator {
 
 
     static void storeAddress(String addr) {
+        nl();
         tab();
         generated += "astore ";
         generated += localIndex;
@@ -381,7 +383,6 @@ public class CodeGenerator {
         TypeEnum ret = getMethodReturnType(funcMethod);
         System.out.println(ret);      
         generated += parseType(ret);
-        nl();
     }
 
     private static String parseType(TypeEnum returnType) {
@@ -481,7 +482,6 @@ public class CodeGenerator {
         generated += "istore";
         space();
         generated += localIndex;
-        nl();
 
         locals[localIndex] = identification;
         localIndex++;

@@ -22,7 +22,7 @@ class ASTASSIGN extends TypeSensitive {
     String varName;
     TypeEnum compatibleType;
 
-    if(firstChild.id == ParserTreeConstants.JJTARRAY_ACCESS){
+    if(compareNode(firstChild, ParserTreeConstants.JJTARRAY_ACCESS)){
       firstChild.addSymbolTable(this.symbolTable);
       firstChild.eval(analysis);
       varName = ((ASTARRAY_ACCESS) firstChild).object;
@@ -43,7 +43,7 @@ class ASTASSIGN extends TypeSensitive {
         varName = "this." + varName;
     }
 
-    if(firstChild.id == ParserTreeConstants.JJTARRAY_ACCESS)
+    if(compareNode(firstChild, ParserTreeConstants.JJTARRAY_ACCESS))
       compatibleType = ((ArraySymbol) this.symbolTable.getSymbol(varName)).getReturnType();
     else
       compatibleType = this.symbolTable.getSymbol(varName).getType();
@@ -58,10 +58,12 @@ class ASTASSIGN extends TypeSensitive {
 
     this.initializedUse(secondChild, analysis);
 
-    this.symbolTable.setInitialized(varName);
-
-    if(scopeStack != null)
+    if(scopeStack != null && !scopeStack.contains(varName)){
+      this.symbolTable.setInitialized(varName);
       this.scopeStack.add(varName);
+    } else if (scopeStack == null && !this.symbolTable.getSymbol(varName).isInitialized())
+      this.symbolTable.setInitialized(varName);
+
   }
 }
 /* JavaCC - OriginalChecksum=cbade18a4c362fe9b5729b12bfc068fc (do not edit this line) */

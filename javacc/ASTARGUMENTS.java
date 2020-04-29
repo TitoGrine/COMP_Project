@@ -26,10 +26,10 @@ class ASTARGUMENTS extends TypeSensitive {
       childNode.addSymbolTable(this.symbolTable);
       childNode.eval(analysis);
 
-      if(childNode.id == ParserTreeConstants.JJTARGUMENT){
+      if(compareNode(childNode, ParserTreeConstants.JJTARGUMENT)){
         this.arguments.add(((ASTARGUMENT) childNode).type);
       }
-      else if (childNode.id == ParserTreeConstants.JJTFUNC_METHOD){
+      else if (compareNode(childNode, ParserTreeConstants.JJTFUNC_METHOD)){
         ASTFUNC_METHOD funcMethod = ((ASTFUNC_METHOD) childNode);
         String call = funcMethod.call;
 

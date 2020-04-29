@@ -29,7 +29,7 @@ class ASTMETHOD extends SimpleNode {
 
     SimpleNode thirdChild = (SimpleNode) this.jjtGetChild(2);
 
-    if(thirdChild.id == ParserTreeConstants.JJTARGUMENTS){
+    if(compareNode(thirdChild, ParserTreeConstants.JJTARGUMENTS)){
       ASTARGUMENTS arguments = (ASTARGUMENTS) thirdChild;
 
       arguments.addSymbolTable(this.symbolTable);
@@ -50,7 +50,7 @@ class ASTMETHOD extends SimpleNode {
 
     SimpleNode childNode = (SimpleNode) this.jjtGetChild(childIndex);
 
-    if(childNode.id == ParserTreeConstants.JJTARGUMENTS){
+    if(compareNode(childNode, ParserTreeConstants.JJTARGUMENTS)){
       childIndex++;
       childNode = (SimpleNode) this.jjtGetChild(childIndex);
     }

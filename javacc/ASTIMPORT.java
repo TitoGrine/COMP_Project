@@ -28,7 +28,7 @@ class ASTIMPORT extends SimpleNode {
     if (numChildren > childIndex){
       SimpleNode nextChild = (SimpleNode) this.jjtGetChild(childIndex);
 
-      if(nextChild.id == ParserTreeConstants.JJTIDENT){
+      if(compareNode(nextChild, ParserTreeConstants.JJTIDENT)){
         if(!this.symbolTable.existsClassSymbol(key))
           analysis.addError(this.getCoords(), "Non static method " + ((ASTIDENT) nextChild).name + " import declaration without the import for class " + firstChild.name);
 
@@ -44,7 +44,7 @@ class ASTIMPORT extends SimpleNode {
         nextChild.addSymbolTable(this.symbolTable);
         nextChild.eval(analysis);
 
-        if (nextChild.id == ParserTreeConstants.JJTPARAMETERS)
+        if (compareNode(nextChild, ParserTreeConstants.JJTPARAMETERS))
           parameters = ((ASTPARAMETERS) nextChild).parameters;
         else if (!classImport)
           returnType = ((ASTRETURN) nextChild).type;

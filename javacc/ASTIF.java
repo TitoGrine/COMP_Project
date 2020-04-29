@@ -22,9 +22,9 @@ class ASTIF extends SimpleNode {
     firstChild.addSymbolTable(this.symbolTable);
     firstChild.eval(analysis);
 
-    if(secondChild.id == ParserTreeConstants.JJTASSIGN)
+    if(compareNode(secondChild, ParserTreeConstants.JJTASSIGN))
       ((ASTASSIGN) secondChild).scopeStack = localStack;
-    else if (secondChild.id == ParserTreeConstants.JJTSCOPE)
+    else if (compareNode(secondChild, ParserTreeConstants.JJTSCOPE))
       ((ASTSCOPE) secondChild).scopeStack = localStack;
 
     secondChild.addSymbolTable(this.symbolTable);

@@ -25,7 +25,7 @@ class ASTFUNC_METHOD extends TypeSensitive {
 
     firstChild.addSymbolTable(this.symbolTable);
 
-    if(firstChild.id == ParserTreeConstants.JJTTHIS){
+    if(compareNode(firstChild, ParserTreeConstants.JJTTHIS)){
       firstChild.eval(analysis);
 
       ClassSymbol classSymbol = (ClassSymbol) this.symbolTable.getSymbol(((ASTTHIS) firstChild).className);
@@ -33,7 +33,7 @@ class ASTFUNC_METHOD extends TypeSensitive {
       object = ((ASTTHIS) firstChild).className;
 
       extendedClass = classSymbol.getExtendedClass();
-    } else if(firstChild.id == ParserTreeConstants.JJTIDENT){
+    } else if(compareNode(firstChild, ParserTreeConstants.JJTIDENT)){
       object = ((ASTIDENT) firstChild).name;
 
       if(this.symbolTable.existsSymbol(object)){
@@ -45,10 +45,10 @@ class ASTFUNC_METHOD extends TypeSensitive {
         if(this.symbolTable.existsClassSymbol(object))
           extendedClass = ((ClassSymbol) this.symbolTable.getSymbol(object)).getExtendedClass();
       }
-    } else if(firstChild.id == ParserTreeConstants.JJTNEW){
+    } else if(compareNode(firstChild, ParserTreeConstants.JJTNEW)){
       firstChild.eval(analysis);
       object = ((ASTNEW) firstChild).object;
-    } else if(firstChild.id == ParserTreeConstants.JJTFUNC_METHOD){
+    } else if(compareNode(firstChild, ParserTreeConstants.JJTFUNC_METHOD)){
       firstChild.eval(analysis);
       object = ((ASTFUNC_METHOD) firstChild).call;
     } else{

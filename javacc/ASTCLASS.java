@@ -57,11 +57,11 @@ class ASTCLASS extends SimpleNode {
 
       childNode.addSymbolTable(this.symbolTable);
 
-      if (childNode.id == ParserTreeConstants.JJTVARIABLE) {
+      if (compareNode(childNode, ParserTreeConstants.JJTVARIABLE)) {
         ((ASTVARIABLE) childNode).classScope = true;
 
         childNode.eval(analysis);
-      } else if (childNode.id == ParserTreeConstants.JJTMETHOD) {
+      } else if (compareNode(childNode, ParserTreeConstants.JJTMETHOD)) {
         ASTMETHOD method = (ASTMETHOD) childNode;
 
         method.preProcessMethod(analysis);
@@ -70,7 +70,7 @@ class ASTCLASS extends SimpleNode {
         key = className + '.' + method.methodName;
 
         this.symbolTable.addMethodSymbol(key, method.parameters, method.returnType);
-      } else if (childNode.id == ParserTreeConstants.JJTMAINMETHOD){
+      } else if (compareNode(childNode, ParserTreeConstants.JJTMAINMETHOD)){
         if(mainDeclared)
           analysis.addError(this.getCoords(), "CLASS " + firstChild.name + " has more than one main method.");
 

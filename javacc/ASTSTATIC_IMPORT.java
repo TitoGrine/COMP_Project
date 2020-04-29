@@ -30,7 +30,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
       thirdChild.addSymbolTable(this.symbolTable);
       thirdChild.eval(analysis);
 
-      if (thirdChild.id == ParserTreeConstants.JJTRETURN)
+      if (compareNode(thirdChild, ParserTreeConstants.JJTRETURN))
         returnType = ((ASTRETURN) thirdChild).type;
       else
         parameters = ((ASTPARAMETERS) thirdChild).parameters;

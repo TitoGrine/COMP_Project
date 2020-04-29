@@ -18,7 +18,7 @@ class ASTTHIS extends SimpleNode {
     boolean foundClass = false;
 
     while(!foundClass){
-      if(parentNode.id == ParserTreeConstants.JJTCLASS){
+      if(compareNode(parentNode, ParserTreeConstants.JJTCLASS)){
         className = ((ASTCLASS) parentNode).className;
         foundClass = true;
       } else {

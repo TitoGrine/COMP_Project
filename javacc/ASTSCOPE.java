@@ -23,8 +23,10 @@ class ASTSCOPE extends SimpleNode {
     while(childIndex < numChildren){
       childNode = (SimpleNode) this.jjtGetChild(childIndex);
 
-      if(scopeStack != null && childNode.id == ParserTreeConstants.JJTASSIGN)
+      if(scopeStack != null && compareNode(childNode, ParserTreeConstants.JJTASSIGN))
         ((ASTASSIGN) childNode).scopeStack = this.scopeStack;
+      else if (scopeStack != null && compareNode(childNode, ParserTreeConstants.JJTSCOPE))
+        ((ASTSCOPE) childNode).scopeStack = this.scopeStack;
 
       childNode.addSymbolTable(this.symbolTable);
       childNode.eval(analysis);

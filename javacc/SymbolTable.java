@@ -12,6 +12,13 @@ public class SymbolTable {
         this.parent = parent;
     }
 
+    public void addStaticMethodSymbol(String key, ArrayList<TypeEnum> parameters, TypeEnum returnType){
+        if(table.containsKey(key))
+            ((MethodSymbol) table.get(key)).addParameters(parameters, returnType, true);
+        else
+            table.put(key, new MethodSymbol(returnType, parameters, true));
+    }
+
     public void addMethodSymbol(String key, ArrayList<TypeEnum> parameters, TypeEnum returnType){
         if(table.containsKey(key))
             ((MethodSymbol) table.get(key)).addParameters(parameters, returnType);

@@ -48,7 +48,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
       return;
     }
 
-    this.symbolTable.addMethodSymbol(key, parameters, returnType);
+    this.symbolTable.addStaticMethodSymbol(key, parameters, returnType);
   }
 }
 /* JavaCC - OriginalChecksum=0ea55270eb33c3d4cca7df9ddcbc14ab (do not edit this line) */

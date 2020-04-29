@@ -68,8 +68,6 @@ class CustomTest extends Test{
 
 	    stonky = false;
 
-	    parade(2)
-
 	    return something;
 	}
 

@@ -9,17 +9,14 @@ class Simple {
 
 		a = 30;
 		b = 0-10;
-		c = 3;
 
 		new Simple();
 		
-		simple.add(a,b);
+		c = simple.add(a,b);
 		io.println(c);
 	}
 
 	public int add(int a, int b){
-		int d;
-		d = 5;
-		return a+b*d;
+		return a+b;
 	}
 }

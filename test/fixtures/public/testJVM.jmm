@@ -1,7 +1,6 @@
 import static io.println(int);
 class Simple {
 
-	int j;
 
 	public static void main(String[] args) {
 		int a;

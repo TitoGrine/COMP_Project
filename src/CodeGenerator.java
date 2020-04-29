@@ -65,6 +65,12 @@ public class CodeGenerator {
         generated += ".limit locals 99";
         nl();
 
+        for(Node node : methodChilds){
+
+            if(((SimpleNode)node).id == ParserTreeConstants.JJTMETHOD_BODY) 
+                methodBody(((SimpleNode) node).jjtGetChildren());
+        }
+
         methodReturn(methodChilds[methodChilds.length -1], returnType);
 
 
@@ -261,7 +267,16 @@ public class CodeGenerator {
                         storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                         break;
                     case "ADD":
-                        addOperation(candidate);
+                        makeOperation(candidate);
+                        storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                        break;
+                    case "MUL":
+                        makeOperation(candidate);
+                        storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                        break;
+                    case "DIV":
+                        makeOperation(candidate);
+                        storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                         break;
                     case "FUNC_METHOD":
                         addMethodCall(candidate.jjtGetChild(1));

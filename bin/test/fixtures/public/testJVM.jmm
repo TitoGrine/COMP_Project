@@ -6,7 +6,6 @@ class Simple {
 		int b;
 		Simple simple;
 		int c;
-		int d;
 
 		a = 30;
 		b = 0-10;
@@ -15,14 +14,11 @@ class Simple {
 		
 		c = simple.add(a,b);
 
-		d = c + a;
 
 		io.println(c);
 	}
 
 	public int add(int a, int b){
-		int j;
-		int h;
 		return a+b;
 	}
 }

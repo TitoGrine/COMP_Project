@@ -197,7 +197,7 @@ public class CodeGenerator {
         Node[] classChilds = classSimpleNode.jjtGetChildren();
 
         classIdent = ((ASTIDENT) classChilds[0]).name;
-        generated += ".public class " + classIdent;
+        generated += ".class public" + classIdent;
         nl();
         generated += ".super java/lang/Object";
         nl();

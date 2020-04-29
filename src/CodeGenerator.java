@@ -283,7 +283,7 @@ public class CodeGenerator {
                 break;
               case "FUNC_METHOD":
                 addMethodCall(candidate.jjtGetChild(1));
-                generated += "\n\t[istore of return value into var index]\n";
+                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
               default:
                 addVariableAllocation(candidate);
@@ -310,7 +310,6 @@ public class CodeGenerator {
 
 
     static void storeAddress(String addr) {
-        nl();
         tab();
         generated += "astore ";
         generated += localIndex;
@@ -386,7 +385,11 @@ public class CodeGenerator {
         }
 
         tab();
-        generated += "invokenonvirtual";
+        if(checkIfStatic(funcMethod)) {
+            generated += "invokestatic";
+        } else {
+            generated += "invokevirtual";
+        }
         space();
         generated += classIdent;
         generated += "/";
@@ -405,6 +408,8 @@ public class CodeGenerator {
             case INT:
                 return "I";
             //TODO
+            case VOID:
+                return "V";
             default:
                 return "";
         }
@@ -433,6 +438,19 @@ public class CodeGenerator {
         // System.out.println(funcMethod.toString());
 
         return null;
+    }
+
+    static boolean checkIfStatic(Node funcMethod) {
+        String key = ((ASTFUNC_METHOD)funcMethod).call;
+        ArrayList<TypeEnum> args = ((ASTFUNC_METHOD)funcMethod).arguments;
+        SymbolTable st = ((SimpleNode)funcMethod).symbolTable;
+
+        if (st.existsMethodSymbol(key)) {
+            MethodSymbol symbol = (MethodSymbol) st.getSymbol(key);
+            return symbol.isStatic(args);
+        }
+
+        return false;
     }
 
 
@@ -502,7 +520,7 @@ public class CodeGenerator {
 
     public static void addStandardInitializer() {
         nl();
-        generated += ".method public<init>()V";
+        generated += ".method <init>()V";
         nl();
         tab();
         generated += "aload_0";

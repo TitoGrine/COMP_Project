@@ -62,7 +62,7 @@ To test the program, run ``gradle test``. This will execute the build, and run t
  * ~~verificar se conditional expressions (if e while) resulta num booleano~~
  * ~~verificar se variáveis são inicializadas, dando um WARNING em vez de ERRO~~
  * ~~parametros são assumidos como inicializados~~
- * devem fazer uma análise através do control flow, i.e., se há um if e a variável só é inicializada dentro de ou o then ou o else, deve-se dar um warning a indicar que poderá não estar inicializada 
+ * ~~devem fazer uma análise através do control flow, i.e., se há um if e a variável só é inicializada dentro de ou o then ou o else, deve-se dar um warning a indicar que poderá não estar inicializada.~~
  
  **Function Verification**  
  

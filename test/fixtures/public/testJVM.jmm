@@ -1,6 +1,8 @@
 import static io.println(int);
 class Simple {
 
+	int j;
+
 	public static void main(String[] args) {
 		int a;
 		int b;
@@ -10,7 +12,7 @@ class Simple {
 		a = 30;
 		b = 0-10;
 
-		new Simple();
+		simple = new Simple();
 		
 		c = simple.add(a,b);
 
@@ -19,6 +21,8 @@ class Simple {
 	}
 
 	public int add(int a, int b){
-		return a+b;
+
+	
+		return a+b * 8 / (1 +2);
 	}
 }

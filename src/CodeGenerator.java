@@ -23,7 +23,7 @@ public class CodeGenerator {
         Node[] children =  root.jjtGetChildren();
 
         for(Node child: children) {
-            if (child.getId() == 6) {
+            if (child.getId() == ParserTreeConstants.JJTCLASS) {
                 this.classNode = child;
                 Node classChilds[] = addClass(child);
                 addVariables(classChilds);
@@ -65,7 +65,14 @@ public class CodeGenerator {
         generated += ".limit locals 99";
         nl();
 
-        
+        for(Node node : methodChilds){
+
+          if ((((SimpleNode)node).id == ParserTreeConstants.JJTMETHOD_BODY) &&
+              ((SimpleNode)node).jjtGetNumChildren() != 0){
+            methodBody(((SimpleNode)node).jjtGetChildren());
+            }
+        }
+
         methodReturn(methodChilds[methodChilds.length -1], returnType);
 
 
@@ -252,26 +259,37 @@ public class CodeGenerator {
     static void methodBody(Node methodBodyChilds[]) {
         for (Node candidate : methodBodyChilds)
             if (((SimpleNode) candidate).id == ParserTreeConstants.JJTASSIGN) {
-                switch(candidate.jjtGetChild(1).toString()) {
-                    case "NEW":
-                        addNew(candidate.jjtGetChild(1));
-                        storeAddress(((ASTIDENT)candidate.jjtGetChild(0)).name);
-                        break;
-                    case "SUB":
-                        makeOperation(candidate);
-                        storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
-                        break;
-                    case "ADD":
-                        addOperation(candidate);
-                        break;
-                    case "FUNC_METHOD":
-                        addMethodCall(candidate.jjtGetChild(1));
-                        generated += "\n\t[istore of return value into var index]\n";
-                        break;
-                    default:
-                        addVariableAllocation(candidate);
-                        break;
-                }
+              System.out.println("\t\t\t\t\t"+ candidate.jjtGetChild(1).toString());
+            switch (
+                  candidate.jjtGetChild(1).toString()) {
+              case "NEW":
+                addNew(candidate.jjtGetChild(1));
+                storeAddress(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                break;
+              case "SUB":
+                makeOperation(candidate);
+                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                break;
+              case "ADD":
+                makeOperation(candidate);
+                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                break;
+              case "MUL":
+                makeOperation(candidate);
+                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                break;
+              case "DIV":
+                makeOperation(candidate);
+                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                break;
+              case "FUNC_METHOD":
+                addMethodCall(candidate.jjtGetChild(1));
+                generated += "\n\t[istore of return value into var index]\n";
+                break;
+              default:
+                addVariableAllocation(candidate);
+                break;
+              }
             } else if (((SimpleNode) candidate).id == ParserTreeConstants.JJTFUNC_METHOD) {
                 addMethodCall(candidate);
                 popReturn(candidate);
@@ -474,7 +492,7 @@ public class CodeGenerator {
         Node identificationNode = assign.jjtGetChild(0);
         String identification = ((ASTIDENT)identificationNode).name;
 
-        TypeEnum type = getVariableType(identification);
+        
 
         nl();
         tab();

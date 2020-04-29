@@ -102,7 +102,7 @@ public class CodeGenerator {
               tab();
               generated += "iload ";
               generated += s;
-              nl();
+            //   nl();
             }
           }
         }
@@ -280,7 +280,7 @@ public class CodeGenerator {
                         break;
                     case "FUNC_METHOD":
                         addMethodCall(candidate.jjtGetChild(1));
-                        generated += "\n\t[istore of return value into var index]\n";
+                        storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                         break;
                     default:
                         addVariableAllocation(candidate);
@@ -395,7 +395,7 @@ public class CodeGenerator {
         TypeEnum ret = getMethodReturnType(funcMethod);
         System.out.println(ret);      
         generated += parseType(ret);
-        nl();
+        // nl();
     }
 
     private static String parseType(TypeEnum returnType) {
@@ -523,7 +523,7 @@ public class CodeGenerator {
 
     public static void addStandardInitializer() {
         nl();
-        generated += ".method public<init>()V";
+        generated += ".method <init>()V";
         nl();
         tab();
         generated += "aload_0";

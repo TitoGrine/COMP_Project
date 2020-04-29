@@ -30,7 +30,7 @@ class ASTARGUMENT extends SimpleNode {
     else
       symbol = new Symbol(firstChild.typeID);
 
-    symbol.setInitialized(true);
+    symbol.incInitialized();
 
     this.type = symbol.getType();
 

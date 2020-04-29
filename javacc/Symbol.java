@@ -6,7 +6,8 @@ import java.util.ArrayList;
 public class Symbol {
     TypeEnum type;
     String classType;
-    boolean initialized = false;
+    int initialized = 0;
+    boolean volatileVar = false;
 
     public Symbol(TypeEnum type){
         this.type = type;
@@ -29,12 +30,25 @@ public class Symbol {
         this.type = type;
     }
 
-    public void setInitialized(boolean initialized) {
-        this.initialized = initialized;
+    public void setAsVolatile(boolean volatileVar) {
+        this.volatileVar = volatileVar;
+    }
+
+    public void incInitialized() {
+        this.initialized++;
+    }
+
+    public void decInitialized() {
+        this.initialized--;
     }
 
     public boolean isInitialized() {
-        return initialized;
+        System.out.println("Init value: " + this.initialized);
+        return initialized > 0;
+    }
+
+    public boolean isVolatile() {
+        return volatileVar;
     }
 
     @Override

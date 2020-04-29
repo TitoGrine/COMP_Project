@@ -27,7 +27,8 @@ public class TypeSensitive extends SimpleNode {
             case ParserTreeConstants.JJTNEW_ARRAY:
                 return TypeEnum.ARRAY;
             case ParserTreeConstants.JJTFUNC_METHOD:
-                String call = ((ASTFUNC_METHOD) node).call;
+                ASTFUNC_METHOD funcMethod = ((ASTFUNC_METHOD) node);
+                String call = funcMethod.call;
 
                 if(!this.symbolTable.existsMethodSymbol(call))
                     return null;
@@ -37,7 +38,7 @@ public class TypeSensitive extends SimpleNode {
                 if(methodSymbol == null) // TODO: Check if the identifier is from the class.
                     return null;
 
-                return methodSymbol.getReturnType();
+                return methodSymbol.getReturnType(funcMethod.arguments);
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 String object = ((ASTARRAY_ACCESS) node).object;
 
@@ -92,8 +93,6 @@ public class TypeSensitive extends SimpleNode {
     }
 
     public void initializedUse(SimpleNode node, SemanticAnalysis analysis){
-        if(!ControlVars.ANALYSE_VAR_INIT)
-            return;
 
         switch(node.id){
             case ParserTreeConstants.JJTADD:
@@ -126,7 +125,16 @@ public class TypeSensitive extends SimpleNode {
                     return;
 
                 if(!arraySymbol.isInitialized()){
-                    analysis.addWarning(this.getCoords(), "Array " + object + "[] used, but isn't previously initialized.");
+                    if(ControlVars.THROW_VAR_INIT_ERROR)
+                        if(arraySymbol.isVolatile())
+                            analysis.addError(this.getCoords(), "Array " + object + "[] used, but but might not be initialized.");
+                        else
+                            analysis.addError(this.getCoords(), "Array " + object + "[] used, but isn't previously initialized.");
+                    else
+                        if(arraySymbol.isVolatile())
+                            analysis.addWarning(this.getCoords(), "Array " + object + "[] used, but but might not be initialized.");
+                        else
+                            analysis.addWarning(this.getCoords(), "Array " + object + "[] used, but isn't previously initialized.");
                     return;
                 }
 
@@ -146,7 +154,19 @@ public class TypeSensitive extends SimpleNode {
                     return;
 
                 if(!symbol.isInitialized()){
-                    analysis.addWarning(this.getCoords(), "Variable " + name + " used, but isn't previously initialized.");
+                    if(ControlVars.THROW_VAR_INIT_ERROR){
+                        if(symbol.isVolatile())
+                            analysis.addError(this.getCoords(), "Variable " + name + " used, but might not be initialized.");
+                        else
+                            analysis.addError(this.getCoords(), "Variable " + name + " used, but isn't previously initialized.");
+                    }
+                    else{
+                        if(symbol.isVolatile())
+                            analysis.addWarning(this.getCoords(), "Variable " + name + " used, but might not be initialized.");
+                        else
+                            analysis.addWarning(this.getCoords(), "Variable " + name + " used, but isn't previously initialized.");
+                    }
+
                     return;
                 }
 

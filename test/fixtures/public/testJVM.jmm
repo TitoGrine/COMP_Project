@@ -9,9 +9,12 @@ class Simple {
 
 		a = 30;
 		b = 0-10;
+		c = 3;
 
-		simple = new Simple();
+		new Simple();
 		
+		simple.add(a,b);
+		io.println(c);
 	}
 
 	public int add(int a, int b){

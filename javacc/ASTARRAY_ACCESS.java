@@ -17,9 +17,9 @@ class ASTARRAY_ACCESS extends TypeSensitive {
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
-    if(firstChild.id == ParserTreeConstants.JJTIDENT){
+    if(compareNode(firstChild, ParserTreeConstants.JJTIDENT)){
       this.object = ((ASTIDENT) firstChild).name;
-    } else if(firstChild.id == ParserTreeConstants.JJTFUNC_METHOD) {
+    } else if(compareNode(firstChild, ParserTreeConstants.JJTFUNC_METHOD)) {
       firstChild.addSymbolTable(this.symbolTable);
       firstChild.eval(analysis);
 

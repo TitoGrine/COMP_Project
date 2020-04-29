@@ -19,25 +19,19 @@ class ASTCALL extends TypeSensitive {
   public void eval(SemanticAnalysis analysis){
     int numChildren = this.jjtGetNumChildren();
 
-    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
+    ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
-    if(firstChild.id != ParserTreeConstants.JJTIDENT)
-      analysis.addError(this.getCoords(), "First child of CALL must be an IDENT.");
-
-    this.method = ((ASTIDENT) firstChild).name;
+    this.method = firstChild.name;
 
     if(numChildren == 1)
       return;
 
-    SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
-
-    if(secondChild.id != ParserTreeConstants.JJTARGUMENTS)
-      analysis.addError(this.getCoords(), "Second child of CALL must be ARGUMENTS.");
+    ASTARGUMENTS secondChild = (ASTARGUMENTS) this.jjtGetChild(1);
 
     secondChild.addSymbolTable(this.symbolTable);
     secondChild.eval(analysis);
 
-    this.arguments = ((ASTARGUMENTS) secondChild).arguments;
+    this.arguments = secondChild.arguments;
   }
 }
 /* JavaCC - OriginalChecksum=3c6f955e59ab927fd02fc4b260500e9b (do not edit this line) */

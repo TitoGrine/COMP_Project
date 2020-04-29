@@ -253,15 +253,17 @@ public class CodeGenerator {
                 }
             } else if (((SimpleNode) candidate).id == ParserTreeConstants.JJTFUNC_METHOD) {
                 addMethodCall(candidate);
+                popReturn(candidate);
+                // System.out.println(candidate.toString());
             }
             else if (((SimpleNode) candidate).id == ParserTreeConstants.JJTNEW) {
                 addNew(candidate);
-                popReturn(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                // popReturn(((ASTIDENT)candidate.jjtGetChild(0)).name);
             }
     }
 
-    static void popReturn(String ident) {
-        if (getMethodReturnType(ident) == TypeEnum.VOID) return;
+    static void popReturn(Node funcMethod) {
+        if (getMethodReturnType(funcMethod) == TypeEnum.VOID) return;
 
         tab();
         generated += "pop";
@@ -355,8 +357,9 @@ public class CodeGenerator {
             generated += "I"; //hard coded for now
         generated += ")";
 
-        TypeEnum returnType = getMethodReturnType(funcName);        
-        generated += parseType(returnType);
+        TypeEnum ret = getMethodReturnType(funcMethod);
+        System.out.println(ret);      
+        generated += parseType(ret);
         nl();
     }
 
@@ -371,16 +374,27 @@ public class CodeGenerator {
 
     }
 
-    static TypeEnum getMethodReturnType(String methodIdent) {
-        Node[] classChilds = ((SimpleNode)classNode).jjtGetChildren();
+    static TypeEnum getMethodReturnType(Node funcMethod) {
+        // Node[] classChilds = ((SimpleNode)classNode).jjtGetChildren();
 
-        for (Node classChild: classChilds) {
-            if (classChild.toString().equals("METHOD")) {
-                if (((ASTIDENT)((SimpleNode)classChild).jjtGetChild(1)).name.equals(methodIdent)) {
-                    return (((ASTTYPE)((SimpleNode)(((SimpleNode) classChild).jjtGetChild(0))).jjtGetChild(0)).typeID);
-                }
-            }
+        // for (Node classChild: classChilds) {
+        //     if (classChild.toString().equals("METHOD")) {
+        //         if (((ASTIDENT)((SimpleNode)classChild).jjtGetChild(1)).name.equals(methodIdent)) {
+        //             return (((ASTTYPE)((SimpleNode)(((SimpleNode) classChild).jjtGetChild(0))).jjtGetChild(0)).typeID);
+        //         }
+        //     }
+        // }
+
+        String key = ((ASTFUNC_METHOD)funcMethod).call;
+        ArrayList<TypeEnum> args = ((ASTFUNC_METHOD)funcMethod).arguments;
+        System.out.println(key);
+        
+        SymbolTable st = ((SimpleNode)funcMethod).symbolTable;
+        if (st.existsMethodSymbol(key)) {
+            MethodSymbol symbol = (MethodSymbol) st.getSymbol(key);
+            return symbol.getReturnType(args);
         }
+        // System.out.println(funcMethod.toString());
 
         return null;
     }

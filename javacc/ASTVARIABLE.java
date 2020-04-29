@@ -20,7 +20,7 @@ class ASTVARIABLE extends SimpleNode {
     TypeEnum type;
     String name;
 
-    if(firstChild.id == ParserTreeConstants.JJTIDENT){
+    if(compareNode(firstChild, ParserTreeConstants.JJTIDENT)){
       name = ((ASTIDENT) firstChild).name;
 
       Symbol symbol = this.symbolTable.getSymbol(name);

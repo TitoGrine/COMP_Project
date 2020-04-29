@@ -36,7 +36,7 @@ public class SemanticAnalysis {
     }
 
     public void throwErrors() throws Exception{
-        if(errors.isEmpty()|| !ControlVars.ANALYSE_SEMANTICS)
+        if(errors.isEmpty() || !ControlVars.ANALYSE_SEMANTICS)
             return;
 
         this.showWarnings(false);

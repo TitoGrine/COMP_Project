@@ -12,6 +12,10 @@ class SimpleNode implements Node {
   protected Parser parser;
   protected SymbolTable symbolTable;
 
+  protected boolean compareNode(SimpleNode node, int type){
+    return node.id == type;
+  }
+
   public SimpleNode(int i) {
     id = i;
   }

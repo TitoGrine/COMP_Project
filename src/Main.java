@@ -26,14 +26,14 @@ public class Main {
             analysis.throwErrors();
 
             if(ControlVars.PRINT_AST){
-                System.out.println(ControlVars.CYAN + "\n ++++++++++++++ AST ++++++++++++++\n" + ControlVars.RESET);
+                System.out.println(ControlVars.CYAN + "\n +++++++++++ Abstract Syntax Tree +++++++++++\n" + ControlVars.RESET);
                 root.dump(""); // prints the tree on the screen
             }
 
             codeGenerator = new CodeGenerator(root);
             codeGenerator.generate();
 
-            analysis.showWarnings(true);
+            analysis.showWarnings(ControlVars.THROW_WARNING_EXCEPTION);
 
         } catch (Exception e) {
             throw e;

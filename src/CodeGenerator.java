@@ -86,8 +86,19 @@ public class CodeGenerator {
           if (oper1.id == ParserTreeConstants.JJTNUM) {
             // System.out.println(oper1.id + '\n');
             generated += "\n\tbipush " + ((ASTNUM)oper1).value;
-          }else
-            generated += "\n\tiload " + "placeholder";
+          }else{
+            Node[] tmp = {operation.jjtGetChild(0)};
+
+            ArrayList<String> localVars = getFunctionLocals(tmp);
+
+            nl();
+            for (String s : localVars) {
+              tab();
+              generated += "iload ";
+              generated += s;
+              nl();
+            }
+          }
         }
 
         if (oper2.id == ParserTreeConstants.JJTADD ||
@@ -100,7 +111,16 @@ public class CodeGenerator {
         //   System.out.println(oper1.id + '\n');
           generated += "\n\tbipush " + ((ASTNUM) oper2).value;
         } else {
-            generated += "\n\tiload " + "placeholder";
+          Node[] tmp = {operation.jjtGetChild(1)};
+
+          ArrayList<String> localVars = getFunctionLocals(tmp);
+
+          nl();
+          for (String s : localVars) {
+            tab();
+            generated += "iload ";
+            generated += s;
+          }
         }
 
         switch(operation.id){
@@ -121,7 +141,7 @@ public class CodeGenerator {
 
     private void methodReturn(Node returnNode, TypeEnum typeReturn) {
         SimpleNode node = (SimpleNode) returnNode;
-        if(node.id != ParserTreeConstants.JJTIDENT)
+        if(node.id != ParserTreeConstants.JJTIDENT) //ver se retornar numero
             makeOperation(node.jjtGetChild(0));
         nl();
         nl();

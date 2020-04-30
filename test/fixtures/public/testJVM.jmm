@@ -1,15 +1,14 @@
 import static io.println(int);
 class Simple {
 
-
 	public static void main(String[] args) {
 		int a;
 		int b;
 		Simple simple;
 		int c;
 
-		a = 30;
-		b = 0-10;
+		a = 3;
+		b = 3;
 
 		simple = new Simple();
 		
@@ -20,8 +19,6 @@ class Simple {
 	}
 
 	public int add(int a, int b){
-
-	
-		return a+b * 8 / (1 +2);
+		return a+b;
 	}
 }

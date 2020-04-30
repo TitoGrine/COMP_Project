@@ -11,6 +11,7 @@ public class CodeGenerator {
     private static String[] locals = new String[99];
     private static String classIdent="";
     private static Node classNode;
+    private PrintWriter out;
 
     public CodeGenerator(SimpleNode root) {
         this.root = root;
@@ -33,7 +34,16 @@ public class CodeGenerator {
                 checkMethods(classChilds);
             }
         }
-        print();
+
+        try {
+            PrintWriter out = fileToWrite();
+            out.println(generated);
+            print();
+            out.close();
+        }
+        catch (IOException e) {
+			e.printStackTrace();
+        }
     }
 
     private void checkMethods(Node[] classChilds) {
@@ -199,7 +209,7 @@ public class CodeGenerator {
         Node[] classChilds = classSimpleNode.jjtGetChildren();
 
         classIdent = ((ASTIDENT) classChilds[0]).name;
-        generated += ".public class " + classIdent;
+        generated += ".class public " + classIdent;
         nl();
         generated += ".super java/lang/Object";
         nl();
@@ -373,6 +383,21 @@ public class CodeGenerator {
         Node callNode = funcMethod.jjtGetChild(1);
         String funcName = ((ASTIDENT)callNode.jjtGetChild(0)).name;
 
+        //If method is nonstatic, load address
+        if(!checkIfStatic(funcMethod)) {
+            nl();
+            tab();
+            generated += "aload";
+            
+            // String key = ((ASTFUNC_METHOD)funcMethod).call;
+            String key = ((ASTIDENT)(funcMethod.jjtGetChild(0))).name;
+       		String[] output = key.split("\\.");
+            int index = getFunctionLocals(output[0]);
+
+            space();
+            generated += Integer.toString(index); 
+        }
+
         Node[] args = ((SimpleNode)callNode.jjtGetChild(1)).jjtGetChildren();
         ArrayList<String> localVars = getFunctionLocals(args);
 
@@ -385,13 +410,19 @@ public class CodeGenerator {
         }
 
         tab();
+        String key = ((ASTFUNC_METHOD)funcMethod).call;
+       	String[] output = key.split("\\.");
+
         if(checkIfStatic(funcMethod)) {
             generated += "invokestatic";
+
         } else {
             generated += "invokevirtual";
+
         }
+        
         space();
-        generated += classIdent;
+        generated += output[0];
         generated += "/";
         generated += funcName;
         generated += "(";
@@ -417,16 +448,6 @@ public class CodeGenerator {
     }
 
     static TypeEnum getMethodReturnType(Node funcMethod) {
-        // Node[] classChilds = ((SimpleNode)classNode).jjtGetChildren();
-
-        // for (Node classChild: classChilds) {
-        //     if (classChild.toString().equals("METHOD")) {
-        //         if (((ASTIDENT)((SimpleNode)classChild).jjtGetChild(1)).name.equals(methodIdent)) {
-        //             return (((ASTTYPE)((SimpleNode)(((SimpleNode) classChild).jjtGetChild(0))).jjtGetChild(0)).typeID);
-        //         }
-        //     }
-        // }
-
         String key = ((ASTFUNC_METHOD)funcMethod).call;
         ArrayList<TypeEnum> args = ((ASTFUNC_METHOD)funcMethod).arguments;
         
@@ -471,6 +492,17 @@ public class CodeGenerator {
         }
 
         return localVars;
+    }
+
+    static int getFunctionLocals(String arg) {
+        for (int i= 1; i < 99; i++) {
+            if (locals[i] != null) {
+                if (locals[i].equals(arg))
+                    return i;
+            }
+
+        }
+        return -1;
     }
 
 
@@ -571,10 +603,10 @@ public class CodeGenerator {
 
     public PrintWriter fileToWrite() throws IOException {
 
-        File dir = new File("jvm");
-        if (!dir.exists()) dir.mkdirs();
+        // File dir = new File("jvm");
+        // if (!dir.exists()) dir.mkdirs();
 
-        File file = new File("jvm/jasmin.j");
+        File file = new File("test/fixtures/libs/compiled/Simple.j");
 
         if(!file.exists())
             file.createNewFile();

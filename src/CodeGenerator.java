@@ -9,8 +9,9 @@ public class CodeGenerator {
     private static SimpleNode root;
     static int localIndex = 1;
     private static String[] locals = new String[99];
-    private static String classIdent="";
+    private static String classIdent = "";
     private static Node classNode;
+    private static String extendedClass = "";
 
     public CodeGenerator(SimpleNode root) {
         this.root = root;
@@ -74,9 +75,6 @@ public class CodeGenerator {
         }
 
         methodReturn(methodChilds[methodChilds.length -1], returnType);
-
-
-
     }
 
 
@@ -160,7 +158,6 @@ public class CodeGenerator {
               generated += "return";
         nl();
         generated += ".end method";
-        
     }
 
     private void printTypes(ArrayList<TypeEnum> argsType) {
@@ -168,7 +165,6 @@ public class CodeGenerator {
             getJType(type);
         }
         generated += ')';
-
     }
 
     public static String getJType(TypeEnum type) {
@@ -176,7 +172,6 @@ public class CodeGenerator {
             case INT:
                 generated += "I";
         }
-
         return "";
     }
 
@@ -188,8 +183,6 @@ public class CodeGenerator {
             SimpleNode node = (SimpleNode) n;
             Node type =  node.jjtGetChild(0);
             buff.add(((ASTTYPE) type).typeID);
-
-
         }
         return buff;
     }
@@ -199,11 +192,21 @@ public class CodeGenerator {
         Node[] classChilds = classSimpleNode.jjtGetChildren();
 
         classIdent = ((ASTIDENT) classChilds[0]).name;
-        generated += ".public class " + classIdent;
+        generated += ".class public " + classIdent;
         nl();
-        generated += ".super java/lang/Object";
-        nl();
+        generated += ".super ";
 
+        if(classChilds.length > 1 && classChilds[1].getId() == ParserTreeConstants.JJTEXTENDS) {
+            SimpleNode extNode = (SimpleNode) classChilds[1];
+            Node[] className = extNode.jjtGetChildren();
+            extendedClass = ((ASTIDENT) className[0]).name;
+        }
+        else {
+            extendedClass = "java/lang/Object";
+        }
+
+        generated += extendedClass;
+        nl();
         return classChilds;
     }
 
@@ -413,7 +416,6 @@ public class CodeGenerator {
             default:
                 return "";
         }
-
     }
 
     static TypeEnum getMethodReturnType(Node funcMethod) {
@@ -436,7 +438,6 @@ public class CodeGenerator {
             return symbol.getReturnType(args);
         }
         // System.out.println(funcMethod.toString());
-
         return null;
     }
 
@@ -467,9 +468,7 @@ public class CodeGenerator {
                         counter++;
                     }
             }
-
         }
-
         return localVars;
     }
 
@@ -526,7 +525,7 @@ public class CodeGenerator {
         generated += "aload_0";
         nl();
         tab();
-        generated += "invokenonvirtual java/lang/Object/<init>()V";
+        generated = generated + "invokenonvirtual " + extendedClass + "/<init>()V";
         nl();
         tab();
         generated += "return";

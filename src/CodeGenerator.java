@@ -185,7 +185,7 @@ public class CodeGenerator {
             nl();
             for (String s : localVars) {
               tab();
-              generated += "iand ";
+              generated += "iload ";
               generated += s;
             }
           }

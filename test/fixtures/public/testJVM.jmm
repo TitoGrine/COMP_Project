@@ -9,14 +9,16 @@ int p;
 		int b;
 		Simple simple;
 		int c;
+		int d;
 		
 		a = 30;
 		b = 10;
 		simple = new Simple();
 		
 		c = simple.add(a,b);
+		d = simple.cenas(c,b);
 
-		io.println(c);
+		io.println(d);
 
 	}
 

@@ -8,17 +8,15 @@ class Simple {
 		Simple simple;
 		int c;
 		boolean t;
-
-		a = 3;
-		b = 5;
-		b = 1;
-		b = 3;
-
-		simple = new Simple();
 		
+		t = true;
+
+		a = 30;
+		b = 10;
+		
+		simple = new Simple();
 		c = simple.add(a,b);
 
-		io.println(c);
 	}
 
 	public int add(int a, int b){

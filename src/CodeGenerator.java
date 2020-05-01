@@ -302,7 +302,6 @@ public class CodeGenerator {
                 break;
               case ParserTreeConstants.JJTBOOL:
                 addBoolean(candidate.jjtGetChild(1), ((ASTIDENT)candidate.jjtGetChild(0)).name);
-                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
               case ParserTreeConstants.JJTNUM:
                 addVariableAllocation(candidate);
@@ -324,10 +323,17 @@ public class CodeGenerator {
 
     static void addBoolean(Node bool, String var) {
         if (((ASTBOOL)bool).truth_value) {
-            
-            printLocals();
+            nl();
+            tab();
+            generated += "iconst_1";
+            storeLocal(var);
+
         } else {
-            printLocals();
+            nl();
+            tab();
+            generated += "iconst_";
+            storeLocal(var);
+
         }
     }
 

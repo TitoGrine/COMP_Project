@@ -2,19 +2,22 @@ import java.io.*;
 
 class Simple {
 
-	public static void main(String[] args) {
-		PrintStream stream = new PrintStream(System.out); 
+	int y = 2;
 
-        int a;
+	public static void main(String[] args) {
+		int a;
 		int b;
 		Simple simple;
 		int c;
+		boolean t;
 
+		t=true;
+		
 		a = 30;
-		b = 0-10;
-
+		b = 10;
+		
 		simple = new Simple();
-
+		c = simple.add(a,b);
 
 	}
 

@@ -11,16 +11,10 @@
 	.limit stack 99
 	.limit locals 99
 
-	bipush 3
+	bipush 30
 	istore 1
 
-	bipush 5
-	istore 2
-
-	bipush 1
-	istore 2
-
-	bipush 3
+	bipush 10
 	istore 2
 
 	new Simple
@@ -34,8 +28,6 @@
 	invokevirtual Simple/add(II)I
 	istore 4
 
-	iload 4
-	invokestatic io/println(I)V
 	return
 .end method
 

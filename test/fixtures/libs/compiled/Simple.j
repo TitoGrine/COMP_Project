@@ -13,8 +13,16 @@
 
 	bipush 3
 	istore 1
+
+	bipush 5
+	istore 2
+
+	bipush 1
+	istore 2
+
 	bipush 3
 	istore 2
+
 	new Simple
 	dup
 	invokespecial Simple/<init>()V

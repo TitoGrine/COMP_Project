@@ -275,33 +275,39 @@ public class CodeGenerator {
         for (Node candidate : methodBodyChilds)
             if (((SimpleNode) candidate).id == ParserTreeConstants.JJTASSIGN) {
             switch (
-                  candidate.jjtGetChild(1).toString()) {
-              case "NEW":
+                  ((SimpleNode)candidate.jjtGetChild(1)).id) {
+              case ParserTreeConstants.JJTNEW:
                 addNew(candidate.jjtGetChild(1));
                 storeAddress(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              case "SUB":
+              case ParserTreeConstants.JJTSUB:
                 makeOperation(candidate);
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              case "ADD":
+              case ParserTreeConstants.JJTADD:
                 makeOperation(candidate);
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              case "MUL":
+              case ParserTreeConstants.JJTMUL:
                 makeOperation(candidate);
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              case "DIV":
+              case ParserTreeConstants.JJTDIV:
                 makeOperation(candidate);
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              case "FUNC_METHOD":
+              case ParserTreeConstants.JJTFUNC_METHOD:
                 addMethodCall(candidate.jjtGetChild(1));
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              default:
+              case ParserTreeConstants.JJTBOOL:
+                addBoolean(candidate.jjtGetChild(1), ((ASTIDENT)candidate.jjtGetChild(0)).name);
+                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                break;
+              case ParserTreeConstants.JJTNUM:
                 addVariableAllocation(candidate);
+                break;
+              default:
                 break;
               }
             } else if (((SimpleNode) candidate).id == ParserTreeConstants.JJTFUNC_METHOD) {
@@ -314,6 +320,17 @@ public class CodeGenerator {
                 // popReturn(((ASTIDENT)candidate.jjtGetChild(0)).name);
             }
     }
+
+
+    static void addBoolean(Node bool, String var) {
+        if (((ASTBOOL)bool).truth_value) {
+            
+            printLocals();
+        } else {
+            printLocals();
+        }
+    }
+
 
     static void popReturn(Node funcMethod) {
         if (getMethodReturnType(funcMethod) == TypeEnum.VOID) return;
@@ -336,9 +353,15 @@ public class CodeGenerator {
     static void storeLocal(String id) {
         nl();
         tab();
-        generated += "istore " + localIndex;
-        locals[localIndex] = id;
-        localIndex++;
+        int index = getFunctionLocals(id);
+
+        if (index == -1) {
+            generated += "istore " + localIndex;
+            locals[localIndex] = id;
+            localIndex++;
+        } else {
+            generated += "istore " + index;
+        }
         nl();
     }
 
@@ -539,14 +562,16 @@ public class CodeGenerator {
         Node identificationNode = assign.jjtGetChild(0);
         String identification = ((ASTIDENT)identificationNode).name;
 
-        nl();
-        tab();
-        generated += "istore";
-        space();
-        generated += localIndex;
+        storeLocal(identification);
 
-        locals[localIndex] = identification;
-        localIndex++;
+        // nl();
+        // tab();
+        // generated += "istore";
+        // space();
+        // generated += localIndex;
+
+        // locals[localIndex] = identification;
+        // localIndex++;
     }
 
 
@@ -613,5 +638,11 @@ public class CodeGenerator {
 
         PrintWriter writer = new PrintWriter(file);
         return writer;
+    }
+
+    static void printLocals() {
+        for (String local: locals)
+            if (local != null)
+                System.out.println(local);
     }
 }

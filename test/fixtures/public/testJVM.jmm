@@ -1,4 +1,5 @@
 import static io.println(int);
+
 class Simple {
 
 	public static void main(String[] args) {
@@ -6,14 +7,16 @@ class Simple {
 		int b;
 		Simple simple;
 		int c;
+		boolean t;
 
 		a = 3;
+		b = 5;
+		b = 1;
 		b = 3;
 
 		simple = new Simple();
 		
 		c = simple.add(a,b);
-
 
 		io.println(c);
 	}

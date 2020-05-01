@@ -11,11 +11,31 @@
 	.limit stack 99
 	.limit locals 99
 
+<<<<<<< HEAD
+=======
+	iconst_1
+	istore 5
+
+	iload 5
+
+	iconst_0
+	ifeq
+	istore 6
+
+>>>>>>> ca17a42b8b5702a2f5db81413ca927b58fb4212e
 	bipush 30
 	istore 2
 
 	bipush 10
 	istore 3
+
+	iload 7
+
+	iload 1
+
+	bipush 10
+	iadd
+	istore 7
 
 	new Simple
 	dup
@@ -40,7 +60,7 @@
 
 	iload 1
 
-	iload 2
+	iand 2
 	iadd
 
 	ireturn

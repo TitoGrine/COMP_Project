@@ -2,28 +2,32 @@ import static io.println(int);
 
 class Simple{
 
-
-	int jk;
-
+int p;
 	public static void main(String[] args) {
 		int a;
 		int b;
 		Simple simple;
 		int c;
+		boolean t;
+		boolean z;
+		int y;
+		
+		t = true;
+
+		z = t && false;
 
 		a = 30;
-		b = 0-10;
-		jk = 3;
+		b = 10;
 
-		simple = new Simple();
+		y = a + 10;
 		
-		c = simple.add(a,b);  //TODO é um argumento
+		simple = new Simple();
+		c = simple.add(a,b);
 
-		io.println(c);
 	}
 
 	public int add(int a, int b){
 
-		return a+b * jk;
+		return a+b;
 	}
 }

@@ -105,19 +105,28 @@ public class CodeGenerator {
 
 
     static void makeOperation(Node operationNode){
+        
         SimpleNode operation = (SimpleNode) operationNode;
         SimpleNode oper1 = (SimpleNode) operation.jjtGetChild(0);
         SimpleNode oper2 = (SimpleNode) operation.jjtGetChild(1);
         if (oper1.id == ParserTreeConstants.JJTADD ||
             oper1.id == ParserTreeConstants.JJTMUL ||
             oper1.id == ParserTreeConstants.JJTSUB ||
-            oper1.id == ParserTreeConstants.JJTDIV) {
+            oper1.id == ParserTreeConstants.JJTDIV ||
+            oper1.id == ParserTreeConstants.JJTAND) {
           makeOperation(operation.jjtGetChild(0));
 
         } else {
           if (oper1.id == ParserTreeConstants.JJTNUM) {
             generated += "\n\tbipush " + ((ASTNUM)oper1).value;
-          }else{
+          } else if (oper1.id == ParserTreeConstants.JJTBOOL) {
+
+            if (((ASTBOOL)oper1).truth_value)
+              generated += "\n\ticonst_1";
+            else
+              generated += "\n\ticonst_0";
+
+          }else {
 
             int classVarI = checkIfClassVar(oper1);
 
@@ -146,12 +155,19 @@ public class CodeGenerator {
         if (oper2.id == ParserTreeConstants.JJTADD ||
             oper2.id == ParserTreeConstants.JJTMUL ||
             oper2.id == ParserTreeConstants.JJTSUB ||
-            oper2.id == ParserTreeConstants.JJTDIV) {
+            oper2.id == ParserTreeConstants.JJTDIV ||
+            oper2.id == ParserTreeConstants.JJTAND) {
           makeOperation(operation.jjtGetChild(1));
-        } else 
-        if (oper2.id == ParserTreeConstants.JJTNUM) {
+        } else if (oper2.id == ParserTreeConstants.JJTNUM) {
           generated += "\n\tbipush " + ((ASTNUM) oper2).value;
-        } else {
+        } else if(oper2.id == ParserTreeConstants.JJTBOOL){
+
+          if (((ASTBOOL)oper2).truth_value)
+            generated += "\n\ticonst_1";
+          else
+            generated += "\n\ticonst_0";
+        }
+        else{
 
           int classVarI2 = checkIfClassVar(oper2);
 
@@ -169,7 +185,7 @@ public class CodeGenerator {
             nl();
             for (String s : localVars) {
               tab();
-              generated += "iload ";
+              generated += "iand ";
               generated += s;
             }
           }
@@ -187,6 +203,9 @@ public class CodeGenerator {
               break;
             case ParserTreeConstants.JJTMUL:
               generated += "\n\timul";
+              break;
+            case ParserTreeConstants.JJTAND:
+              generated += "\n\tifeq";
               break;
         }
         }
@@ -369,6 +388,10 @@ public class CodeGenerator {
                 break;
               case ParserTreeConstants.JJTDIV:
                 makeOperation(candidate);
+                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                break;
+              case ParserTreeConstants.JJTAND:
+                makeOperation(((SimpleNode) candidate).jjtGetChild(1));
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
               case ParserTreeConstants.JJTFUNC_METHOD:

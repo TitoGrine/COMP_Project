@@ -1,7 +1,8 @@
 import static io.println(int);
 
-class Simple {
+class Simple{
 
+int p;
 	public static void main(String[] args) {
 		int a;
 		int b;
@@ -20,6 +21,7 @@ class Simple {
 	}
 
 	public int add(int a, int b){
+
 		return a+b;
 	}
 }

@@ -24,9 +24,8 @@ class CustomTest extends Test{
         num = 2;
 
         star = true;
-        star = true;
-        star = true;
-        star = true;
+
+        test = new CustomTest();
 
         //if((num < 1 && num < 1)){
         if(5*3+4/num < this.test() && (2-3/45*34+5) < 4/4*1){
@@ -50,6 +49,8 @@ class CustomTest extends Test{
             num = 7*3;
         }
 
+        star = test.parade();
+
         a = 8 / 2 + num * 5 / 2 - 2 + this.parade(2);
 
         new int[5];
@@ -67,10 +68,12 @@ class CustomTest extends Test{
 
 	    stonky = false;
 
-	    return stonky;
+	    return something;
 	}
 
 	public int parade(int i) {
+	    something = 2;
+
     	return i + 6;
     }
 }

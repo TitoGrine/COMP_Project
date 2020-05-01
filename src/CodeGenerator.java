@@ -56,12 +56,14 @@ public class CodeGenerator {
             SimpleNode simpleN = (SimpleNode) n;
             if (simpleN.toString().equals("METHOD")) {
                 Node methodChilds[] = simpleN.jjtGetChildren();
-                addMethod(methodChilds);
+                addMethod(simpleN);
             }
         }
     }
 
-    private void addMethod(Node[] methodChilds) {
+    private void addMethod(Node method) {
+
+        Node[] methodChilds = ((SimpleNode)method).jjtGetChildren();
 
         ArrayList<TypeEnum> argsType = getArgsType(methodChilds[2]);
         nl();
@@ -79,16 +81,26 @@ public class CodeGenerator {
         tab();
         generated += ".limit locals 99";
         nl();
+        Node argumentsNode;
 
+        String[] backup = this.locals;
         for(Node node : methodChilds){
 
-          if ((((SimpleNode)node).id == ParserTreeConstants.JJTMETHOD_BODY) &&
-              ((SimpleNode)node).jjtGetNumChildren() != 0){
+
+          if (((SimpleNode)node).id == ParserTreeConstants.JJTARGUMENTS) {
+            argumentsNode = node;
+            addMethodArguments(((SimpleNode)argumentsNode).jjtGetChildren());
+          }
+
+
+          if ((((SimpleNode)node).id == ParserTreeConstants.JJTMETHOD_BODY) && ((SimpleNode)node).jjtGetNumChildren() != 0) {
+
             methodBody(((SimpleNode)node).jjtGetChildren());
             }
         }
-
+        // printLocals();
         methodReturn(methodChilds[methodChilds.length -1], returnType);
+        this.locals = backup;
     }
 
 
@@ -152,6 +164,7 @@ public class CodeGenerator {
             Node[] tmp = {operation.jjtGetChild(1)};
 
             ArrayList<String> localVars = getFunctionLocals(tmp);
+
 
             nl();
             for (String s : localVars) {
@@ -314,6 +327,24 @@ public class CodeGenerator {
         nl();
         generated += ".end method\n";
     }
+
+
+    private void addMethodArguments(Node[] args) {
+        // for (int i=0; i < args.length; i++) {
+        //     if (((ASTIDENT)args[i].jjtGetChild(1)).name == name)
+        //         return i;
+        // }
+
+        // return -1;
+
+        this.locals = new String[99];
+
+        for (int i = 0; i < args.length; i++) {
+            System.out.println("Arg " + i + ": " + ((ASTIDENT)((SimpleNode)((SimpleNode)args[i]).jjtGetChild(1))).name);
+            this.locals[i+1] = ((ASTIDENT)((SimpleNode)((SimpleNode)args[i]).jjtGetChild(1))).name;
+        }
+    }
+
 
     static void methodBody(Node methodBodyChilds[]) {
         for (Node candidate : methodBodyChilds)

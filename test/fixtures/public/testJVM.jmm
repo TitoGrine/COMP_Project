@@ -4,24 +4,24 @@ class Simple{
 
 int p;
 	public static void main(String[] args) {
+		boolean t;
 		int a;
 		int b;
 		Simple simple;
 		int c;
-		boolean t;
 		
-		t = true;
-
 		a = 30;
 		b = 10;
-		
 		simple = new Simple();
+		
 		c = simple.add(a,b);
+
+		io.println(c);
 
 	}
 
 	public int add(int a, int b){
-
 		return a+b;
 	}
+
 }

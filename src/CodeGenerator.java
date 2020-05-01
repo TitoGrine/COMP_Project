@@ -13,6 +13,8 @@ public class CodeGenerator {
     private static String[] classVars = new String[99];
     private static String classIdent="";
     private static Node classNode;
+    private PrintWriter out;
+    private static String extendedClass = "";
 
     public CodeGenerator(SimpleNode root) {
         this.root = root;
@@ -35,7 +37,16 @@ public class CodeGenerator {
                 checkMethods(classChilds);
             }
         }
-        print();
+
+        try {
+            PrintWriter out = fileToWrite();
+            out.println(generated);
+            print();
+            out.close();
+        }
+        catch (IOException e) {
+			e.printStackTrace();
+        }
     }
 
     private void checkMethods(Node[] classChilds) {
@@ -76,9 +87,6 @@ public class CodeGenerator {
         }
 
         methodReturn(methodChilds[methodChilds.length -1], returnType);
-
-
-
     }
 
 
@@ -183,7 +191,6 @@ public class CodeGenerator {
               generated += "return";
         nl();
         generated += ".end method";
-        
     }
 
     private static int checkIfClassVar(SimpleNode candidate){
@@ -202,7 +209,6 @@ public class CodeGenerator {
             getJType(type);
         }
         generated += ')';
-
     }
 
     public static String getJType(TypeEnum type) {
@@ -210,7 +216,6 @@ public class CodeGenerator {
             case INT:
                 generated += "I";
         }
-
         return "";
     }
 
@@ -222,8 +227,6 @@ public class CodeGenerator {
             SimpleNode node = (SimpleNode) n;
             Node type =  node.jjtGetChild(0);
             buff.add(((ASTTYPE) type).typeID);
-
-
         }
         return buff;
     }
@@ -233,11 +236,23 @@ public class CodeGenerator {
         Node[] classChilds = classSimpleNode.jjtGetChildren();
 
         classIdent = ((ASTIDENT) classChilds[0]).name;
-        generated += ".public class " + classIdent;
+        generated += ".class public " + classIdent;
         nl();
-        generated += ".super java/lang/Object";
-        nl();
+        // generated += ".super java/lang/Object";
+        // nl();
+        generated += ".super ";
 
+        if(classChilds.length > 1 && classChilds[1].getId() == ParserTreeConstants.JJTEXTENDS) {
+            SimpleNode extNode = (SimpleNode) classChilds[1];
+            Node[] className = extNode.jjtGetChildren();
+            extendedClass = ((ASTIDENT) className[0]).name;
+        }
+        else {
+            extendedClass = "java/lang/Object";
+        }
+
+        generated += extendedClass;
+        nl();
         return classChilds;
     }
 
@@ -297,33 +312,39 @@ public class CodeGenerator {
         for (Node candidate : methodBodyChilds)
             if (((SimpleNode) candidate).id == ParserTreeConstants.JJTASSIGN) {
             switch (
-                  candidate.jjtGetChild(1).toString()) {
-              case "NEW":
+                  ((SimpleNode)candidate.jjtGetChild(1)).id) {
+              case ParserTreeConstants.JJTNEW:
                 addNew(candidate.jjtGetChild(1));
                 storeAddress(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              case "SUB":
+              case ParserTreeConstants.JJTSUB:
                 makeOperation(candidate);
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              case "ADD":
+              case ParserTreeConstants.JJTADD:
                 makeOperation(candidate);
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              case "MUL":
+              case ParserTreeConstants.JJTMUL:
                 makeOperation(candidate);
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              case "DIV":
+              case ParserTreeConstants.JJTDIV:
                 makeOperation(candidate);
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              case "FUNC_METHOD":
+              case ParserTreeConstants.JJTFUNC_METHOD:
                 addMethodCall(candidate.jjtGetChild(1));
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
-              default:
+              case ParserTreeConstants.JJTBOOL:
+                addBoolean(candidate.jjtGetChild(1), ((ASTIDENT)candidate.jjtGetChild(0)).name);
+                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                break;
+              case ParserTreeConstants.JJTNUM:
                 addVariableAllocation(candidate);
+                break;
+              default:
                 break;
               }
             } else if (((SimpleNode) candidate).id == ParserTreeConstants.JJTFUNC_METHOD) {
@@ -336,6 +357,17 @@ public class CodeGenerator {
                 // popReturn(((ASTIDENT)candidate.jjtGetChild(0)).name);
             }
     }
+
+
+    static void addBoolean(Node bool, String var) {
+        if (((ASTBOOL)bool).truth_value) {
+            
+            printLocals();
+        } else {
+            printLocals();
+        }
+    }
+
 
     static void popReturn(Node funcMethod) {
         if (getMethodReturnType(funcMethod) == TypeEnum.VOID) return;
@@ -372,9 +404,15 @@ public class CodeGenerator {
 
         nl();
         tab();
-        generated += "istore " + localIndex;
-        locals[localIndex] = id;
-        localIndex++;
+        int index = getFunctionLocals(id);
+
+        if (index == -1) {
+            generated += "istore " + localIndex;
+            locals[localIndex] = id;
+            localIndex++;
+        } else {
+            generated += "istore " + index;
+        }
         nl();
     }
 
@@ -424,6 +462,21 @@ public class CodeGenerator {
         Node callNode = funcMethod.jjtGetChild(1);
         String funcName = ((ASTIDENT)callNode.jjtGetChild(0)).name;
 
+        //If method is nonstatic, load address
+        if(!checkIfStatic(funcMethod)) {
+            nl();
+            tab();
+            generated += "aload";
+            
+            // String key = ((ASTFUNC_METHOD)funcMethod).call;
+            String key = ((ASTIDENT)(funcMethod.jjtGetChild(0))).name;
+       		String[] output = key.split("\\.");
+            int index = getFunctionLocals(output[0]);
+
+            space();
+            generated += Integer.toString(index); 
+        }
+
         Node[] args = ((SimpleNode)callNode.jjtGetChild(1)).jjtGetChildren();
         ArrayList<String> localVars = getFunctionLocals(args);
 
@@ -436,13 +489,19 @@ public class CodeGenerator {
         }
 
         tab();
+        String key = ((ASTFUNC_METHOD)funcMethod).call;
+       	String[] output = key.split("\\.");
+
         if(checkIfStatic(funcMethod)) {
             generated += "invokestatic";
+
         } else {
             generated += "invokevirtual";
+
         }
+        
         space();
-        generated += classIdent;
+        generated += output[0];
         generated += "/";
         generated += funcName;
         generated += "(";
@@ -464,20 +523,9 @@ public class CodeGenerator {
             default:
                 return "";
         }
-
     }
 
     static TypeEnum getMethodReturnType(Node funcMethod) {
-        // Node[] classChilds = ((SimpleNode)classNode).jjtGetChildren();
-
-        // for (Node classChild: classChilds) {
-        //     if (classChild.toString().equals("METHOD")) {
-        //         if (((ASTIDENT)((SimpleNode)classChild).jjtGetChild(1)).name.equals(methodIdent)) {
-        //             return (((ASTTYPE)((SimpleNode)(((SimpleNode) classChild).jjtGetChild(0))).jjtGetChild(0)).typeID);
-        //         }
-        //     }
-        // }
-
         String key = ((ASTFUNC_METHOD)funcMethod).call;
         ArrayList<TypeEnum> args = ((ASTFUNC_METHOD)funcMethod).arguments;
         
@@ -487,7 +535,6 @@ public class CodeGenerator {
             return symbol.getReturnType(args);
         }
         // System.out.println(funcMethod.toString());
-
         return null;
     }
 
@@ -518,10 +565,19 @@ public class CodeGenerator {
                         counter++;
                     }
             }
+        }
+        return localVars;
+    }
+
+    static int getFunctionLocals(String arg) {
+        for (int i= 1; i < 99; i++) {
+            if (locals[i] != null) {
+                if (locals[i].equals(arg))
+                    return i;
+            }
 
         }
-
-        return localVars;
+        return -1;
     }
 
 
@@ -544,7 +600,7 @@ public class CodeGenerator {
     }
 
 
-    //dar iload se jk = a??
+    
     public static void addVariableAllocation(Node assign) {
         Node value = assign.jjtGetChild(1);
         int valueString = ((ASTNUM) value).value;
@@ -567,15 +623,10 @@ public class CodeGenerator {
               return;
             }
         }
+        
+        storeLocal(identification);
 
-        nl();
-        tab();
-        generated += "istore";
-        space();
-        generated += localIndex;
-
-        locals[localIndex] = identification;
-        localIndex++;
+        
     }
 
 
@@ -587,7 +638,7 @@ public class CodeGenerator {
         generated += "aload_0";
         nl();
         tab();
-        generated += "invokenonvirtual java/lang/Object/<init>()V";
+        generated = generated + "invokenonvirtual " + extendedClass + "/<init>()V";
         nl();
         tab();
         generated += "return";
@@ -632,15 +683,21 @@ public class CodeGenerator {
 
     public PrintWriter fileToWrite() throws IOException {
 
-        File dir = new File("jvm");
-        if (!dir.exists()) dir.mkdirs();
+        // File dir = new File("jvm");
+        // if (!dir.exists()) dir.mkdirs();
 
-        File file = new File("jvm/jasmin.j");
+        File file = new File("test/fixtures/libs/compiled/Simple.j");
 
         if(!file.exists())
             file.createNewFile();
 
         PrintWriter writer = new PrintWriter(file);
         return writer;
+    }
+
+    static void printLocals() {
+        for (String local: locals)
+            if (local != null)
+                System.out.println(local);
     }
 }

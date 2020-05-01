@@ -1,5 +1,7 @@
 import static io.println(int);
-class Simple {
+
+class Simple{
+
 
 	int jk;
 
@@ -15,8 +17,7 @@ class Simple {
 
 		simple = new Simple();
 		
-		c = simple.add(a,jk);  //TODO é um argumento
-
+		c = simple.add(a,b);  //TODO é um argumento
 
 		io.println(c);
 	}

@@ -8,7 +8,9 @@ public class CodeGenerator {
     static String generated;
     private static SimpleNode root;
     static int localIndex = 1;
+    static int classIndex = 1;
     private static String[] locals = new String[99];
+    private static String[] classVars = new String[99];
     private static String classIdent="";
     private static Node classNode;
 
@@ -95,6 +97,16 @@ public class CodeGenerator {
             // System.out.println(oper1.id + '\n');
             generated += "\n\tbipush " + ((ASTNUM)oper1).value;
           }else{
+
+            int classVarI = checkIfClassVar(oper1);
+
+            if(classVarI != -1){
+              tab();
+              generated += "getfield "; // TODO acrescentar return e class name
+              generated += classVars[classVarI];
+              nl();
+            }else{
+
             Node[] tmp = {operation.jjtGetChild(0)};
 
             ArrayList<String> localVars = getFunctionLocals(tmp);
@@ -106,6 +118,7 @@ public class CodeGenerator {
               generated += s;
               nl();
             }
+        }
           }
         }
 
@@ -119,15 +132,25 @@ public class CodeGenerator {
         //   System.out.println(oper1.id + '\n');
           generated += "\n\tbipush " + ((ASTNUM) oper2).value;
         } else {
-          Node[] tmp = {operation.jjtGetChild(1)};
 
-          ArrayList<String> localVars = getFunctionLocals(tmp);
+          int classVarI2 = checkIfClassVar(oper2);
 
-          nl();
-          for (String s : localVars) {
+          if (classVarI2 != -1) {
             tab();
-            generated += "iload ";
-            generated += s;
+            generated += "getfield ";  //TODO acrescentar return e class name
+            generated += classVars[classVarI2];
+            nl();
+          } else {
+            Node[] tmp = {operation.jjtGetChild(1)};
+
+            ArrayList<String> localVars = getFunctionLocals(tmp);
+
+            nl();
+            for (String s : localVars) {
+              tab();
+              generated += "iload ";
+              generated += s;
+            }
           }
         }
 
@@ -145,7 +168,7 @@ public class CodeGenerator {
               generated += "\n\timul";
               break;
         }
-    }
+        }
 
     private void methodReturn(Node returnNode, TypeEnum typeReturn) {
         SimpleNode node = (SimpleNode) returnNode;
@@ -161,6 +184,17 @@ public class CodeGenerator {
         nl();
         generated += ".end method";
         
+    }
+
+    private static int checkIfClassVar(SimpleNode candidate){
+        for(int i = 0; i < 99; i++){
+            if(classVars[i] != null){
+                if(classVars[i].equals(((ASTIDENT) candidate).name)){
+                    return i;
+                }
+            }    
+        }
+        return -1;
     }
 
     private void printTypes(ArrayList<TypeEnum> argsType) {
@@ -213,23 +247,26 @@ public class CodeGenerator {
             SimpleNode simpleN = (SimpleNode) n;
 
             if (simpleN.toString().equals("VARIABLE")) {
-                generated += '\n' + ".field " + ((ASTIDENT) simpleN.jjtGetChildren()[1]).name;
-                space();
+              System.out.println(((ASTIDENT)simpleN.jjtGetChild(1)).name);
+              classVars[classIndex] = ((ASTIDENT)simpleN.jjtGetChild(1)).name;
+              classIndex++;
+              generated += '\n' + ".field public" + ((ASTIDENT)simpleN.jjtGetChildren()[1]).name;
+              space();
 
-                ASTTYPE typeN = (ASTTYPE)simpleN.jjtGetChildren()[0];
-                switch (typeN.typeID) {
-                    case STRING:
-                        generated += "V";
-                        nl();
-                        break;
-                    case INT:
-                        generated += "I";
-                        nl();
-                        break;
-                    case BOOL:
-                        generated += "Z";
-                        nl();
-                        break;
+              ASTTYPE typeN = (ASTTYPE)simpleN.jjtGetChildren()[0];
+              switch (typeN.typeID) {
+              case STRING:
+                generated += "V";
+                nl();
+                break;
+              case INT:
+                generated += "I";
+                nl();
+                break;
+              case BOOL:
+                generated += "Z";
+                nl();
+                break;
                 }
             }
         }
@@ -319,6 +356,20 @@ public class CodeGenerator {
     }
 
     static void storeLocal(String id) {
+
+      System.out.println(classVars[1] + '\t' + id);
+
+      for (int i = 0; i < 99; i++) {
+        if (classVars[i] != null) {
+          if (classVars[i].equals(id)) {
+
+            generated += "\n\tputfield " + ((ASTIDENT)((SimpleNode)root.jjtGetChild(1)).jjtGetChild(0)).name + "/" + id;
+            // acrescentar tipo
+            return;
+          }
+        }
+    }
+
         nl();
         tab();
         generated += "istore " + localIndex;
@@ -493,8 +544,8 @@ public class CodeGenerator {
     }
 
 
+    //dar iload se jk = a??
     public static void addVariableAllocation(Node assign) {
-        System.out.println(assign.toString());
         Node value = assign.jjtGetChild(1);
         int valueString = ((ASTNUM) value).value;
 
@@ -506,6 +557,16 @@ public class CodeGenerator {
 
         Node identificationNode = assign.jjtGetChild(0);
         String identification = ((ASTIDENT)identificationNode).name;
+
+        for(int i = 1; classVars[i] != null; i++){
+            if(classVars[i].equals(identification)){
+              nl();
+              tab();
+              generated += "putfield " + identification; //TODO RETURN + CLASS name
+              nl();
+              return;
+            }
+        }
 
         nl();
         tab();

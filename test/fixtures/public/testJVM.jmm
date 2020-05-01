@@ -9,11 +9,17 @@ int p;
 		Simple simple;
 		int c;
 		boolean t;
+		boolean z;
+		int y;
 		
 		t = true;
 
+		z = t && false;
+
 		a = 30;
 		b = 10;
+
+		y = a + 10;
 		
 		simple = new Simple();
 		c = simple.add(a,b);

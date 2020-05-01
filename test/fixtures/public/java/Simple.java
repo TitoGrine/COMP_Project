@@ -10,8 +10,11 @@ class Simple {
 		Simple simple;
 		int c;
 		boolean t;
+		boolean z;
 
 		t=true;
+		z = t && false;
+
 		
 		a = 30;
 		b = 10;

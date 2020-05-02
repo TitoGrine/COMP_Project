@@ -10,16 +10,15 @@ class Simple {
 		boolean h;
 		int c;
 		
-		t = true;
+		t = !true;
 
-		h = (t && false) && (1 < 3);
+		h = !(t && true);
 
 		a = 10;
 		b = 2;
 		simple = new Simple();
 		
 		c = simple.add(a,b);
-		t=true;
 
 		io.println(c);
 	}

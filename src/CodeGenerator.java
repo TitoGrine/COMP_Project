@@ -84,6 +84,8 @@ public class CodeGenerator {
         Node argumentsNode;
 
         String[] backup = this.locals;
+        int backupCounter = this.localsCounter;
+        this.localsCounter = 1;
         for(Node node : methodChilds){
 
 
@@ -94,13 +96,15 @@ public class CodeGenerator {
 
 
           if ((((SimpleNode)node).id == ParserTreeConstants.JJTMETHOD_BODY) && ((SimpleNode)node).jjtGetNumChildren() != 0) {
-
+              storeVariables(((SimpleNode)node).jjtGetChildren());
+                
             methodBody(((SimpleNode)node).jjtGetChildren());
             }
         }
         // printLocals();
         methodReturn(methodChilds[methodChilds.length -1], returnType);
         this.locals = backup;
+        this.localsCounter = backupCounter;
     }
 
 
@@ -208,12 +212,23 @@ public class CodeGenerator {
               generated += "\n\tifeq";
               break;
         }
-        }
+    }
+
+
+    private static void loadVariable(String name) {
+        nl();
+        tab();
+        generated += "iload ";
+        generated += Integer.toString(getFunctionLocals(name));
+    }
 
     private void methodReturn(Node returnNode, TypeEnum typeReturn) {
         SimpleNode node = (SimpleNode) returnNode;
-        if(node.id != ParserTreeConstants.JJTIDENT) //ver se retornar numero
+        if(((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTIDENT) //ver se retornar numero
             makeOperation(node.jjtGetChild(0));
+        else if (((SimpleNode)node.jjtGetChild(0)).id == ParserTreeConstants.JJTIDENT) {
+            loadVariable(((ASTIDENT)((SimpleNode)node.jjtGetChild(0))).name);
+        }
         nl();
         nl();
         tab();
@@ -294,14 +309,18 @@ public class CodeGenerator {
             SimpleNode simpleN = (SimpleNode) n;
 
             if (simpleN.toString().equals("MAINMETHOD")) {
-
                 Node[] candidates = ((SimpleNode)simpleN.jjtGetChild(1)).jjtGetChildren();
-                for (Node candidate: candidates) {
-                    if (candidate.toString() == "VARIABLE") {
-                        locals[localsCounter] = ((ASTIDENT)candidate.jjtGetChild(1)).name;
-                        localsCounter++;
-                    }
-                }
+                storeVariables(candidates);
+
+                // Node[] candidates = ((SimpleNode)simpleN.jjtGetChild(1)).jjtGetChildren();
+                // for (Node candidate: candidates) {
+                //     if (candidate.toString() == "VARIABLE") {
+                //         locals[localsCounter] = ((ASTIDENT)candidate.jjtGetChild(1)).name;
+                //         localsCounter++;
+                //     }
+                // }
+
+
             //   classVars[classIndex] = ((ASTIDENT)simpleN.jjtGetChild(1)).name;
             //   classIndex++;
             //   generated += '\n' + ".field public" + ((ASTIDENT)simpleN.jjtGetChildren()[1]).name;
@@ -324,6 +343,17 @@ public class CodeGenerator {
             //     }
             }
         }
+    }
+
+
+    static void storeVariables(Node[] candidates) {
+                for (Node candidate: candidates) {
+                    if (candidate.toString() == "VARIABLE") {
+                        locals[localsCounter] = ((ASTIDENT)candidate.jjtGetChild(1)).name;
+                        localsCounter++;
+                    }
+                }
+
     }
 
 
@@ -359,8 +389,8 @@ public class CodeGenerator {
         this.locals = new String[99];
 
         for (int i = 0; i < args.length; i++) {
-            System.out.println("Arg " + i + ": " + ((ASTIDENT)((SimpleNode)((SimpleNode)args[i]).jjtGetChild(1))).name);
             this.locals[i+1] = ((ASTIDENT)((SimpleNode)((SimpleNode)args[i]).jjtGetChild(1))).name;
+            this.localsCounter++;
         }
     }
 
@@ -469,8 +499,7 @@ public class CodeGenerator {
         int index = getFunctionLocals(id);
 
         if (index == -1) {
-            generated += "istore " + localIndex;
-            localIndex++;
+            return;
         } else {
             generated += "istore " + index;
         }

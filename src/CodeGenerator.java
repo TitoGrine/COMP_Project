@@ -198,6 +198,7 @@ public class CodeGenerator {
               generated += "iload ";
               generated += s;
             }
+            generated += "\n\tineg";
           }
         }
 
@@ -478,12 +479,17 @@ public class CodeGenerator {
                 makeOperation(((SimpleNode)candidate).jjtGetChild(1));
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
+              case ParserTreeConstants.JJTNEGATION:
+                handleNeg(((SimpleNode)candidate).jjtGetChild(1));
+                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                break;
               case ParserTreeConstants.JJTFUNC_METHOD:
                 addMethodCall(candidate.jjtGetChild(1));
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
               case ParserTreeConstants.JJTBOOL:
-                addBoolean(candidate.jjtGetChild(1), ((ASTIDENT)candidate.jjtGetChild(0)).name);
+                addBoolean(candidate.jjtGetChild(1));
+                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
               case ParserTreeConstants.JJTNUM:
                 addVariableAllocation(candidate);
@@ -500,23 +506,45 @@ public class CodeGenerator {
             }
     }
 
+    
 
-    static void addBoolean(Node bool, String var) {
+    static void addBoolean(Node bool) {
         if (((ASTBOOL)bool).truth_value) {
             nl();
             tab();
             generated += "iconst_1";
-            storeLocal(var);
 
         } else {
             nl();
             tab();
-            generated += "iconst_";
-            storeLocal(var);
+            generated += "iconst_0";
 
         }
     }
 
+    static void handleNeg(Node nodeNeg){
+        Node n = ((SimpleNode) nodeNeg).jjtGetChild(0);
+        if(((SimpleNode)n).id == ParserTreeConstants.JJTBOOL){
+            addBoolean(n);
+            generated += "\n\tineg";
+            return;
+        }else if(((SimpleNode)n).id == ParserTreeConstants.JJTIDENT) {
+          Node[] tmp = {n};
+
+          ArrayList<String> localVars = getFunctionLocals(tmp);
+
+          nl();
+          for (String s : localVars) {
+            tab();
+            generated += "iload ";
+            generated += s;
+            nl();
+          }
+        }else{
+            makeOperation(n);  //é uma operação ou função
+            generated += "\n\tineg";
+        }
+    }
 
     static void popReturn(Node funcMethod) {
         if (getMethodReturnType(funcMethod) == TypeEnum.VOID) return;

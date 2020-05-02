@@ -16,6 +16,20 @@ class ASTIF_ELSE extends SimpleNode {
     super(p, id);
   }
 
+  public ArrayList<String> getDuplicates(){
+    ArrayList<String> stack = new ArrayList<>();
+    java.util.HashSet unique = new HashSet();
+
+    for (String s : this.localStack){
+      if(!unique.add(s))
+        stack.add(s);
+    }
+
+    unique.clear();
+
+    return stack;
+  }
+
   @Override
   public void eval(SemanticAnalysis analysis){
     ASTIF firstChild = (ASTIF) this.jjtGetChild(0);
@@ -24,21 +38,23 @@ class ASTIF_ELSE extends SimpleNode {
     firstChild.addSymbolTable(this.symbolTable);
     firstChild.eval(analysis);
 
-    this.localStack.addAll(firstChild.localStack);
+    localStack.addAll(firstChild.localStack);
 
     secondChild.addSymbolTable(this.symbolTable);
     secondChild.eval(analysis);
 
-    this.localStack.addAll(secondChild.localStack);
+    localStack.addAll(secondChild.localStack);
+
+    ArrayList<String> stack = this.getDuplicates();
 
     Set<String> auxSet = new HashSet<>(this.localStack);
-    this.localStack.clear();
-    this.localStack.addAll(auxSet);
+    localStack.clear();
+    localStack.addAll(auxSet);
 
     if(ControlVars.ANALYSE_SCOPE_VAR_INIT)
       this.symbolTable.clearInitialized(this.localStack);
 
-    this.localStack.clear();
+    this.localStack = stack;
   }
 }
 /* JavaCC - OriginalChecksum=d6ae377bef4cc1fafd01d6843e24e640 (do not edit this line) */

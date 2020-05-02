@@ -2,30 +2,37 @@ import java.io.*;
 
 class Simple {
 
-	int y = 2;
-
 	public static void main(String[] args) {
+		boolean t;
 		int a;
 		int b;
 		Simple simple;
 		int c;
-		boolean t;
-		boolean z;
-
-		t=true;
 		
-
-		
-		a = 30;
-        z = true && false;
-        b = 10;
-		
+		a = 10;
+		b = 2;
 		simple = new Simple();
+		
 		c = simple.add(a,b);
+		t=true;
+
 
 	}
 
-	public int add(int a, int b){
-		return a+b;
+	public int add(int a, int b) {
+
+
+		Simple simple;
+		
+		simple = new Simple();
+
+
+		return simple.cenas(a);
+	}
+
+	public int cenas(int c) {
+		int r;
+		r=10;
+		return r + c;
 	}
 }

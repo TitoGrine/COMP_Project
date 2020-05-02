@@ -232,13 +232,26 @@ public class CodeGenerator {
         }
         else if (((SimpleNode)node.jjtGetChild(0)).id == ParserTreeConstants.JJTIDENT) {
             loadVariable(((ASTIDENT)((SimpleNode)node.jjtGetChild(0))).name);
-        } else if(((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTIDENT) //ver se retornar numero
-            makeOperation(node.jjtGetChild(0));
+        } else if(((SimpleNode)node.jjtGetChild(0)).id == ParserTreeConstants.JJTBOOL) { //ver se retornar numero
+            nl();
+            tab();
+            generated += "iconst";
+            if (((ASTBOOL)node.jjtGetChild(0)).truth_value)
+                generated += "_1";
+            else generated += "_0";
 
+        } else if(((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTADD || 
+        ((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTSUB || 
+        ((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTMUL ||
+        ((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTDIV) {
+            //ver se retornar numero
+            System.out.println(((SimpleNode)node.jjtGetChild(0)).toString());   
+            makeOperation(node.jjtGetChild(0));
+        }
         nl();
         nl();
         tab();
-        if(typeReturn == TypeEnum.INT) 
+        if(typeReturn == TypeEnum.INT || typeReturn == TypeEnum.BOOL) 
                 generated += "ireturn";
         if (typeReturn == TypeEnum.VOID)
               generated += "return";
@@ -567,8 +580,8 @@ public class CodeGenerator {
             generated += "aload";
             
             if (((SimpleNode)(funcMethod.jjtGetChild(0))).id == ParserTreeConstants.JJTTHIS) {
-                space();
-                generated += "0"; 
+                // space();
+                generated += "_0"; 
             } else if (((SimpleNode)(funcMethod.jjtGetChild(0))).id == ParserTreeConstants.JJTIDENT) {
 
                 String key = ((ASTIDENT)(funcMethod.jjtGetChild(0))).name;
@@ -623,6 +636,8 @@ public class CodeGenerator {
             //TODO
             case VOID:
                 return "V";
+            case BOOL:
+                return "Z";
             default:
                 return "";
         }

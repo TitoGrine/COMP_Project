@@ -13,11 +13,12 @@ class Simple {
 		boolean z;
 
 		t=true;
-		z = t && false;
+		
 
 		
 		a = 30;
-		b = 10;
+        z = true && false;
+        b = 10;
 		
 		simple = new Simple();
 		c = simple.add(a,b);

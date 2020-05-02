@@ -16,6 +16,7 @@ public class CodeGenerator {
     private PrintWriter out;
     private static String extendedClass = "";
     private static int localsCounter = 1;
+    private static int labelCounter = 1;
 
     public CodeGenerator(SimpleNode root) {
         this.root = root;
@@ -132,8 +133,12 @@ public class CodeGenerator {
 
             if(classVarI != -1){
               tab();
-              generated += "getfield "; // TODO acrescentar return e class name
+              generated += "getfield ";
+              space();
+              generated += getClassName() + "/";
               generated += classVars[classVarI];
+              space();
+              getJType(getClassVarType(classVars[classVarI]));
               nl();
             }else{
 
@@ -205,7 +210,25 @@ public class CodeGenerator {
               generated += "\n\timul";
               break;
             case ParserTreeConstants.JJTAND:
-              generated += "\n\tifeq";
+              generated += "\n\tiand";
+              break;
+            case ParserTreeConstants.JJTNEGATION:
+              generated += "\n\tineg";
+              break;
+            case ParserTreeConstants.JJTLESSTHAN:
+              generated += "\n\tif_icmple l";
+              generated += labelCounter;
+              nl();
+              tab();
+              generated += "iconst_0";
+              nl();
+              tab();
+              generated += "goto l" + (labelCounter +1);
+              nl();
+              generated += "l" + labelCounter + ":\n\t" + "iconst_1" ;
+              nl();
+              generated += "l" + (labelCounter + 1) + ":";
+
               break;
         }
         }
@@ -247,6 +270,13 @@ public class CodeGenerator {
         switch(type) {
             case INT:
                 generated += "I";
+                break;
+            case BOOL:
+                generated += "B";
+                break;
+            case VOID:
+                generated += "V";
+                break;
         }
         return "";
     }
@@ -292,6 +322,7 @@ public class CodeGenerator {
     static void addVariables(Node node[]) {
         for (Node n : node) {
             SimpleNode simpleN = (SimpleNode) n;
+            
 
             if (simpleN.toString().equals("MAINMETHOD")) {
 
@@ -302,27 +333,18 @@ public class CodeGenerator {
                         localsCounter++;
                     }
                 }
-            //   classVars[classIndex] = ((ASTIDENT)simpleN.jjtGetChild(1)).name;
-            //   classIndex++;
-            //   generated += '\n' + ".field public" + ((ASTIDENT)simpleN.jjtGetChildren()[1]).name;
-            //   space();
-
-            //   ASTTYPE typeN = (ASTTYPE)simpleN.jjtGetChildren()[0];
-            //   switch (typeN.typeID) {
-            //   case STRING:
-            //     generated += "V";
-            //     nl();
-            //     break;
-            //   case INT:
-            //     generated += "I";
-            //     nl();
-            //     break;
-            //   case BOOL:
-            //     generated += "Z";
-            //     nl();
-            //     break;
-            //     }
             }
+
+                if (simpleN.toString().equals("VARIABLE")) {
+                   
+                    classVars[classIndex] = ((ASTIDENT)simpleN.jjtGetChild(1)).name;
+                    classIndex++;
+                    generated += '\n' + ".field public " + getClassName() + "/" + ((ASTIDENT)simpleN.jjtGetChildren()[1]).name;
+                    space();
+                    getJType(getClassVarType(classVars[classIndex -1]));
+                    space();
+                }
+            
         }
     }
 
@@ -394,6 +416,10 @@ public class CodeGenerator {
                 makeOperation(((SimpleNode) candidate).jjtGetChild(1));
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
+              case ParserTreeConstants.JJTLESSTHAN:
+                makeOperation(((SimpleNode)candidate).jjtGetChild(1));
+                storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+                break;
               case ParserTreeConstants.JJTFUNC_METHOD:
                 addMethodCall(candidate.jjtGetChild(1));
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
@@ -457,8 +483,10 @@ public class CodeGenerator {
         if (classVars[i] != null) {
           if (classVars[i].equals(id)) {
 
-            generated += "\n\tputfield " + ((ASTIDENT)((SimpleNode)root.jjtGetChild(1)).jjtGetChild(0)).name + "/" + id;
-            // acrescentar tipo
+            generated += "\n\tputfield " + getClassName() + "/" + ((ASTIDENT)((SimpleNode)root.jjtGetChild(1)).jjtGetChild(0)).name;
+            space();
+            getJType(getClassVarType(((ASTIDENT)((SimpleNode)root.jjtGetChild(1)).jjtGetChild(0)).name));
+            space();
             return;
             }
         }
@@ -673,7 +701,9 @@ public class CodeGenerator {
             if(classVars[i].equals(identification)){
               nl();
               tab();
-              generated += "putfield " + identification; //TODO RETURN + CLASS name
+              generated += "putfield " + getClassName() + "/" + identification;
+              space();
+              getJType(getClassVarType(identification));
               nl();
               return;
             }
@@ -755,4 +785,29 @@ public class CodeGenerator {
             if (local != null)
                 System.out.println(local);
     }
+
+    static String getClassName() {
+      return ( (ASTIDENT)((SimpleNode) classNode).jjtGetChild(0)).name;
+    }
+
+    static TypeEnum getClassVarType(String name){
+        SimpleNode nodeClass = null;
+        for (Node child : root.jjtGetChildren()) {
+          if (child.getId() == ParserTreeConstants.JJTCLASS)
+            nodeClass = (SimpleNode)child;
+        }
+
+          for (Node n : nodeClass.jjtGetChildren()){
+            if( ((SimpleNode)n).id == ParserTreeConstants.JJTVARIABLE){
+                if((((ASTIDENT)((SimpleNode) n).jjtGetChild(1)).name).equals(name)){
+                  System.out.println(
+                      ((ASTTYPE)((SimpleNode)n).jjtGetChild(0)).typeID);
+                  return ((ASTTYPE)((SimpleNode) n).jjtGetChild(0)).typeID;
+                }
+            }
+        }
+
+        return null;
+        
+      }
 }

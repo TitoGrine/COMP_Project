@@ -11,40 +11,39 @@
 	.limit stack 99
 	.limit locals 99
 
-	iconst_1
-	istore 5
-
-	iload 5
-
+	bipush 1
+	bipush 3
+	if_icmple l1
 	iconst_0
-	ifeq
-	istore 6
-
-	bipush 30
+	goto l2
+l1:
+	iconst_1
+l2:
 	istore 1
 
-	bipush 10
+	bipush 30
 	istore 2
 
-	iload 7
+	iload 3
 
-	iload 1
-
+	bipush 0
 	bipush 10
-	iadd
-	istore 7
+	isub
+	istore 3
 
 	new Simple
 	dup
 	invokespecial Simple/<init>()V
-	astore 3
+	astore 4
 
-	aload 3
-	iload 1
+	aload 4
 	iload 2
+	iload 3
 	invokevirtual Simple/add(II)I
-	istore 4
+	istore 5
 
+	iload 5
+	invokestatic io/println(I)V
 	return
 .end method
 
@@ -55,7 +54,7 @@
 
 	iload 1
 
-	iand 2
+	iload 2
 	iadd
 
 	ireturn

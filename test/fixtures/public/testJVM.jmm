@@ -10,7 +10,7 @@ int p;
 		Simple simple;
 		int c;
 		
-		a = 3;
+		a = 10;
 		b = 2;
 		simple = new Simple();
 		
@@ -21,10 +21,21 @@ int p;
 
 	}
 
-	public int add(int d, int e) {
-		int k;
-		k = 3;
-		return k;
+	public int add(int a, int b) {
+
+
+		Simple simple;
+		
+		simple = new Simple();
+
+
+		return simple.cenas(a);
+	}
+
+	public int cenas(int c) {
+		int r;
+		r=10;
+		return r + c;
 	}
 
 }

@@ -11,7 +11,7 @@
 	.limit stack 99
 	.limit locals 99
 
-	bipush 3
+	bipush 10
 	istore 2
 
 	bipush 2
@@ -41,10 +41,29 @@
 	.limit stack 99
 	.limit locals 99
 
-	bipush 3
-	istore 3
+	new Simple
+	dup
+	invokespecial Simple/<init>()V
+	astore 3
 
-	iload 3
+	aload 3
+	iload 1
+	invokevirtual Simple/cenas(I)I
+
+	ireturn
+.end method
+
+.method public cenas(I)I
+	.limit stack 99
+	.limit locals 99
+
+	bipush 10
+	istore 2
+
+	iload 2
+
+	iload 1
+	iadd
 
 	ireturn
 .end method

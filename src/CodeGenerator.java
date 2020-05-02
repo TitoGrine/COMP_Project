@@ -224,11 +224,17 @@ public class CodeGenerator {
 
     private void methodReturn(Node returnNode, TypeEnum typeReturn) {
         SimpleNode node = (SimpleNode) returnNode;
-        if(((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTIDENT) //ver se retornar numero
-            makeOperation(node.jjtGetChild(0));
+
+        if(((SimpleNode)node.jjtGetChild(0)).id == ParserTreeConstants.JJTFUNC_METHOD) {  //ver se retornar numero
+            addMethodCall(((SimpleNode)node.jjtGetChild(0)));
+            // storeLocal(((ASTIDENT)((SimpleNode)((SimpleNode)node.jjtGetChild(0)).jjtGetChild(0))).name);
+            // storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
+        }
         else if (((SimpleNode)node.jjtGetChild(0)).id == ParserTreeConstants.JJTIDENT) {
             loadVariable(((ASTIDENT)((SimpleNode)node.jjtGetChild(0))).name);
-        }
+        } else if(((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTIDENT) //ver se retornar numero
+            makeOperation(node.jjtGetChild(0));
+
         nl();
         nl();
         tab();
@@ -425,6 +431,9 @@ public class CodeGenerator {
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
               case ParserTreeConstants.JJTFUNC_METHOD:
+            //   System.out.println("--------------");
+            //   System.out.println(candidate.jjtGetChild(1));
+            //   System.out.println("--------------");
                 addMethodCall(candidate.jjtGetChild(1));
                 storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
                 break;
@@ -557,12 +566,18 @@ public class CodeGenerator {
             tab();
             generated += "aload";
             
-            String key = ((ASTIDENT)(funcMethod.jjtGetChild(0))).name;
-       		String[] output = key.split("\\.");
-            int index = getFunctionLocals(output[0]);
+            if (((SimpleNode)(funcMethod.jjtGetChild(0))).id == ParserTreeConstants.JJTTHIS) {
+                space();
+                generated += "0"; 
+            } else if (((SimpleNode)(funcMethod.jjtGetChild(0))).id == ParserTreeConstants.JJTIDENT) {
 
-            space();
-            generated += Integer.toString(index); 
+                String key = ((ASTIDENT)(funcMethod.jjtGetChild(0))).name;
+                String[] output = key.split("\\.");
+                int index = getFunctionLocals(output[0]);
+
+                space();
+                generated += Integer.toString(index); 
+            }
         }
 
         Node[] args = ((SimpleNode)callNode.jjtGetChild(1)).jjtGetChildren();

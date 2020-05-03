@@ -283,7 +283,6 @@ public class CodeGenerator {
         ((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTMUL ||
         ((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTDIV) {
             //ver se retornar numero
-            System.out.println(((SimpleNode)node.jjtGetChild(0)).toString());   
             makeOperation(node.jjtGetChild(0));
         }
         nl();
@@ -412,7 +411,7 @@ public class CodeGenerator {
                    
                     classVars[classIndex] = ((ASTIDENT)simpleN.jjtGetChild(1)).name;
                     classIndex++;
-                    generated += '\n' + ".field public " + getClassName() + "/" + ((ASTIDENT)simpleN.jjtGetChildren()[1]).name;
+                    generated += '\n' + ".field public " + ((ASTIDENT)simpleN.jjtGetChildren()[1]).name;
                     space();
                     getJType(getClassVarType(classVars[classIndex -1]));
                     space();
@@ -656,7 +655,6 @@ public class CodeGenerator {
 
 
     static void parseMethodArgumentsType(Node node) {
-        System.out.println(node.toString());
             switch(node.getId()) {
                 case ParserTreeConstants.JJTIDENT:
                     String name = ((ASTIDENT) node).name;
@@ -721,11 +719,28 @@ public class CodeGenerator {
                 case ParserTreeConstants.JJTIDENT:
                     String name = ((ASTIDENT)n).name;
                     int ind = getFunctionLocals(name);
+
+                    if(ind == -1){
+                      int classVarI = checkIfClassVar((SimpleNode)n);
+
+                      if (classVarI != -1) {
+                        tab();
+                        generated += "getfield ";
+                        space();
+                        generated += getClassName() + "/";
+                        generated += classVars[classVarI];
+                        space();
+                        getJType(getClassVarType(classVars[classVarI]));
+                        nl();
+                      }
+                    }else{
+
                     nl();
                     tab();
                     generated += "iload ";
                     generated += Integer.toString(ind);
                     nl();
+                    }
                     break;
                 case ParserTreeConstants.JJTADD:
                 case ParserTreeConstants.JJTSUB:
@@ -996,8 +1011,6 @@ public class CodeGenerator {
           for (Node n : nodeClass.jjtGetChildren()){
             if( ((SimpleNode)n).id == ParserTreeConstants.JJTVARIABLE){
                 if((((ASTIDENT)((SimpleNode) n).jjtGetChild(1)).name).equals(name)){
-                  System.out.println(
-                      ((ASTTYPE)((SimpleNode)n).jjtGetChild(0)).typeID);
                   return ((ASTTYPE)((SimpleNode) n).jjtGetChild(0)).typeID;
                 }
             }

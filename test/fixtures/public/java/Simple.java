@@ -1,26 +1,37 @@
 import java.io.*; 
 class Simple{
 
+	int jk;
+
 	public static void main(String[] args) {
+		boolean t;
 		int a;
 		int b;
 		Simple simple;
-		boolean c;
-		boolean t;
-		boolean u;
-		boolean v;
+		boolean h;
+		int c;
 
-		v=true;
+
+		t = true;
 
 		a = 10;
 		b = 2;
 		simple = new Simple();
 		
-		c = simple.add(2, v);
+		c = simple.add(a,t);
 
 	}
-	public boolean add(int a, boolean b) {
-		return b;
+
+	public int add(int a, boolean b) {
+		jk = 3;
+
+		return a+1;
+	}
+
+	public int cenas(int c) {
+		int r;
+		r=10;
+		return r + c;
 	}
 
 

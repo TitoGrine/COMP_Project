@@ -45,10 +45,6 @@
 
 	iload 1
 
-	bipush 1
-	iadd
-
-
 	ireturn
 .end method
 

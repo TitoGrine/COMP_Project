@@ -1,6 +1,7 @@
 .class public Simple
 .super java/lang/Object
 
+.field public Simple/jk I 
 .method <init>()V
 	aload_0
 	invokenonvirtual java/lang/Object/<init>()V
@@ -22,6 +23,9 @@
 	ineg
 	istore 5
 
+	bipush 3
+	putfield Simple/jk I
+
 	bipush 10
 	istore 2
 
@@ -35,8 +39,7 @@
 
 	aload 4
 	iload 2
-
-	iload 3
+	getfield  Simple/jk I
 	invokevirtual Simple/add(II)I
 	istore 6
 

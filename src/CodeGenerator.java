@@ -686,11 +686,28 @@ public class CodeGenerator {
                 case ParserTreeConstants.JJTIDENT:
                     String name = ((ASTIDENT)n).name;
                     int ind = getFunctionLocals(name);
+
+                    if(ind == -1){
+                      int classVarI = checkIfClassVar((SimpleNode)n);
+
+                      if (classVarI != -1) {
+                        tab();
+                        generated += "getfield ";
+                        space();
+                        generated += getClassName() + "/";
+                        generated += classVars[classVarI];
+                        space();
+                        getJType(getClassVarType(classVars[classVarI]));
+                        nl();
+                      }
+                    }else{
+
                     nl();
                     tab();
                     generated += "iload ";
                     generated += Integer.toString(ind);
                     nl();
+                    }
                     break;
                 case ParserTreeConstants.JJTADD:
                     makeOperation(n);

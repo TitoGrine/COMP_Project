@@ -46,21 +46,27 @@
 
 	iload 1
 
+	bipush 3
+	imul
+	bipush 3
+	iadd
+
+	aload_0
+	bipush 1
+	iload 2
+	
+	invokevirtual Simple/cenas(IZ)I
+	iadd
+
+
 	ireturn
 .end method
 
-.method public cenas(I)I
+.method public cenas(IZ)I
 	.limit stack 99
 	.limit locals 99
 
-	bipush 10
-	istore 2
-
-	iload 1
-
-	iload 2
-	iadd
-
+	bipush 3
 
 	ireturn
 .end method

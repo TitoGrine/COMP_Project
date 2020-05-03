@@ -24,12 +24,11 @@ class Simple {
 	}
 
 	public int add(int a, boolean b) {
-		return a;
+		return a*3 +3 + this.cenas(1,b);
 	}
 
-	public int cenas(int c) {
-		int r;
-		r=10;
-		return c + r ;
+	public int cenas(int a, boolean b) {
+		return 3;
 	}
+
 }

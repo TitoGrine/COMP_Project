@@ -34,11 +34,35 @@
 	invokevirtual Simple/add(IZ)I
 	istore 6
 
+	iload 6
+	invokestatic io/println(I)V
 	return
 .end method
 
 
 .method public add(IZ)I
+	.limit stack 99
+	.limit locals 99
+
+	iload 1
+
+	bipush 3
+	imul
+	bipush 3
+	iadd
+
+	aload_0
+	bipush 1
+	iload 2
+	
+	invokevirtual Simple/cenas(IZ)I
+	iadd
+
+
+	ireturn
+.end method
+
+.method public cenas(IZ)I
 	.limit stack 99
 	.limit locals 99
 

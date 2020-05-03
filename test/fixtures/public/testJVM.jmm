@@ -19,9 +19,15 @@ class Simple {
 		simple = new Simple();
 		
 		c = simple.add(a,t);
+
+		io.println(c);
 	}
 
 	public int add(int a, boolean b) {
+		return a*3 +3 + this.cenas(1,b);
+	}
+
+	public int cenas(int a, boolean b) {
 		return 3;
 	}
 

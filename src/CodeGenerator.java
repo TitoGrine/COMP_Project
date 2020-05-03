@@ -132,7 +132,10 @@ public class CodeGenerator {
             else
               generated += "\n\ticonst_0";
 
-          }else {
+          } else if (oper1.id == ParserTreeConstants.JJTFUNC_METHOD) {
+            addMethodCall(((SimpleNode)oper1));
+
+        } else {
 
             int classVarI = checkIfClassVar(oper1);
 
@@ -186,8 +189,10 @@ public class CodeGenerator {
 
           if (classVarI2 != -1) {
             tab();
-            generated += "getfield ";  //TODO acrescentar return e class name
-            generated += classVars[classVarI2];
+            generated += "getfield ";
+            generated += getClassName() + "/" + classVars[classVarI2];
+            space();
+            getJType(getClassVarType(classVars[classVarI2]));
             nl();
           } else {
             Node[] tmp = {operation.jjtGetChild(1)};

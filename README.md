@@ -40,6 +40,22 @@ Where ``<jar filename>`` is the name of the JAR file that has been copied to the
 
 To test the program, run ``gradle test``. This will execute the build, and run the JUnit tests in the ``test`` folder. If you want to see output printed during the tests, use the flag ``-i`` (i.e., ``gradle test -i``).
 
+## Execution Control
+
+In the ``javacc`` folder there is a class ``ControlVars.java`` that hold some variables that control the execution of the parser, allowing for some
+costumization. Here are the description of each of those variables.
+
+|         Variable        |                                                                    Description                                                                   |
+|:-----------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------:|
+| ANALYSE_SEMANTICS       | If **true**, it performs the semantic analysis of the code.                                                                                         |
+| ANALYSE_SCOPE_VAR_INIT  | If **true**, it will check whether variable are only initialized within if, else or while scopes and  therefore might not be initialized when used. |
+| THROW_VAR_INIT_ERROR    | If **true**, variables that are used but are not initialized will throw an error instead of a warning.                                             |
+| THROW_WARNING_EXCEPTION | If **true**, warnings will throw an exception causing the semantic analysis to fail.                                                               |
+| PRINT_SYMBOL_TABLE      | If **true**, it prints the symbol table of each meaningful scope.                                                                                  |
+| PRINT_AST               | If **true**, it prints the Abstract Syntax Tree.                                                                                                   |
+| RUN_CUSTOM_TESTS        | If **true**, it will run tests for custom made ``.jmm`` files.                                                                                     |
+
+
 ## Checklist
 
  **Symbol Table**  

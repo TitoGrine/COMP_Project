@@ -140,7 +140,11 @@ public class CodeGenerator {
             int classVarI = checkIfClassVar(oper1);
 
             if(classVarI != -1){
-              tab();
+                nl();
+                tab();
+                generated += "aload_0";
+                nl();
+                tab();
               generated += "getfield ";
               space();
               generated += getClassName() + "/";
@@ -188,7 +192,11 @@ public class CodeGenerator {
           int classVarI2 = checkIfClassVar(oper2);
 
           if (classVarI2 != -1) {
-            tab();
+                nl();
+                tab();
+                generated += "aload_0";
+                nl();
+                tab();
             generated += "getfield ";
             generated += getClassName() + "/" + classVars[classVarI2];
             space();
@@ -266,6 +274,10 @@ public class CodeGenerator {
             int classVarI = checkIfClassVar((SimpleNode)node.jjtGetChild(0));
 
             if (classVarI != -1) {
+                nl();
+                tab();
+                generated += "aload_0";
+                nl();
                 tab();
                 generated += "getfield ";
                 space();
@@ -735,7 +747,11 @@ public class CodeGenerator {
                       int classVarI = checkIfClassVar((SimpleNode)n);
 
                       if (classVarI != -1) {
+                        nl();
                         tab();
+                        generated += "aload_0";
+                        nl();
+                        tab();                        
                         generated += "getfield ";
                         space();
                         generated += getClassName() + "/";
@@ -921,6 +937,12 @@ public class CodeGenerator {
 
         for(int i = 1; classVars[i] != null; i++){
             if(classVars[i].equals(identification)){
+              nl();
+              tab();
+              generated += "aload_0";
+              nl();
+              tab();
+              generated += "swap";
               nl();
               tab();
               generated += "putfield " + getClassName() + "/" + identification;

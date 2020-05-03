@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class CodeGenerator {
     static String generated;
@@ -51,7 +52,7 @@ public class CodeGenerator {
     private void checkMethods(Node[] classChilds) {
         for (Node n : classChilds) {
             SimpleNode simpleN = (SimpleNode) n;
-            if (simpleN.toString().equals("METHOD")) {
+            if (simpleN.id == ParserTreeConstants.JJTMETHOD) {
                 Node methodChilds[] = simpleN.jjtGetChildren();
                 addMethod(simpleN);
             }
@@ -62,7 +63,11 @@ public class CodeGenerator {
 
         Node[] methodChilds = ((SimpleNode) method).jjtGetChildren();
 
-        ArrayList<TypeEnum> argsType = getArgsType(methodChilds[2]);
+        ArrayList<TypeEnum> argsType = new ArrayList<>(Collections.singleton(TypeEnum.VOID));;
+
+        if(((SimpleNode) methodChilds[2]).id == ParserTreeConstants.JJTARGUMENTS)
+            argsType = getArgsType(methodChilds[2]);
+
         nl();
         nl();
         generated += ".method public ";
@@ -343,7 +348,8 @@ public class CodeGenerator {
         Node[] argsChildren = args.jjtGetChildren();
         for (Node n : argsChildren) {
             SimpleNode node = (SimpleNode) n;
-            Node type = node.jjtGetChild(0);
+            SimpleNode type = (SimpleNode) node.jjtGetChild(0);
+
             buff.add(((ASTTYPE) type).typeID);
         }
         return buff;
@@ -441,28 +447,19 @@ public class CodeGenerator {
                         storeAddress(((ASTIDENT) candidate.jjtGetChild(0)).name);
                         break;
                     case ParserTreeConstants.JJTSUB:
-                        makeOperation(((SimpleNode) candidate).jjtGetChild(1));
-                        storeLocal(((ASTIDENT) candidate.jjtGetChild(0)).name);
-                        break;
                     case ParserTreeConstants.JJTADD:
-                        makeOperation(((SimpleNode) candidate).jjtGetChild(1));
-                        storeLocal(((ASTIDENT) candidate.jjtGetChild(0)).name);
-                        break;
                     case ParserTreeConstants.JJTMUL:
-                        makeOperation(((SimpleNode) candidate).jjtGetChild(1));
-                        storeLocal(((ASTIDENT) candidate.jjtGetChild(0)).name);
-                        break;
                     case ParserTreeConstants.JJTDIV:
-                        makeOperation(((SimpleNode) candidate).jjtGetChild(1));
-                        storeLocal(((ASTIDENT) candidate.jjtGetChild(0)).name);
-                        break;
                     case ParserTreeConstants.JJTAND:
-                        makeOperation(((SimpleNode) candidate).jjtGetChild(1));
-                        storeLocal(((ASTIDENT) candidate.jjtGetChild(0)).name);
-                        break;
                     case ParserTreeConstants.JJTLESSTHAN:
+                        SimpleNode simpleNode = (SimpleNode) candidate.jjtGetChild(0);
+
+                        if(simpleNode.id == ParserTreeConstants.JJTARRAY_ACCESS)
+                            return;
+
                         makeOperation(((SimpleNode) candidate).jjtGetChild(1));
-                        storeLocal(((ASTIDENT) candidate.jjtGetChild(0)).name);
+
+                        storeLocal(((ASTIDENT) simpleNode).name);
                         break;
                     case ParserTreeConstants.JJTNEGATION:
                         handleNeg(((SimpleNode) candidate).jjtGetChild(1));
@@ -779,7 +776,7 @@ public class CodeGenerator {
     }
 
     static ArrayList<String> getFunctionLocals(Node args[]) {
-        ArrayList<String> localVars = new ArrayList<String>();
+        ArrayList<String> localVars = new ArrayList<>();
         int counter = 0;
         for (Node n : args) {
             for (int i = 1; i < 99; i++) {
@@ -813,7 +810,11 @@ public class CodeGenerator {
         space();
         generated += valueString;
 
-        Node identificationNode = assign.jjtGetChild(0);
+        SimpleNode identificationNode = (SimpleNode) assign.jjtGetChild(0);
+
+        if(identificationNode.id == ParserTreeConstants.JJTARRAY_ACCESS)
+            return;
+
         String identification = ((ASTIDENT) identificationNode).name;
 
         for (int i = 1; classVars[i] != null; i++) {

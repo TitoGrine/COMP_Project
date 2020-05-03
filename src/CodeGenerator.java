@@ -677,6 +677,8 @@ public class CodeGenerator {
                 space();
                 generated += Integer.toString(index); 
             }
+
+
         }
 
         Node[] args = ((SimpleNode)callNode.jjtGetChild(1)).jjtGetChildren();
@@ -710,19 +712,27 @@ public class CodeGenerator {
                     }
                     break;
                 case ParserTreeConstants.JJTADD:
-                    makeOperation(n);
-                    break;
                 case ParserTreeConstants.JJTSUB:
-                    makeOperation(n);
-                    break;
                 case ParserTreeConstants.JJTMUL:
+                case ParserTreeConstants.JJTDIV:
+                case ParserTreeConstants.JJTAND:
+                case ParserTreeConstants.JJTLESSTHAN:
                     makeOperation(n);
                     break;
-                case ParserTreeConstants.JJTDIV:
-                    makeOperation(n);
+                case ParserTreeConstants.JJTNEGATION:
+                    handleNeg(n);
                     break;
                 case ParserTreeConstants.JJTFUNC_METHOD:
                     addMethodCall(n);
+                    break;
+                case ParserTreeConstants.JJTNUM:
+                    generated += "\n\tbipush " + ((ASTNUM) n).value;
+                    break;
+                case ParserTreeConstants.JJTBOOL:
+                    if (((ASTBOOL)n).truth_value)
+                        generated += "\n\ticonst_1";
+                    else
+                        generated += "\n\ticonst_0";
                     break;
             }
         }
@@ -745,6 +755,8 @@ public class CodeGenerator {
             generated += "invokestatic";
 
         } else {
+            nl();
+            tab();
             generated += "invokevirtual";
 
         }
@@ -754,10 +766,14 @@ public class CodeGenerator {
         generated += "/";
         generated += funcName;
         generated += "(";
-        for (int i=0; i < args.length; i++)
-            generated += "I"; //hard coded for now
-        generated += ")";
+        for (int i=0; i < args.length; i++) {
+            System.out.println(args[i].toString());
+            generated += "I";
 
+
+        }
+        generated += ")";
+        
         TypeEnum ret = getMethodReturnType(funcMethod);
         generated += parseType(ret);
     }

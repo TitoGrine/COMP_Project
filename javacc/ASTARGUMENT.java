@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTARGUMENT extends SimpleNode {
+  protected TypeEnum type;
+
   public ASTARGUMENT(int id) {
     super(id);
   }
@@ -11,33 +13,28 @@ class ASTARGUMENT extends SimpleNode {
   }
 
   @Override
-  public void addSymbolTable(SymbolTable symbolTable){
-    this.symbolTable = new SymbolTable(symbolTable);
-  }
+  public void eval(SemanticAnalysis analysis){
+    ASTTYPE firstChild = (ASTTYPE) this.jjtGetChild(0);
+    ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
-  @Override
-  public void eval() throws Exception {
-    // TODO: Add symbol
+    firstChild.addSymbolTable(this.symbolTable);
+    firstChild.eval(analysis);
 
-    int numChildren = this.jjtGetNumChildren();
+    secondChild.addSymbolTable(this.symbolTable);
+    secondChild.eval(analysis);
 
-    if(!(numChildren == 2))
-      throw new Exception("ARGUMENT must have at exactly two children.");
+    Symbol symbol;
 
-    SimpleNode childNode1 = (SimpleNode) this.jjtGetChild(0);
-    SimpleNode childNode2 = (SimpleNode) this.jjtGetChild(1);
+    if(firstChild.typeID == TypeEnum.ARRAY)
+      symbol = new ArraySymbol(TypeEnum.INT);
+    else
+      symbol = new Symbol(firstChild.typeID);
 
-    if(childNode1.id != ParserTreeConstants.JJTTYPE)
-      throw new Exception("ARGUMENT must have first child of type TYPE.");
+    symbol.incInitialized();
 
-    if(childNode2.id != ParserTreeConstants.JJTIDENT)
-      throw new Exception("ARGUMENTS must have second child of type IDENT.");
+    this.type = symbol.getType();
 
-    childNode1.addSymbolTable(this.symbolTable);
-    childNode1.eval();
-
-    childNode2.addSymbolTable(this.symbolTable);
-    childNode2.eval();
+    this.symbolTable.addSymbol(secondChild.name, symbol);
   }
 }
 /* JavaCC - OriginalChecksum=1c4e5b4ef5eeb3f2188100031b20d30d (do not edit this line) */

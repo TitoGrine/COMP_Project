@@ -1,9 +1,13 @@
+// import sun.java2d.pipe.SpanShapeRenderer;
+
 import java.io.FileNotFoundException;
 
 public class Main {
-    public static void main(String[] args) throws ParseException {
+    static CodeGenerator codeGenerator;
 
+    public static void main(String[] args) throws Exception {
         java.io.FileInputStream file = null;
+
         try {
             file = new java.io.FileInputStream(new java.io.File(args[0]));
         } catch (FileNotFoundException e) {
@@ -15,16 +19,28 @@ public class Main {
         try {
             SimpleNode root = parser.Program(); // returns reference to root node
 
-            try{
-                //root.eval();
-            } catch (Exception e){
-                e.printStackTrace();
+            SemanticAnalysis analysis = new SemanticAnalysis();
+
+            root.eval(analysis);
+
+            analysis.throwErrors();
+
+            if(ControlVars.PRINT_AST){
+                System.out.println(ControlVars.CYAN + "\n +++++++++++ Abstract Syntax Tree +++++++++++\n" + ControlVars.RESET);
+                root.dump(""); // prints the tree on the screen
             }
 
-            root.dump(""); // prints the tree on the screen
-        } catch (ParseException e) {
-            e.printStackTrace();
-            throw new ParseException("Parser error");
+            if(ControlVars.GENERATE_JASMIN_CODE){
+                codeGenerator = new CodeGenerator(root);
+                codeGenerator.generate();
+            }
+
+            analysis.showWarnings(ControlVars.THROW_WARNING_EXCEPTION);
+
+        } catch (Exception e) {
+            throw e;
         }
+
+        //root.dump(""); // prints the tree on the screen
     }
 }

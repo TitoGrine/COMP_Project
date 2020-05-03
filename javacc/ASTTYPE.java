@@ -3,6 +3,7 @@
 public
 class ASTTYPE extends SimpleNode {
   public TypeEnum typeID = null;
+  public String varName;
 
   public ASTTYPE(int id) {
     super(id);
@@ -13,26 +14,20 @@ class ASTTYPE extends SimpleNode {
   }
 
   @Override
-  public void eval() throws Exception {
+  public void eval(SemanticAnalysis analysis){
     if(typeID != null)
       return;
 
-    int numChildren = this.jjtGetNumChildren();
-
-    if(numChildren != 1)
-      throw new Exception("TYPE can only have at most one child.");
-
     SimpleNode child = (SimpleNode) this.jjtGetChild(0);
 
-    if(child.id != ParserTreeConstants.JJTIDENT)
-      throw new Exception("TYPE can only a child of type IDENT");
+    varName = ((ASTIDENT) child).name;
 
-    String name = ((ASTIDENT) child).name;
+    Symbol symbol = this.symbolTable.getSymbol(varName);
 
-    Symbol symbol = this.symbolTable.getSymbol(name);
-
-    if(symbol == null)
-      throw new Exception("Could not resolve identifier of name " + name);
+    if(symbol == null){
+      analysis.addError(this.getCoords(), "Unrecognized type " + varName);
+      return;
+    }
 
     this.typeID = symbol.getType();
   }

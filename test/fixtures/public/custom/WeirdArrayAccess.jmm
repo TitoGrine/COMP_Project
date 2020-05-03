@@ -1,0 +1,35 @@
+class Linked{
+
+    public static void main(String[] args){
+        int[] a;
+        int b;
+        int c;
+        Linked lin;
+        lin = new Linked();
+
+        a = new int[10];
+        b = 2 + lin.length * a[3];
+        c = lin.add(b, 3);
+
+        b = new int[1][0] + lin.add(b, c);
+        c = a[0] + lin.add();
+        c = lin.getArray()[0] + lin.add();
+        b = a.length;
+        b = new int[10].length;
+        b = lin.getArray().length;
+    }
+
+    public int add() {
+        return 1;
+    }
+
+    public int add(int left, int right){
+        return left + right;
+    }
+
+    public int[] getArray(){
+        int[] ar;
+        ar = new int[34];
+        return ar;
+    }
+}

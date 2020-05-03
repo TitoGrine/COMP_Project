@@ -70,7 +70,8 @@ public class ParserTest {
 
     @Test
     public void testLife() {
-        test("fixtures/public/Life.jmm", false);
+        if(!ControlVars.GENERATE_JASMIN_CODE)
+            test("fixtures/public/Life.jmm", false);
     }
 
     @Test
@@ -80,7 +81,8 @@ public class ParserTest {
 
     @Test
     public void testQuickSort() {
-        test("fixtures/public/QuickSort.jmm", false);
+        if(!ControlVars.GENERATE_JASMIN_CODE)
+            test("fixtures/public/QuickSort.jmm", false);
     }
 
     @Test
@@ -90,14 +92,15 @@ public class ParserTest {
 
     @Test
     public void testTicTacToe() {
-        test("fixtures/public/TicTacToe.jmm", false);
+        if(!ControlVars.GENERATE_JASMIN_CODE)
+            test("fixtures/public/TicTacToe.jmm", false);
     }
 
     @Test
     public void testWhileAndIF() {
         test("fixtures/public/WhileAndIF.jmm", false);
     }
-/*
+
     @Test
     public void testarr_index_not_int() {
         test("fixtures/public/fail/semantic/arr_index_not_int.jmm", true);
@@ -152,7 +155,7 @@ public class ParserTest {
     public void testmiss_type() {
         test("fixtures/public/fail/semantic/extra/miss_type.jmm", true);
     }
-*/
+
     @Test
     public void testBlowUp() {
         test("fixtures/public/fail/syntactical/BlowUp.jmm", true);
@@ -185,8 +188,33 @@ public class ParserTest {
 
     // CUSTOM MADE TESTS
 
-/*    @Test
+    @Test
     public void testCustomTest() {
-        test("fixtures/public/CustomTest.jmm", false);
-    }*/
+        if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
+            test("fixtures/public/custom/CustomTest.jmm", false);
+    }
+
+    @Test
+    public void testAwfulCode() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/GodAwfulCode.jmm", true);
+    }
+
+    @Test
+    public void testScopeVarInit() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/ScopeVarInit.jmm", true);
+    }
+
+    @Test
+    public void testWeirdArrayAccess() {
+        if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
+            test("fixtures/public/custom/WeirdArrayAccess.jmm", false);
+    }
+
+    @Test
+    public void testJVMGeneration() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/TestJVM.jmm", false);
+    }
 }

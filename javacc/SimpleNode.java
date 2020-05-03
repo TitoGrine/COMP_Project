@@ -3,12 +3,18 @@
 public
 class SimpleNode implements Node {
 
+  private SourceCoords myCoords;
+
   protected Node parent;
   protected Node[] children;
   protected int id;
   protected Object value;
   protected Parser parser;
   protected SymbolTable symbolTable;
+
+  protected boolean compareNode(SimpleNode node, int type){
+    return node.id == type;
+  }
 
   public SimpleNode(int i) {
     id = i;
@@ -18,6 +24,9 @@ class SimpleNode implements Node {
     this(i);
     parser = p;
   }
+
+  public void setCoords( SourceCoords toSet ) { myCoords = toSet ; }
+  public SourceCoords getCoords() { return myCoords ; }
 
   public void jjtOpen() {
   }
@@ -43,6 +52,10 @@ class SimpleNode implements Node {
     return children[i];
   }
 
+  public Node[] jjtGetChildren() {
+    return children;
+  }
+
   public int jjtGetNumChildren() {
     return (children == null) ? 0 : children.length;
   }
@@ -65,7 +78,7 @@ class SimpleNode implements Node {
     this.symbolTable = symbolTable;
   }
 
-  public void eval() throws Exception {
+  public void eval(SemanticAnalysis analysis) {
   }
 
   /* Override this method if you want to customize how the node dumps
@@ -86,6 +99,15 @@ class SimpleNode implements Node {
   public int getId() {
     return id;
   }
+
+
+
+  String getJasmin() {
+    return "";
+  }
+
+
 }
+
 
 /* JavaCC - OriginalChecksum=ff562ba524f63263971357127128f566 (do not edit this line) */

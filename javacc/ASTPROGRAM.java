@@ -10,26 +10,17 @@ class ASTPROGRAM extends SimpleNode {
     super(p, id);
   }
 
-  public void eval() throws Exception {
+  public void eval(SemanticAnalysis analysis){
     int numChildren = this.jjtGetNumChildren();
     int childIndex = 0;
-    boolean importsDone = false;
+    this.symbolTable = new SymbolTable();
 
     while(childIndex < numChildren){
 
-      if(importsDone)
-        throw new Exception("More nodes after class declaration.");
-
       SimpleNode childNode = (SimpleNode) this.jjtGetChild(childIndex);
 
-      if(childNode.id == ParserTreeConstants.JJTCLASS){
-        importsDone = true;
-      } else if (!(childNode.id == ParserTreeConstants.JJTIMPORT || childNode.id == ParserTreeConstants.JJTSTATIC_IMPORT)){
-        throw new Exception("PROGRAM got an unexpected node as child.");
-      }
-
       childNode.addSymbolTable(this.symbolTable);
-      childNode.eval();
+      childNode.eval(analysis);
 
       childIndex++;
     }

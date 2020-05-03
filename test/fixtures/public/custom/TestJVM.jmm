@@ -1,0 +1,34 @@
+import static io.println(int);
+class Simple {
+
+	int jk;
+
+	public static void main(String[] args) {
+		boolean t;
+		int a;
+		int b;
+		Simple simple;
+		boolean h;
+		int c;
+
+		
+		t = true;
+
+		a = 10;
+		b = 2;
+		simple = new Simple();
+		
+		c = simple.add(a,t);
+
+		io.println(c);
+	}
+
+	public int add(int a, boolean b) {
+		return a*3 +3 + this.cenas(1,b);
+	}
+
+	public int cenas(int a, boolean b) {
+		return 3;
+	}
+
+}

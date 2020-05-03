@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTVARIABLE extends SimpleNode {
+  protected boolean classScope = false;
+
   public ASTVARIABLE(int id) {
     super(id);
   }
@@ -11,34 +13,64 @@ class ASTVARIABLE extends SimpleNode {
   }
 
   @Override
-  public void addSymbolTable(SymbolTable symbolTable){
-    this.symbolTable = symbolTable;
-  }
-
-  @Override
-  public void eval() throws Exception {
-    // TODO: Add symbol
-
-    int numChildren = this.jjtGetNumChildren();
-
-    if(numChildren != 2)
-      throw new Exception("VARIABLE has an invalid number of children.");
-
+  public void eval(SemanticAnalysis analysis){
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
-    SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
-    TypeEnum type;
+    ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
-    if(firstChild.id == ParserTreeConstants.JJTTYPE){
-      firstChild.eval();
-      type = ((ASTTYPE) firstChild).typeID;
+    TypeEnum type;
+    String name;
+
+    if(compareNode(firstChild, ParserTreeConstants.JJTIDENT)){
+      name = ((ASTIDENT) firstChild).name;
+
+      Symbol symbol = this.symbolTable.getSymbol(name);
+
+      if(symbol == null){
+        analysis.addError(this.getCoords(), "Unrecognized type " + name + ".");
+        return;
+      }
+
+      type = symbol.getType();
     } else {
-      throw new Exception("VARIABLE must have first child of type TYPE.");
+      firstChild.addSymbolTable(this.symbolTable);
+      firstChild.eval(analysis);
+
+      type = ((ASTTYPE) firstChild).typeID;
+      name = ((ASTTYPE) firstChild).varName;
     }
 
-    if(secondChild.id == ParserTreeConstants.JJTIDENT){
-      this.symbolTable.addSymbol(((ASTIDENT) secondChild).name, new Symbol(type));
-    } else {
-      throw new Exception("VARIABLE must have second child of type IDENT.");
+    String key = (classScope ? "this." : "") + secondChild.name;
+
+    if(this.symbolTable.existsSymbol(key)){
+      analysis.addError(this.getCoords(), "Variable " + key + " already declared.");
+      return;
+    }
+
+    Symbol symbol;
+
+    if(type == TypeEnum.ARRAY){
+      symbol = new ArraySymbol(TypeEnum.INT);
+
+      if(classScope)
+        symbol.incInitialized();
+
+      this.symbolTable.addSymbol(key, symbol);
+    }
+    else if(type == TypeEnum.OBJECT){
+      symbol = new Symbol(type, name);
+
+      if(classScope)
+        symbol.incInitialized();
+
+      this.symbolTable.addSymbol(key, symbol);
+    }
+    else{
+      symbol = new Symbol(type);
+
+      if(classScope)
+        symbol.incInitialized();
+
+      this.symbolTable.addSymbol(key, symbol);
     }
   }
 }

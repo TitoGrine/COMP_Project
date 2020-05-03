@@ -1,0 +1,79 @@
+import static ioPlus.printHelloWorld(void) void;
+import static ioPlus.print();
+import ioPlus;
+import ioPlus.plus(int, int, boolean);
+import ioPlus.plus(int, int, int) int;
+import Init;
+
+class Var extends Init{
+    int x;
+    int y;
+    boolean z;
+
+    public int testing(int w) {
+        int test_variable;
+
+        x = 3;
+
+
+        while(x < 5){
+            test_variable = 1;
+            x = x + 1;
+        }
+
+        y = test_variable * 2 + 1; // Suppose to fail since test_variable might not be initialized
+
+        if(y < x){
+            y = y - x;
+
+            while(z){
+                test_variable = 3;
+                z = false;
+            }
+        } else {
+            test_variable = y + x * 7;
+        }
+
+        z = test_variable < x; // Suppose to fail since test_variable might not be initialized
+
+        if(y < x){
+            while(x - 2 < y){
+                y = y + 1;
+                if(z){
+                    test_variable = y * y / 3;
+                } else {
+                    z = true;
+                }
+            }
+        } else{
+            if(z)
+                test_variable = x + y + w;
+            else
+                test_variable = y + x * 7;
+        }
+
+
+        z = test_variable < y + x && w < x; // Suppose to fail since test_variable might not be initialized
+
+        if(z)
+            test_variable = 0 - 1;
+        else {
+            if(y < x - 2){
+                if(3 < x && x + w < 0){
+                    test_variable = 1;
+                } else {
+                    test_variable = 0;
+                }
+            } else {
+                while(x < y && y + w < x - y){
+                    x = w + 3;
+                    y = y - 1;
+                }
+
+                test_variable = x + y;
+            }
+        }
+
+        return test_variable; // Doesn't fail since it's guaranteed to be initialized
+    }
+}

@@ -35,6 +35,7 @@
 
 	aload 4
 	iload 2
+
 	iload 3
 	invokevirtual Simple/add(II)I
 	istore 6
@@ -72,6 +73,7 @@
 
 	iload 1
 	iadd
+
 
 	ireturn
 .end method

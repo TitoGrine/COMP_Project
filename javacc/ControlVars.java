@@ -6,6 +6,7 @@ public class ControlVars {
     public static final boolean PRINT_SYMBOLTABLE = false;
     public static final boolean PRINT_AST = true;
     public static final boolean RUN_CUSTOM_TESTS = false;
+    public static final boolean GENERATE_JASMIN_CODE = true;
 
     // Terminal Colors
     public static final String RESET = "\033[0m";  // Text Reset

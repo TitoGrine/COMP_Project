@@ -23,8 +23,6 @@ class CustomTest extends Test{
 
         num = 2;
 
-        star = true;
-
         test = new CustomTest();
 
         //if((num < 1 && num < 1)){
@@ -33,11 +31,10 @@ class CustomTest extends Test{
             star = false;
         } else {
             num = 7;
-            //star = true;
+            star = true;
         }
 
         while(num < 4){
-            star = new CustomTest().parade();
             num = num/2 * 3+2;
         }
 
@@ -49,9 +46,7 @@ class CustomTest extends Test{
             num = 7*3;
         }
 
-        star = test.parade();
-
-        a = 8 / 2 + num * 5 / 2 - 2 + this.parade(2);
+        a = 8 / 2 + num * 5 / 2 - 2;
 
         new int[5];
         new Stonk();
@@ -62,18 +57,4 @@ class CustomTest extends Test{
 
 		return num;
 	}
-
-	public boolean parade() {
-	    boolean stonky;
-
-	    stonky = false;
-
-	    return something;
-	}
-
-	public int parade(int i) {
-	    something = 2;
-
-    	return i + 6;
-    }
 }

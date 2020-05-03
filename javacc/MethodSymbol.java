@@ -22,6 +22,10 @@ public class MethodSymbol extends Symbol{
 
     public MethodSymbol(TypeEnum returnType, ArrayList<TypeEnum> parameters, boolean staticValue) {
         super(TypeEnum.METHOD);
+
+        if(parameters.isEmpty())
+            parameters = new ArrayList<>(Collections.singleton(TypeEnum.VOID));
+
         this.addParameter(parameters, returnType, staticValue);
     }
 

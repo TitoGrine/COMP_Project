@@ -1,4 +1,4 @@
-.class public HelloWorld
+.class public ImportStressTest
 .super java/lang/Object
 
 .method <init>()V
@@ -10,7 +10,7 @@
 .method public static main([Ljava/lang/String;)V
 	.limit stack 99
 	.limit locals 99
-	invokestatic ioPlus/printHelloWorld()V
+
 	return
 .end method
 

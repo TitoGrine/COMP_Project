@@ -42,9 +42,16 @@ public class TypeSensitive extends SimpleNode {
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 String object = ((ASTARRAY_ACCESS) node).object;
 
+                if(object != null && object.equals("[new int array]"))
+                    return TypeEnum.INT;
+
                 if(!this.symbolTable.existsArraySymbol(object) && !this.symbolTable.existsArraySymbol("this." + object)){
                     if(object != null && !this.symbolTable.existsSymbol(object) && !this.symbolTable.existsSymbol("this." + object))
                         analysis.addError(this.getCoords(), "Variable " + object + " used, but isn't previously declared.");
+
+                    if(object != null && this.symbolTable.existsMethodSymbol(object)){
+                        return TypeEnum.INT;
+                    }
 
                     return null;
                 }

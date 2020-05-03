@@ -202,4 +202,10 @@ public class ParserTest {
         if(ControlVars.RUN_CUSTOM_TESTS)
             test("fixtures/public/custom/ScopeVarInit.jmm", true);
     }
+
+    @Test
+    public void testWeirdArrayAccess() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/WeirdArrayAccess.jmm", false);
+    }
 }

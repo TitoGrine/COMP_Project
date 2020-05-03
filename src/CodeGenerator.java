@@ -627,6 +627,8 @@ public class CodeGenerator {
 
         Node callNode = funcMethod.jjtGetChild(1);
         String funcName = ((ASTIDENT) callNode.jjtGetChild(0)).name;
+        int arguments = ((SimpleNode) callNode).jjtGetNumChildren();
+        Node[] args = {};
 
         if (!checkIfStatic(funcMethod)) {
             nl();
@@ -645,63 +647,66 @@ public class CodeGenerator {
             }
         }
 
-        Node[] args = ((SimpleNode) callNode.jjtGetChild(1)).jjtGetChildren();
+        if(arguments > 1) {
 
-        for (Node n : args) {
-            switch (((SimpleNode) n).id) {
-                case ParserTreeConstants.JJTIDENT:
-                    String name = ((ASTIDENT) n).name;
-                    int ind = getFunctionLocals(name);
+            args = ((SimpleNode) callNode.jjtGetChild(1)).jjtGetChildren();
 
-                    if (ind == -1) {
-                        int classVarI = checkIfClassVar((SimpleNode) n);
+            for (Node n : args) {
+                switch (((SimpleNode) n).id) {
+                    case ParserTreeConstants.JJTIDENT:
+                        String name = ((ASTIDENT) n).name;
+                        int ind = getFunctionLocals(name);
 
-                        if (classVarI != -1) {
+                        if (ind == -1) {
+                            int classVarI = checkIfClassVar((SimpleNode) n);
+
+                            if (classVarI != -1) {
+                                nl();
+                                tab();
+                                generated += "aload_0";
+                                nl();
+                                tab();
+                                generated += "getfield ";
+                                space();
+                                generated += getClassName() + "/";
+                                generated += classVars[classVarI];
+                                space();
+                                getJType(getClassVarType(classVars[classVarI]));
+                                nl();
+                            }
+                        } else {
+
                             nl();
                             tab();
-                            generated += "aload_0";
-                            nl();
-                            tab();
-                            generated += "getfield ";
-                            space();
-                            generated += getClassName() + "/";
-                            generated += classVars[classVarI];
-                            space();
-                            getJType(getClassVarType(classVars[classVarI]));
+                            generated += "iload ";
+                            generated += Integer.toString(ind);
                             nl();
                         }
-                    } else {
-
-                        nl();
-                        tab();
-                        generated += "iload ";
-                        generated += Integer.toString(ind);
-                        nl();
-                    }
-                    break;
-                case ParserTreeConstants.JJTADD:
-                case ParserTreeConstants.JJTSUB:
-                case ParserTreeConstants.JJTMUL:
-                case ParserTreeConstants.JJTDIV:
-                case ParserTreeConstants.JJTAND:
-                case ParserTreeConstants.JJTLESSTHAN:
-                    makeOperation(n);
-                    break;
-                case ParserTreeConstants.JJTNEGATION:
-                    handleNeg(n);
-                    break;
-                case ParserTreeConstants.JJTFUNC_METHOD:
-                    addMethodCall(n);
-                    break;
-                case ParserTreeConstants.JJTNUM:
-                    generated += "\n\tbipush " + ((ASTNUM) n).value;
-                    break;
-                case ParserTreeConstants.JJTBOOL:
-                    if (((ASTBOOL) n).truth_value)
-                        generated += "\n\ticonst_1";
-                    else
-                        generated += "\n\ticonst_0";
-                    break;
+                        break;
+                    case ParserTreeConstants.JJTADD:
+                    case ParserTreeConstants.JJTSUB:
+                    case ParserTreeConstants.JJTMUL:
+                    case ParserTreeConstants.JJTDIV:
+                    case ParserTreeConstants.JJTAND:
+                    case ParserTreeConstants.JJTLESSTHAN:
+                        makeOperation(n);
+                        break;
+                    case ParserTreeConstants.JJTNEGATION:
+                        handleNeg(n);
+                        break;
+                    case ParserTreeConstants.JJTFUNC_METHOD:
+                        addMethodCall(n);
+                        break;
+                    case ParserTreeConstants.JJTNUM:
+                        generated += "\n\tbipush " + ((ASTNUM) n).value;
+                        break;
+                    case ParserTreeConstants.JJTBOOL:
+                        if (((ASTBOOL) n).truth_value)
+                            generated += "\n\ticonst_1";
+                        else
+                            generated += "\n\ticonst_0";
+                        break;
+                }
             }
         }
 
@@ -756,6 +761,7 @@ public class CodeGenerator {
             MethodSymbol symbol = (MethodSymbol) st.getSymbol(key);
             return symbol.getReturnType(args);
         }
+
         return null;
     }
 

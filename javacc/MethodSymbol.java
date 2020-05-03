@@ -30,6 +30,9 @@ public class MethodSymbol extends Symbol{
     }
 
     public TypeEnum getReturnType(ArrayList<TypeEnum> parameters) {
+        if(parameters.isEmpty())
+            parameters = new ArrayList<>(Collections.singleton(TypeEnum.VOID));
+
         int index = this.parametersOverload.indexOf(parameters);
 
         if(index == -1)

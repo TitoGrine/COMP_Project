@@ -147,18 +147,18 @@ public class CodeGenerator {
               nl();
             }else{
 
-            Node[] tmp = {operation.jjtGetChild(0)};
+               Node[] tmp = {operation.jjtGetChild(0)};
 
-            ArrayList<String> localVars = getFunctionLocals(tmp);
+                ArrayList<String> localVars = getFunctionLocals(tmp);
 
-            nl();
-            for (String s : localVars) {
-              tab();
-              generated += "iload ";
-              generated += s;
-              nl();
+                nl();
+                for (String s : localVars) {
+                    tab();
+                    generated += "iload ";
+                    generated += s;
+                    nl();
+                }
             }
-        }
           }
         }
 
@@ -177,6 +177,9 @@ public class CodeGenerator {
             generated += "\n\ticonst_1";
           else
             generated += "\n\ticonst_0";
+        } else if (oper2.id == ParserTreeConstants.JJTFUNC_METHOD) {
+            addMethodCall(((SimpleNode)oper2));
+
         } else {
 
           int classVarI2 = checkIfClassVar(oper2);
@@ -203,7 +206,7 @@ public class CodeGenerator {
 
         switch(operation.id){
             case ParserTreeConstants.JJTADD: 
-                generated += "\n\tiadd";
+                generated += "\n\tiadd\n";
                 break;
             case ParserTreeConstants.JJTSUB:
               generated += "\n\tisub";
@@ -249,7 +252,6 @@ public class CodeGenerator {
 
     private void methodReturn(Node returnNode, TypeEnum typeReturn) {
         SimpleNode node = (SimpleNode) returnNode;
-
         if(((SimpleNode)node.jjtGetChild(0)).id == ParserTreeConstants.JJTFUNC_METHOD) {  //ver se retornar numero
             addMethodCall(((SimpleNode)node.jjtGetChild(0)));
             // storeLocal(((ASTIDENT)((SimpleNode)((SimpleNode)node.jjtGetChild(0)).jjtGetChild(0))).name);
@@ -257,6 +259,12 @@ public class CodeGenerator {
         }
         else if (((SimpleNode)node.jjtGetChild(0)).id == ParserTreeConstants.JJTIDENT) {
             loadVariable(((ASTIDENT)((SimpleNode)node.jjtGetChild(0))).name);
+        } else if (((SimpleNode)node.jjtGetChild(0)).id == ParserTreeConstants.JJTNUM) {
+            // System.out.println(((ASTNUM)(((SimpleNode)node.jjtGetChild(0)))).value);
+            nl();
+            tab();
+            generated += "bipush ";
+            generated += ((ASTNUM)(((SimpleNode)node.jjtGetChild(0)))).value;
         } else if(((SimpleNode)node.jjtGetChild(0)).id == ParserTreeConstants.JJTBOOL) { //ver se retornar numero
             nl();
             tab();
@@ -308,7 +316,7 @@ public class CodeGenerator {
                 generated += "I";
                 break;
             case BOOL:
-                generated += "B";
+                generated += "Z";
                 break;
             case VOID:
                 generated += "V";
@@ -652,7 +660,6 @@ public class CodeGenerator {
             nl();
             tab();
             generated += "aload";
-            
             if (((SimpleNode)(funcMethod.jjtGetChild(0))).id == ParserTreeConstants.JJTTHIS) {
                 // space();
                 generated += "_0"; 
@@ -668,15 +675,45 @@ public class CodeGenerator {
         }
 
         Node[] args = ((SimpleNode)callNode.jjtGetChild(1)).jjtGetChildren();
-        ArrayList<String> localVars = getFunctionLocals(args);
 
-        nl();
-        for(String s: localVars) {
-            tab();
-            generated += "iload ";
-            generated += s;
-            nl();
+        for (Node n: args) {
+            switch(((SimpleNode)n).id) {
+                case ParserTreeConstants.JJTIDENT:
+                    String name = ((ASTIDENT)n).name;
+                    int ind = getFunctionLocals(name);
+                    nl();
+                    tab();
+                    generated += "iload ";
+                    generated += Integer.toString(ind);
+                    nl();
+                    break;
+                case ParserTreeConstants.JJTADD:
+                    makeOperation(n);
+                    break;
+                case ParserTreeConstants.JJTSUB:
+                    makeOperation(n);
+                    break;
+                case ParserTreeConstants.JJTMUL:
+                    makeOperation(n);
+                    break;
+                case ParserTreeConstants.JJTDIV:
+                    makeOperation(n);
+                    break;
+                case ParserTreeConstants.JJTFUNC_METHOD:
+                    addMethodCall(n);
+                    break;
+            }
         }
+
+        // ArrayList<String> localVars = getFunctionLocals(args);
+
+        // nl();
+        // for(String s: localVars) {
+        //     tab();
+        //     generated += "iload ";
+        //     generated += s;
+        //     nl();
+        // }
 
         tab();
         String key = ((ASTFUNC_METHOD)funcMethod).call;

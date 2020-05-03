@@ -190,7 +190,7 @@ public class ParserTest {
 
     @Test
     public void testCustomTest() {
-        if(ControlVars.RUN_CUSTOM_TESTS)
+        if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
             test("fixtures/public/custom/CustomTest.jmm", false);
     }
 
@@ -208,7 +208,13 @@ public class ParserTest {
 
     @Test
     public void testWeirdArrayAccess() {
-        if(ControlVars.RUN_CUSTOM_TESTS)
+        if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
             test("fixtures/public/custom/WeirdArrayAccess.jmm", false);
+    }
+
+    @Test
+    public void testJVMGeneration() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/TestJVM.jmm", false);
     }
 }

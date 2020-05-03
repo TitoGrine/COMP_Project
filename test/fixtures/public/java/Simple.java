@@ -1,6 +1,7 @@
 import java.io.*; 
 class Simple{
 
+
 	int jk;
 
 	public static void main(String[] args) {
@@ -11,7 +12,7 @@ class Simple{
 		boolean h;
 		int c;
 
-
+		
 		t = true;
 
 		a = 10;
@@ -19,20 +20,13 @@ class Simple{
 		simple = new Simple();
 		
 		c = simple.add(a,t);
-
 	}
 
 	public int add(int a, boolean b) {
-		jk = 3;
-
-		return a+1;
+		jk=3;
+		return jk;
 	}
 
-	public int cenas(int c) {
-		int r;
-		r=10;
-		return r + c;
-	}
 
 
 }

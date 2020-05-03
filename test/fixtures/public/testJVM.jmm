@@ -19,18 +19,10 @@ class Simple {
 		simple = new Simple();
 		
 		c = simple.add(a,t);
-
-		io.println(c);
 	}
 
 	public int add(int a, boolean b) {
-		jk=3;
-		return jk;
+		return 3;
 	}
 
-	public int cenas(int c) {
-		int r;
-		r=10;
-		return c + r ;
-	}
 }

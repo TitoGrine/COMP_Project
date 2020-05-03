@@ -655,6 +655,39 @@ public class CodeGenerator {
     }
 
 
+    static void parseMethodArgumentsType(Node node) {
+        System.out.println(node.toString());
+            switch(node.getId()) {
+                case ParserTreeConstants.JJTIDENT:
+                    String name = ((ASTIDENT) node).name;
+                    SymbolTable st = ((SimpleNode)node).symbolTable;
+                    Symbol symbol = st.getSymbol(name);
+                    generated += parseType(symbol.getType());
+                break;
+                case ParserTreeConstants.JJTNUM:
+                case ParserTreeConstants.JJTADD:
+                case ParserTreeConstants.JJTSUB:
+                case ParserTreeConstants.JJTMUL:
+                case ParserTreeConstants.JJTDIV:
+                    generated += "I";
+                    break;
+                case ParserTreeConstants.JJTAND:
+                case ParserTreeConstants.JJTLESSTHAN:
+                case ParserTreeConstants.JJTNEGATION:
+                case ParserTreeConstants.JJTBOOL:
+                    generated += "Z";
+                    break;
+                case ParserTreeConstants.JJTVOID:
+                    generated += "V";
+                    break;
+                case ParserTreeConstants.JJTFUNC_METHOD:
+                    generated += parseType(getMethodReturnType(node));
+                    break;
+            }
+        }
+
+
+
     static void addMethodCall(Node funcMethod) {
 
         Node callNode = funcMethod.jjtGetChild(1);
@@ -749,14 +782,14 @@ public class CodeGenerator {
         generated += "/";
         generated += funcName;
         generated += "(";
+
         for (int i=0; i < args.length; i++) {
-            System.out.println(args[i].toString());
-            generated += "I";
-
-
+            parseMethodArgumentsType(args[i]);
         }
+
+
         generated += ")";
-        
+
         TypeEnum ret = getMethodReturnType(funcMethod);
         generated += parseType(ret);
     }

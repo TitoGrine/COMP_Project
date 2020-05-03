@@ -10,28 +10,20 @@ class Simple {
 		boolean h;
 		int c;
 		
-		t = !true;
-
-		h = !(t && true);
+		t = true;
 
 		a = 10;
 		b = 2;
 		simple = new Simple();
 		
-		c = simple.add(a,b);
+		c = simple.add(a,t);
 
 		io.println(c);
 	}
 
-	public int add(int a, int b) {
+	public int add(int a, boolean b) {
 
-
-		Simple simple;
-		
-		simple = new Simple();
-
-
-		return simple.cenas(a);
+		return a+1;
 	}
 
 	public int cenas(int c) {

@@ -40,6 +40,7 @@
 	aload 4
 	iload 2
 	getfield  Simple/jk I
+	
 	invokevirtual Simple/add(II)I
 	istore 6
 
@@ -60,6 +61,7 @@
 
 	aload 3
 	iload 1
+	
 	invokevirtual Simple/cenas(I)I
 
 	ireturn
@@ -71,11 +73,7 @@
 
 	bipush 10
 	istore 2
-
-	iload 2
-
-	iload 1
-	iadd
+	getfield  Simple/jk I
 
 
 	ireturn

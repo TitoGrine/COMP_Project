@@ -1,6 +1,7 @@
 .class public Simple
 .super java/lang/Object
 
+.field public jk I 
 .method <init>()V
 	aload_0
 	invokenonvirtual java/lang/Object/<init>()V
@@ -14,9 +15,11 @@
 	iconst_1
 	istore 1
 
+	aload_0
 	bipush 10
 	istore 2
 
+	aload_0
 	bipush 2
 	istore 3
 
@@ -43,7 +46,11 @@
 	.limit stack 99
 	.limit locals 99
 
-	iload 1
+	aload_0
+	bipush 3
+	putfield Simple/jk I
+
+	iload -1
 
 	ireturn
 .end method
@@ -52,6 +59,7 @@
 	.limit stack 99
 	.limit locals 99
 
+	aload_0
 	bipush 10
 	istore 2
 

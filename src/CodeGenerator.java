@@ -901,6 +901,10 @@ public class CodeGenerator {
 
         nl();
         tab();
+        generated += "aload_0";
+
+        nl();
+        tab();
         generated += "bipush";
         space();
         generated += valueString;

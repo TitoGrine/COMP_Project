@@ -30,8 +30,10 @@ public class Main {
                 root.dump(""); // prints the tree on the screen
             }
 
-            codeGenerator = new CodeGenerator(root);
-            codeGenerator.generate();
+            if(ControlVars.GENERATE_JASMIN_CODE){
+                codeGenerator = new CodeGenerator(root);
+                codeGenerator.generate();
+            }
 
             analysis.showWarnings(ControlVars.THROW_WARNING_EXCEPTION);
 

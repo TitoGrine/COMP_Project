@@ -71,7 +71,6 @@
 	iload 2
 
 	iload 1
-	ineg
 	iadd
 
 	ireturn

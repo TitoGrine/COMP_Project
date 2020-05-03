@@ -198,7 +198,6 @@ public class CodeGenerator {
               generated += "iload ";
               generated += s;
             }
-            generated += "\n\tineg";
           }
         }
 

@@ -551,7 +551,7 @@ public class CodeGenerator {
                     generated += "\n\tputfield " + getClassName() + "/"
                             + ((ASTIDENT) ((SimpleNode) root.jjtGetChild(1)).jjtGetChild(0)).name;
                     space();
-                    getJType(getClassVarType(((ASTIDENT) ((SimpleNode) root.jjtGetChild(1)).jjtGetChild(0)).name));
+                    getJType(getClassVarType(((ASTIDENT) classNode.jjtGetChild(0)).name));
                     space();
                     return;
                 }
@@ -903,13 +903,7 @@ public class CodeGenerator {
     }
 
     static TypeEnum getClassVarType(String name) {
-        SimpleNode nodeClass = null;
-        for (Node child : root.jjtGetChildren()) {
-            if (child.getId() == ParserTreeConstants.JJTCLASS)
-                nodeClass = (SimpleNode) child;
-        }
-
-        for (Node n : nodeClass.jjtGetChildren()) {
+        for (Node n : ((SimpleNode) classNode).jjtGetChildren()) {
             if (((SimpleNode) n).id == ParserTreeConstants.JJTVARIABLE) {
                 if ((((ASTIDENT) ((SimpleNode) n).jjtGetChild(1)).name).equals(name)) {
                     return ((ASTTYPE) ((SimpleNode) n).jjtGetChild(0)).typeID;

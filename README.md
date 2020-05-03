@@ -46,7 +46,7 @@ In the ``javacc`` folder there is a class ``ControlVars.java`` that hold some va
 costumization. Here are the description of each of those variables.
 
 |         Variable        |                                                                    Description                                                                   |
-|:-----------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------:|
+|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
 | ANALYSE_SEMANTICS       | If **true**, it performs the semantic analysis of the code.                                                                                         |
 | ANALYSE_SCOPE_VAR_INIT  | If **true**, it will check whether variable are only initialized within if, else or while scopes and  therefore might not be initialized when used. |
 | THROW_VAR_INIT_ERROR    | If **true**, variables that are used but are not initialized will throw an error instead of a warning.                                             |
@@ -90,10 +90,9 @@ costumization. Here are the description of each of those variables.
   
  **Code Generation**
 
- * estrutura básica de classe (incluindo construtor ``<init>``)
- * estrutura básica de fields
- * estrutura básica de métodos (podem desconsiderar os limites neste checkpoint: limit_stack 99, limit_locals 99)
- * assignments
- * operações aritméticas (com prioridade de operações correta)
- * neste checkpoint não é necessário a seleção das operações mais eficientes mas isto será considerado no CP3 e versão final
- * invocação de métodos
+ * ~~estrutura básica de classe (incluindo construtor ``<init>``)~~
+ * ~~estrutura básica de fields~~
+ * ~~estrutura básica de métodos (podem desconsiderar os limites neste checkpoint: limit_stack 99, limit_locals 99)~~
+ * ~~assignments~~
+ * ~~operações aritméticas (com prioridade de operações correta)~~
+ * ~~invocação de métodos~~

@@ -49,8 +49,8 @@
 	aload_0
 	bipush 3
 	putfield Simple/jk I
+	getfield  Simple/jk I
 
-	iload -1
 
 	ireturn
 .end method

@@ -294,7 +294,6 @@ public class CodeGenerator {
         ((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTMUL ||
         ((SimpleNode)node.jjtGetChild(0)).id != ParserTreeConstants.JJTDIV) {
             //ver se retornar numero
-            System.out.println(((SimpleNode)node.jjtGetChild(0)).toString());   
             makeOperation(node.jjtGetChild(0));
         }
         nl();
@@ -423,7 +422,7 @@ public class CodeGenerator {
                    
                     classVars[classIndex] = ((ASTIDENT)simpleN.jjtGetChild(1)).name;
                     classIndex++;
-                    generated += '\n' + ".field public " + getClassName() + "/" + ((ASTIDENT)simpleN.jjtGetChildren()[1]).name;
+                    generated += '\n' + ".field public " + ((ASTIDENT)simpleN.jjtGetChildren()[1]).name;
                     space();
                     getJType(getClassVarType(classVars[classIndex -1]));
                     space();
@@ -666,6 +665,38 @@ public class CodeGenerator {
     }
 
 
+    static void parseMethodArgumentsType(Node node) {
+            switch(node.getId()) {
+                case ParserTreeConstants.JJTIDENT:
+                    String name = ((ASTIDENT) node).name;
+                    SymbolTable st = ((SimpleNode)node).symbolTable;
+                    Symbol symbol = st.getSymbol(name);
+                    generated += parseType(symbol.getType());
+                break;
+                case ParserTreeConstants.JJTNUM:
+                case ParserTreeConstants.JJTADD:
+                case ParserTreeConstants.JJTSUB:
+                case ParserTreeConstants.JJTMUL:
+                case ParserTreeConstants.JJTDIV:
+                    generated += "I";
+                    break;
+                case ParserTreeConstants.JJTAND:
+                case ParserTreeConstants.JJTLESSTHAN:
+                case ParserTreeConstants.JJTNEGATION:
+                case ParserTreeConstants.JJTBOOL:
+                    generated += "Z";
+                    break;
+                case ParserTreeConstants.JJTVOID:
+                    generated += "V";
+                    break;
+                case ParserTreeConstants.JJTFUNC_METHOD:
+                    generated += parseType(getMethodReturnType(node));
+                    break;
+            }
+        }
+
+
+
     static void addMethodCall(Node funcMethod) {
 
         Node callNode = funcMethod.jjtGetChild(1);
@@ -777,14 +808,14 @@ public class CodeGenerator {
         generated += "/";
         generated += funcName;
         generated += "(";
+
         for (int i=0; i < args.length; i++) {
-            System.out.println(args[i].toString());
-            generated += "I";
-
-
+            parseMethodArgumentsType(args[i]);
         }
+
+
         generated += ")";
-        
+
         TypeEnum ret = getMethodReturnType(funcMethod);
         generated += parseType(ret);
     }
@@ -991,8 +1022,6 @@ public class CodeGenerator {
           for (Node n : nodeClass.jjtGetChildren()){
             if( ((SimpleNode)n).id == ParserTreeConstants.JJTVARIABLE){
                 if((((ASTIDENT)((SimpleNode) n).jjtGetChild(1)).name).equals(name)){
-                  System.out.println(
-                      ((ASTTYPE)((SimpleNode)n).jjtGetChild(0)).typeID);
                   return ((ASTTYPE)((SimpleNode) n).jjtGetChild(0)).typeID;
                 }
             }

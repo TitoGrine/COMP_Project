@@ -1,7 +1,7 @@
 .class public Simple
 .super java/lang/Object
 
-.field public Simple/jk I 
+.field public jk I 
 .method <init>()V
 	aload_0
 	invokenonvirtual java/lang/Object/<init>()V
@@ -13,18 +13,7 @@
 	.limit locals 99
 
 	iconst_1
-	ineg
 	istore 1
-
-	iload 1
-
-	iconst_1
-	iand
-	ineg
-	istore 5
-
-	bipush 3
-	putfield Simple/jk I
 
 	bipush 10
 	istore 2
@@ -39,9 +28,10 @@
 
 	aload 4
 	iload 2
-	getfield  Simple/jk I
+
+	iload 1
 	
-	invokevirtual Simple/add(II)I
+	invokevirtual Simple/add(IZ)I
 	istore 6
 
 	iload 6
@@ -50,19 +40,11 @@
 .end method
 
 
-.method public add(II)I
+.method public add(IZ)I
 	.limit stack 99
 	.limit locals 99
 
-	new Simple
-	dup
-	invokespecial Simple/<init>()V
-	astore 3
-
-	aload 3
 	iload 1
-	
-	invokevirtual Simple/cenas(I)I
 
 	ireturn
 .end method
@@ -73,7 +55,11 @@
 
 	bipush 10
 	istore 2
-	getfield  Simple/jk I
+
+	iload 1
+
+	iload 2
+	iadd
 
 
 	ireturn

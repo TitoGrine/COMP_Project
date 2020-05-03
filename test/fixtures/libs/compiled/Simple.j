@@ -63,9 +63,9 @@
 	bipush 10
 	istore 2
 
-	iload 2
-
 	iload 1
+
+	iload 2
 	iadd
 
 

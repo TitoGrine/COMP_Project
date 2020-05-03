@@ -10,36 +10,26 @@ class Simple {
 		Simple simple;
 		boolean h;
 		int c;
+
 		
-		t = !true;
-
-		h = !(t && true);
-
-		jk = 3;
+		t = true;
 
 		a = 10;
 		b = 2;
 		simple = new Simple();
 		
-		c = simple.add(a,jk);
+		c = simple.add(a,t);
 
 		io.println(c);
 	}
 
-	public int add(int a, int b) {
-
-
-		Simple simple;
-		
-		simple = new Simple();
-
-
-		return simple.cenas(a);
+	public int add(int a, boolean b) {
+		return a;
 	}
 
 	public int cenas(int c) {
 		int r;
 		r=10;
-		return r + c;
+		return c + r ;
 	}
 }

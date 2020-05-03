@@ -263,7 +263,18 @@ public class CodeGenerator {
             // storeLocal(((ASTIDENT)candidate.jjtGetChild(0)).name);
         }
         else if (((SimpleNode)node.jjtGetChild(0)).id == ParserTreeConstants.JJTIDENT) {
-            loadVariable(((ASTIDENT)((SimpleNode)node.jjtGetChild(0))).name);
+            int classVarI = checkIfClassVar((SimpleNode)node.jjtGetChild(0));
+
+            if (classVarI != -1) {
+                tab();
+                generated += "getfield ";
+                space();
+                generated += getClassName() + "/";
+                generated += classVars[classVarI];
+                space();
+                getJType(getClassVarType(classVars[classVarI]));
+                nl();
+            }else loadVariable(((ASTIDENT)((SimpleNode)node.jjtGetChild(0))).name);
         } else if (((SimpleNode)node.jjtGetChild(0)).id == ParserTreeConstants.JJTNUM) {
             // System.out.println(((ASTNUM)(((SimpleNode)node.jjtGetChild(0)))).value);
             nl();

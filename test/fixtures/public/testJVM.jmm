@@ -31,6 +31,6 @@ class Simple {
 	public int cenas(int c) {
 		int r;
 		r=10;
-		return r + c;
+		return c + r ;
 	}
 }

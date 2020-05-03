@@ -8,7 +8,7 @@ class Linked{
         lin = new Linked();
 
         a = new int[10];
-        b = 2 + lin.length;
+        b = 2 + lin.length * a[3];
         c = lin.add(b, 3);
 
         b = new int[1][0] + lin.add(b, c);

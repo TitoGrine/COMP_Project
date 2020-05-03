@@ -31,23 +31,7 @@ class CustomTest extends Test{
             star = false;
         } else {
             num = 7;
-            //star = true;
-            if(truth){
-                star = true;
-            } else {
-                num = 8;
-                if(!(args[3] < num)){
-                    num = num * 2;
-                    while(num < something){
-                        star = false;
-                        star = false;
-                        star = false;
-                        star = false;
-                    }
-                } else {
-                    star = true;
-                }
-            }
+            star = true;
         }
 
         while(num < 4){

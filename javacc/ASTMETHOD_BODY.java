@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTMETHOD_BODY extends SimpleNode {
+  protected int numVars = 0;
+
   public ASTMETHOD_BODY(int id) {
     super(id);
   }
@@ -18,6 +20,9 @@ class ASTMETHOD_BODY extends SimpleNode {
 
     while(childIndex < numChildren){
       childNode = (SimpleNode) this.jjtGetChild(childIndex);
+
+      if(this.compareNode(childNode, ParserTreeConstants.JJTVARIABLE))
+        numVars++;
 
       childNode.addSymbolTable(this.symbolTable);
       childNode.eval(analysis);

@@ -8,6 +8,7 @@ class ASTMETHOD extends SimpleNode {
   protected String methodName;
   protected TypeEnum returnType;
   protected ArrayList<TypeEnum> parameters = new ArrayList<>();
+  protected int localSize = 0;
 
   public ASTMETHOD(int id) {
     super(id);
@@ -59,6 +60,8 @@ class ASTMETHOD extends SimpleNode {
 
     methodBody.addSymbolTable(symbolTable);
     methodBody.eval(analysis);
+
+    this.localSize = 1 + this.parameters.size() + methodBody.numVars;
 
     childIndex++;
     ASTRETURN_EXP returnExp = (ASTRETURN_EXP) this.jjtGetChild(childIndex);

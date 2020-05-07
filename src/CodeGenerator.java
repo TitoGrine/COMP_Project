@@ -790,7 +790,7 @@ public class CodeGenerator {
         return localVars;
     }
 
-    static int getFunctionLocals(String arg) {
+    static int  getFunctionLocals(String arg) {
         for (int i = 1; i < 99; i++) {
             if (locals[i] != null) {
                 if (locals[i].equals(arg))

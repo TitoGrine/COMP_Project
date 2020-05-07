@@ -6,6 +6,7 @@ import java.util.List;
 public
 class ASTCLASS extends SimpleNode {
   protected String className;
+  protected int classVars = 0;
 
   public ASTCLASS(int id) {
     super(id);
@@ -59,6 +60,7 @@ class ASTCLASS extends SimpleNode {
 
       if (compareNode(childNode, ParserTreeConstants.JJTVARIABLE)) {
         ((ASTVARIABLE) childNode).classScope = true;
+        classVars++;
 
         childNode.eval(analysis);
       } else if (compareNode(childNode, ParserTreeConstants.JJTMETHOD)) {

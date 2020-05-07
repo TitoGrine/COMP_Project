@@ -8,6 +8,7 @@ class ASTMAINMETHOD extends SimpleNode {
   protected String methodName = "main";
   protected TypeEnum returnType = TypeEnum.VOID;
   protected ArrayList<TypeEnum> parameters = new ArrayList<>(Collections.singleton(TypeEnum.ARRAY));
+  protected int localSize = 0;
 
   public ASTMAINMETHOD(int id) {
     super(id);
@@ -39,6 +40,8 @@ class ASTMAINMETHOD extends SimpleNode {
 
     methodBody.addSymbolTable(symbolTable);
     methodBody.eval(analysis);
+
+    this.localSize = 2 + methodBody.numVars;
 
     if(ControlVars.PRINT_SYMBOLTABLE)
       this.symbolTable.print(this.methodName);

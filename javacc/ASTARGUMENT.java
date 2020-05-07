@@ -3,6 +3,7 @@
 public
 class ASTARGUMENT extends SimpleNode {
   protected TypeEnum type;
+  protected String argName;
 
   public ASTARGUMENT(int id) {
     super(id);
@@ -23,6 +24,8 @@ class ASTARGUMENT extends SimpleNode {
     secondChild.addSymbolTable(this.symbolTable);
     secondChild.eval(analysis);
 
+    argName = secondChild.name;
+
     Symbol symbol;
 
     if(firstChild.typeID == TypeEnum.ARRAY)
@@ -34,7 +37,7 @@ class ASTARGUMENT extends SimpleNode {
 
     this.type = symbol.getType();
 
-    this.symbolTable.addSymbol(secondChild.name, symbol);
+    this.symbolTable.addSymbol(argName, symbol);
   }
 }
 /* JavaCC - OriginalChecksum=1c4e5b4ef5eeb3f2188100031b20d30d (do not edit this line) */

@@ -18,7 +18,7 @@ class ASTIF_ELSE extends SimpleNode {
 
   public ArrayList<String> getDuplicates(){
     ArrayList<String> stack = new ArrayList<>();
-    java.util.HashSet unique = new HashSet();
+    HashSet<String> unique = new HashSet<>();
 
     for (String s : this.localStack){
       if(!unique.add(s))

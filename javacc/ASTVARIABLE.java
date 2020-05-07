@@ -3,6 +3,7 @@
 public
 class ASTVARIABLE extends SimpleNode {
   protected boolean classScope = false;
+  protected String name = null;
 
   public ASTVARIABLE(int id) {
     super(id);
@@ -18,7 +19,6 @@ class ASTVARIABLE extends SimpleNode {
     ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
     TypeEnum type;
-    String name;
 
     if(compareNode(firstChild, ParserTreeConstants.JJTIDENT)){
       name = ((ASTIDENT) firstChild).name;

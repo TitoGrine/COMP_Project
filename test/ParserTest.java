@@ -70,8 +70,7 @@ public class ParserTest {
 
     @Test
     public void testLife() {
-        if(!ControlVars.GENERATE_JASMIN_CODE)
-            test("fixtures/public/Life.jmm", false);
+        test("fixtures/public/Life.jmm", false);
     }
 
     @Test
@@ -81,8 +80,7 @@ public class ParserTest {
 
     @Test
     public void testQuickSort() {
-        if(!ControlVars.GENERATE_JASMIN_CODE)
-            test("fixtures/public/QuickSort.jmm", false);
+        test("fixtures/public/QuickSort.jmm", false);
     }
 
     @Test
@@ -92,8 +90,7 @@ public class ParserTest {
 
     @Test
     public void testTicTacToe() {
-        if(!ControlVars.GENERATE_JASMIN_CODE)
-            test("fixtures/public/TicTacToe.jmm", false);
+        test("fixtures/public/TicTacToe.jmm", false);
     }
 
     @Test

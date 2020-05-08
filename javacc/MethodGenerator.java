@@ -397,15 +397,13 @@ public class MethodGenerator extends CodeGenerator{
         String callCode = "";
         SimpleNode objectNode = (SimpleNode) funcNode.jjtGetChild(0);
         ASTCALL callNode = (ASTCALL) funcNode.jjtGetChild(1);
-        ASTARGUMENTS argumentsNode = (ASTARGUMENTS) callNode.jjtGetChild(1);
         int numArgs = funcNode.arguments.size();
 
         if(!isStatic(funcNode)){
             if(objectNode.equalsNodeType(ParserTreeConstants.JJTTHIS))
                 callCode += tab() + "aload_0";
-            else if(objectNode.equalsNodeType(ParserTreeConstants.JJTIDENT)){
+            else if(objectNode.equalsNodeType(ParserTreeConstants.JJTIDENT))
                 callCode += tab() + "aload " + locals.indexOf(((ASTIDENT) objectNode).name);
-            }
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTFUNC_METHOD))
                 callCode += tab() + generateCallCode((ASTFUNC_METHOD) objectNode); //TODO: Probs wrong
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTNEW))
@@ -414,15 +412,18 @@ public class MethodGenerator extends CodeGenerator{
             callCode += nl();
         }
 
-        SimpleNode child;
-        int childIndex = 0;
+        if(numArgs > 0){
+            SimpleNode child;
+            int childIndex = 0;
+            ASTARGUMENTS argumentsNode = (ASTARGUMENTS) callNode.jjtGetChild(1);
 
-        while(childIndex < numArgs){
-            child = (SimpleNode) argumentsNode.jjtGetChild(childIndex);
+            while(childIndex < numArgs){
+                child = (SimpleNode) argumentsNode.jjtGetChild(childIndex);
 
-            callCode += generateTypeSensitiveCode(child, 1);
+                callCode += generateTypeSensitiveCode(child, 1);
 
-            childIndex++;
+                childIndex++;
+            }
         }
 
         callCode += tab() + (isStatic(funcNode) ? "invokestatic " : "invokevirtual ") + funcNode.call.replace('.', '/');

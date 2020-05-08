@@ -388,26 +388,28 @@ public class MethodGenerator extends CodeGenerator{
 
         assignCode += generateTypeSensitiveCode(secondChild, 1, true);
         assignCode += addStoreVar(firstChild, 1);
+        assignCode += nl();
 
         return assignCode;
     }
 
     public String generateCallCode(ASTFUNC_METHOD funcNode){
-        String callCode = nl();
+        String callCode = "";
         SimpleNode objectNode = (SimpleNode) funcNode.jjtGetChild(0);
         ASTCALL callNode = (ASTCALL) funcNode.jjtGetChild(1);
         ASTARGUMENTS argumentsNode = (ASTARGUMENTS) callNode.jjtGetChild(1);
         int numArgs = funcNode.arguments.size();
 
-        if(isStatic(funcNode)){
+        if(!isStatic(funcNode)){
             if(objectNode.equalsNodeType(ParserTreeConstants.JJTTHIS))
-                callCode += "aload_0";
-            else if(objectNode.equalsNodeType(ParserTreeConstants.JJTIDENT))
-                callCode += "aload " + locals.indexOf(((ASTIDENT) objectNode).name);
+                callCode += tab() + "aload_0";
+            else if(objectNode.equalsNodeType(ParserTreeConstants.JJTIDENT)){
+                callCode += tab() + "aload " + locals.indexOf(((ASTIDENT) objectNode).name);
+            }
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTFUNC_METHOD))
-                callCode += generateCallCode((ASTFUNC_METHOD) objectNode); //TODO: Probs wrong
+                callCode += tab() + generateCallCode((ASTFUNC_METHOD) objectNode); //TODO: Probs wrong
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTNEW))
-                callCode += generateNewCode((ASTNEW) objectNode); //TODO: Probs wrong
+                callCode += tab() + generateNewCode((ASTNEW) objectNode); //TODO: Probs wrong
 
             callCode += nl();
         }
@@ -430,11 +432,11 @@ public class MethodGenerator extends CodeGenerator{
     }
 
     public String generateNewCode(ASTNEW newNode){
-        String newCode = nl();
+        String newCode = "";
 
         newCode += tab() + "new " + newNode.object + nl();
         newCode += tab() + "dup" + nl();
-        newCode += tab() + "invokespecial " + newNode.object + "/<init>()V" + nl();
+        newCode += tab() + "invokespecial " + newNode.object + "/<init>()V";
 
         return newCode;
     }

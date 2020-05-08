@@ -21,6 +21,7 @@ class ASTARRAY_ACCESS extends TypeSensitive {
 
     if(!new_array) {
       if (compareNode(firstChild, ParserTreeConstants.JJTIDENT)) {
+        firstChild.addSymbolTable(this.symbolTable);
         this.object = ((ASTIDENT) firstChild).name;
       } else if (compareNode(firstChild, ParserTreeConstants.JJTFUNC_METHOD)) {
         firstChild.addSymbolTable(this.symbolTable);

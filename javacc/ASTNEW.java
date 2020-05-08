@@ -16,6 +16,8 @@ class ASTNEW extends SimpleNode {
   public void eval(SemanticAnalysis analysis){
     ASTIDENT childNode = (ASTIDENT) this.jjtGetChild(0);
 
+    childNode.addSymbolTable(this.symbolTable);
+
     if(!this.symbolTable.existsClassSymbol(childNode.name))
       analysis.addError(this.getCoords(), "New unrecognized object " + childNode.name);
 

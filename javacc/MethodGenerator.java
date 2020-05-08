@@ -50,12 +50,29 @@ public class MethodGenerator extends CodeGenerator{
         return getSimpleJasminType(returnType);
     }
 
+    private String generateStackCode(){
+        String stackCode = "";
+
+        stackCode += tab() + ".limit stack " + 99 + nl(); //TODO: Provisório!!
+        stackCode += tab() + ".limit locals " + methodNode.localSize + nl();
+
+        return stackCode;
+    }
+
     private String generateMethodHeader(){
         String headerCode = "";
 
         headerCode += ".method public " + methodNode.methodName + "(" + parametersCode() + ")" + getSimpleJasminType(methodNode.returnType) + nl();
-        headerCode += tab() + ".limit stack " + 99 + nl(); //TODO: Provisório!!
-        headerCode += tab() + ".limit locals " + methodNode.localSize + nl();
+        headerCode += generateStackCode() + nl();
+
+        return headerCode;
+    }
+
+    private String generateMainMethodHeader(){
+        String headerCode = "";
+
+        headerCode += ".method public static main([Ljava/lang/String;)V" + nl();
+        headerCode += generateStackCode() + nl();
 
         return headerCode;
     }
@@ -72,7 +89,7 @@ public class MethodGenerator extends CodeGenerator{
     }
 
     private void addVariable(ASTVARIABLE varNode){
-        locals.add(varNode.name);
+        locals.add(varNode.varName);
         this.localsCounter++;
     }
 
@@ -145,21 +162,27 @@ public class MethodGenerator extends CodeGenerator{
             operationCode += generateTypeSensitiveCode(secondChild, identation);
         }
 
-        operationCode += tab(identation);
+        operationCode += nl() + tab(identation);
 
         switch(operationNode.id){
             case ParserTreeConstants.JJTADD:
                 operationCode += "iadd";
+                break;
             case ParserTreeConstants.JJTSUB:
                 operationCode += "isub";
+                break;
             case ParserTreeConstants.JJTMUL:
                 operationCode += "imul";
+                break;
             case ParserTreeConstants.JJTDIV:
                 operationCode += "idiv";
+                break;
             case ParserTreeConstants.JJTAND:
                 operationCode += "iand";
+                break;
             case ParserTreeConstants.JJTNEGATION:
                 operationCode += "ineg";
+                break;
             case ParserTreeConstants.JJTLESSTHAN:
                 operationCode += "if_cmple label_" + labelCounter + nl();
                 operationCode += tab(identation) + "iconst_0" + nl();
@@ -169,6 +192,7 @@ public class MethodGenerator extends CodeGenerator{
                 operationCode += tab(identation) + "label_" + (labelCounter + 1) + ":";
 
                 labelCounter += 2;
+                break;
             default:
                 break;
         }
@@ -195,7 +219,7 @@ public class MethodGenerator extends CodeGenerator{
     }
 
     private String generateVarCode(ASTIDENT identNode, int identation){
-        String varCode = tab(identation);
+        String varCode = "";
         String varName = identNode.name;
         int index = locals.indexOf(varName);
 
@@ -223,13 +247,15 @@ public class MethodGenerator extends CodeGenerator{
     }
 
     private String generateTypeSensitiveCode(SimpleNode child, int identation, boolean assigned){
-        String code = nl();
+        String code = "";
 
         switch(child.id){
             case ParserTreeConstants.JJTNUM:
                 code += generateNumCode((ASTNUM) child, identation);
+                break;
             case ParserTreeConstants.JJTBOOL:
                 code += generateBoolCode((ASTBOOL) child, identation);
+                break;
             case ParserTreeConstants.JJTADD:
             case ParserTreeConstants.JJTSUB:
             case ParserTreeConstants.JJTMUL:
@@ -238,20 +264,29 @@ public class MethodGenerator extends CodeGenerator{
             case ParserTreeConstants.JJTLESSTHAN:
             case ParserTreeConstants.JJTNEGATION:
                 code += generateOperationCode(child, identation);
+                break;
             case ParserTreeConstants.JJTNEW:
                 code += generateNewCode((ASTNEW) child);
+                break;
             case ParserTreeConstants.JJTNEW_ARRAY:
                 code += generateNewArrayCode((ASTNEW_ARRAY) child, identation);
+                break;
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 code += generateArrayAccessCode((ASTARRAY_ACCESS) child, identation);
+                break;
             case ParserTreeConstants.JJTFUNC_METHOD:
                 code += generateCallCode((ASTFUNC_METHOD) child);
-                if(!assigned)
-                    code += nl() + tab(identation) + "pop"; //TODO: Check if this is needed
+
+                /*if(!assigned)
+                    code += nl() + tab(identation) + "pop";*/ //TODO: Check if this is needed
+
+                break;
             case ParserTreeConstants.JJTLENGTH:
                 code += ""; //TODO: generateLengthCode((ASTLENGTH) child);
+                break;
             case ParserTreeConstants.JJTIDENT:
                 code += generateVarCode((ASTIDENT) child, identation);
+                break;
             default:
                 break;
         }
@@ -259,6 +294,25 @@ public class MethodGenerator extends CodeGenerator{
         code += nl();
 
         return code;
+    }
+
+    public String generateReturnCode(ASTRETURN_EXP returnNode){
+        SimpleNode child = (SimpleNode) returnNode.jjtGetChild(0);
+        String returnCode = "";
+
+        returnCode += generateTypeSensitiveCode(child, 1);
+        returnCode += tab();
+
+        if(returnNode.expType == TypeEnum.OBJECT || returnNode.expType == TypeEnum.ARRAY)
+            returnCode += "areturn";
+        else if(returnNode.expType == TypeEnum.VOID)
+            returnCode += "return";
+        else
+            returnCode += "ireturn";
+
+        returnCode += nl();
+
+        return returnCode;
     }
 
     public String generateMethodCode(){
@@ -274,16 +328,35 @@ public class MethodGenerator extends CodeGenerator{
                 addArguments((ASTARGUMENTS) child);
             else if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD_BODY))
                 methodCode += generateBodyCode((ASTMETHOD_BODY) child);
+            else if(child.equalsNodeType(ParserTreeConstants.JJTRETURN_EXP))
+                methodCode += generateReturnCode((ASTRETURN_EXP) child);
 
             childIndex++;
         }
+
+        methodCode += ".end method" + nl();
+
+        return methodCode;
+    }
+
+    public String generateMainMethodCode(){
+        String methodCode = nl() + generateMainMethodHeader();
+        ASTIDENT firstChild = (ASTIDENT) methodNode.jjtGetChild(0);
+        ASTMETHOD_BODY secondChild = (ASTMETHOD_BODY) methodNode.jjtGetChild(1);
+
+        locals.add(firstChild.name);
+        localsCounter++;
+
+        methodCode += generateBodyCode(secondChild);
+        methodCode += tab() + "return" + nl();
+        methodCode += ".end method" + nl();
 
         return methodCode;
     }
 
     public String generateBodyCode(ASTMETHOD_BODY bodyNode){
         String bodyCode = "";
-        int numChildren = methodNode.jjtGetNumChildren();
+        int numChildren = bodyNode.jjtGetNumChildren();
         int childIndex = 0;
         SimpleNode child;
 
@@ -297,19 +370,13 @@ public class MethodGenerator extends CodeGenerator{
                 case ParserTreeConstants.JJTASSIGN:
                     bodyCode += generateAssignCode((ASTASSIGN) child);
                     break;
-                case ParserTreeConstants.JJTFUNC_METHOD:
-                    bodyCode += generateCallCode((ASTFUNC_METHOD) child);
-                    break;
-                case ParserTreeConstants.JJTNEW:
-                    bodyCode += generateNewCode((ASTNEW) child);
-                    break;
                 default:
+                    bodyCode += generateTypeSensitiveCode(child, 1);
                     break;
             }
 
             childIndex++;
         }
-
 
         return bodyCode;
     }
@@ -328,8 +395,8 @@ public class MethodGenerator extends CodeGenerator{
     public String generateCallCode(ASTFUNC_METHOD funcNode){
         String callCode = nl();
         SimpleNode objectNode = (SimpleNode) funcNode.jjtGetChild(0);
-        ASTCLASS callNode = (SimpleNode) funcNode.jjtGetChild(1);
-        ASTARGUMENTS argumentsNode = (SimpleNode) callNode.jjtGetChild(1);
+        ASTCALL callNode = (ASTCALL) funcNode.jjtGetChild(1);
+        ASTARGUMENTS argumentsNode = (ASTARGUMENTS) callNode.jjtGetChild(1);
         int numArgs = funcNode.arguments.size();
 
         if(isStatic(funcNode)){
@@ -356,8 +423,8 @@ public class MethodGenerator extends CodeGenerator{
             childIndex++;
         }
 
-        callCode += tab() + nl() + (isStatic(funcNode) ? "invokestatic " : "invokevirtual ") + funcNode.call.replace('.', '/');
-        callCode += "(" + argumentsCode(funcNode) + ")" + methodReturnCode(funcNode) + nl();
+        callCode += tab() + (isStatic(funcNode) ? "invokestatic " : "invokevirtual ") + funcNode.call.replace('.', '/');
+        callCode += "(" + argumentsCode(funcNode) + ")" + methodReturnCode(funcNode);
 
         return callCode;
     }

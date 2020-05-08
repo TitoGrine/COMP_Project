@@ -16,6 +16,7 @@ class ASTEXTENDS extends SimpleNode {
   public void eval(SemanticAnalysis analysis){
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
+    firstChild.addSymbolTable(this.symbolTable);
     extendedClass = firstChild.name;
 
     if(!this.symbolTable.existsClassSymbol(extendedClass))

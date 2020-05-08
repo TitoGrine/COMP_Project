@@ -18,9 +18,10 @@ class ASTTYPE extends SimpleNode {
     if(typeID != null)
       return;
 
-    SimpleNode child = (SimpleNode) this.jjtGetChild(0);
+    ASTIDENT child = (ASTIDENT) this.jjtGetChild(0);
 
-    varName = ((ASTIDENT) child).name;
+    child.addSymbolTable(this.symbolTable);
+    varName = child.name;
 
     Symbol symbol = this.symbolTable.getSymbol(varName);
 

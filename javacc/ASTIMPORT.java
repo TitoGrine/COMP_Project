@@ -18,6 +18,7 @@ class ASTIMPORT extends SimpleNode {
 
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
+    firstChild.addSymbolTable(this.symbolTable);
     String key = firstChild.name;
     TypeEnum returnType = TypeEnum.VOID;
     ArrayList<TypeEnum> parameters = new ArrayList<>();
@@ -29,6 +30,8 @@ class ASTIMPORT extends SimpleNode {
       SimpleNode nextChild = (SimpleNode) this.jjtGetChild(childIndex);
 
       if(compareNode(nextChild, ParserTreeConstants.JJTIDENT)){
+        nextChild.addSymbolTable(this.symbolTable);
+
         if(!this.symbolTable.existsClassSymbol(key))
           analysis.addError(this.getCoords(), "Non static method " + ((ASTIDENT) nextChild).name + " import declaration without the import for class " + firstChild.name);
 

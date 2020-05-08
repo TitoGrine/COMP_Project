@@ -21,6 +21,7 @@ class ASTCALL extends TypeSensitive {
 
     ASTIDENT firstChild = (ASTIDENT) this.jjtGetChild(0);
 
+    firstChild.addSymbolTable(this.symbolTable);
     this.method = firstChild.name;
 
     if(numChildren == 1)

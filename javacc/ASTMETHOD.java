@@ -23,6 +23,7 @@ class ASTMETHOD extends SimpleNode {
     ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
     firstChild.addSymbolTable(this.symbolTable);
+    secondChild.addSymbolTable(this.symbolTable);
     firstChild.eval(errors);
 
     this.returnType = firstChild.type;

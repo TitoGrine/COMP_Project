@@ -3,7 +3,7 @@
 public
 class ASTVARIABLE extends SimpleNode {
   protected boolean classScope = false;
-  protected String name = null;
+  protected String varName = null;
 
   public ASTVARIABLE(int id) {
     super(id);
@@ -19,6 +19,10 @@ class ASTVARIABLE extends SimpleNode {
     ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
     TypeEnum type;
+    String name = "";
+
+    firstChild.addSymbolTable(this.symbolTable);
+    secondChild.addSymbolTable(this.symbolTable);
 
     if(compareNode(firstChild, ParserTreeConstants.JJTIDENT)){
       name = ((ASTIDENT) firstChild).name;
@@ -32,14 +36,14 @@ class ASTVARIABLE extends SimpleNode {
 
       type = symbol.getType();
     } else {
-      firstChild.addSymbolTable(this.symbolTable);
       firstChild.eval(analysis);
 
       type = ((ASTTYPE) firstChild).typeID;
       name = ((ASTTYPE) firstChild).varName;
     }
 
-    String key = (classScope ? "this." : "") + secondChild.name;
+    varName = secondChild.name;
+    String key = (classScope ? "this." : "") + varName;
 
     if(this.symbolTable.existsSymbol(key)){
       analysis.addError(this.getCoords(), "Variable " + key + " already declared.");

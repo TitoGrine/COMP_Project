@@ -22,6 +22,9 @@ class ASTSTATIC_IMPORT extends SimpleNode {
 
     String key = firstChild.name + '.' + secondChild.name;
 
+    firstChild.addSymbolTable(this.symbolTable);
+    secondChild.addSymbolTable(this.symbolTable);
+
     TypeEnum returnType = TypeEnum.VOID;
     ArrayList<TypeEnum> parameters = new ArrayList<>();
 

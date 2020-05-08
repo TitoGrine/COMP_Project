@@ -57,10 +57,6 @@ public class CodeGenerator {
         return code;
     }
 
-    protected static String mainHeader(){
-        return nl() + ".method public static main([Ljava/lang/String;)V";
-    }
-
     protected static String getSimpleJasminType(TypeEnum type){
         switch (type) {
             case INT:
@@ -108,13 +104,12 @@ public class CodeGenerator {
             default:
                 jasminType = getSimpleJasminType(symbol.getType());
         }
+
         return jasminType;
     }
 
     public void generate(SimpleNode root){
         this.generatedCode = "";
-
-        classVars = new ArrayList<>(classNode.classVars);
 
         int numChildren = root.jjtGetNumChildren();
         int childIndex = 0;
@@ -127,13 +122,16 @@ public class CodeGenerator {
             if(child.equalsNodeType(ParserTreeConstants.JJTCLASS)){
                 this.classNode = (ASTCLASS) child;
 
+                classVars = new ArrayList<>(classNode.classVars);
+
                 generatedCode += convertClass();
             }
 
             childIndex++;
         }
 
-        writeToFile();
+        //writeToFile();
+        System.out.println(generatedCode);
     }
 
     public String convertClass(){
@@ -179,11 +177,13 @@ public class CodeGenerator {
     public String convertVarDeclaration(ASTVARIABLE varNode){
         String varCode = "";
 
-        classVars.add(varNode.name);
+        classVars.add(varNode.varName);
 
         if(varNode.classScope){
-            varCode += nl() + ".field public " + varNode.name + space() + getJasminType(varNode.name, varNode);
+            varCode += nl() + ".field public " + varNode.varName + space() + getJasminType(varNode.varName, varNode);
         }
+
+        varCode += nl();
 
         return varCode;
     }
@@ -195,8 +195,8 @@ public class CodeGenerator {
     }
 
     public String convertMainMethodDeclaration(ASTMAINMETHOD methodNode){
-        String methodCode = "";
+        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, labelCounter);
 
-        return methodCode;
+        return methodGenerator.generateMainMethodCode();
     }
 }

@@ -22,8 +22,9 @@ class ASTASSIGN extends TypeSensitive {
     String varName;
     TypeEnum compatibleType;
 
+    firstChild.addSymbolTable(this.symbolTable);
+
     if(compareNode(firstChild, ParserTreeConstants.JJTARRAY_ACCESS)){
-      firstChild.addSymbolTable(this.symbolTable);
       firstChild.eval(analysis);
       varName = ((ASTARRAY_ACCESS) firstChild).object;
     }

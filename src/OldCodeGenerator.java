@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class CodeGenerator {
+public class OldCodeGenerator {
     static String generated;
     private static SimpleNode root;
     static int classIndex = 1;
@@ -18,7 +18,7 @@ public class CodeGenerator {
     private static int localsCounter = 1;
     private static int labelCounter = 1;
 
-    public CodeGenerator(SimpleNode root) {
+    public OldCodeGenerator(SimpleNode root) {
         this.root = root;
         generated = "";
     }

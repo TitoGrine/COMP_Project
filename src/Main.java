@@ -3,7 +3,7 @@
 import java.io.FileNotFoundException;
 
 public class Main {
-    static CodeGenerator codeGenerator;
+    static OldCodeGenerator codeGenerator;
 
     public static void main(String[] args) throws Exception {
         java.io.FileInputStream file = null;
@@ -31,8 +31,7 @@ public class Main {
             }
 
             if(ControlVars.GENERATE_JASMIN_CODE){
-                codeGenerator = new CodeGenerator(root);
-                codeGenerator.generate();
+                new CodeGenerator().generate(root);
             }
 
             analysis.showWarnings(ControlVars.THROW_WARNING_EXCEPTION);

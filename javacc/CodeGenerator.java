@@ -6,12 +6,13 @@ import java.util.List;
 
 public class CodeGenerator {
 
-    private static String generatedCode;
-
     protected ASTCLASS classNode;
+    private static String generatedCode;
+    protected int labelCounter = 0;
+    protected List<String> classVars;
 
     //private static List<String> locals;
-    protected static List<String> classVars;
+
 
     protected void writeToFile() {
         File file = new File("test/fixtures/libs/compiled/" + classNode.className + ".j");
@@ -38,8 +39,12 @@ public class CodeGenerator {
         return "\n";
     }
 
+    protected static String tab(int indentation){
+        return "\t".repeat(indentation);
+    }
+
     protected static String tab() {
-        return "\t";
+        return tab(1);
     }
 
     protected static String standardInitializer(String extendedClass) {
@@ -73,11 +78,17 @@ public class CodeGenerator {
 
     protected static String getJasminType(String key, SimpleNode node){
         String jasminType = "";
+        Symbol symbol;
 
-        if(!node.symbolTable.existsSymbol(key))
-            return jasminType;
+        if(!node.symbolTable.existsSymbol(key)){
 
-        Symbol symbol = node.symbolTable.getSymbol(key);
+            if(!node.symbolTable.existsSymbol("this." + key))
+                return jasminType;
+
+            symbol = node.symbolTable.getSymbol("this." + key);
+        } else {
+            symbol = node.symbolTable.getSymbol(key);
+        }
 
         switch (symbol.getType()) {
             case OBJECT:
@@ -178,7 +189,7 @@ public class CodeGenerator {
     }
 
     public String convertMethodDeclaration(ASTMETHOD methodNode){
-        MethodGenerator methodGenerator = new MethodGenerator(methodNode);
+        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, labelCounter);
 
         return methodGenerator.generateMethodCode();
     }

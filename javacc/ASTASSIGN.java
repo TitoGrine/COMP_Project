@@ -23,6 +23,7 @@ class ASTASSIGN extends TypeSensitive {
     TypeEnum compatibleType;
 
     firstChild.addSymbolTable(this.symbolTable);
+    secondChild.addSymbolTable(this.symbolTable);
 
     if(compareNode(firstChild, ParserTreeConstants.JJTARRAY_ACCESS)){
       firstChild.eval(analysis);
@@ -49,7 +50,6 @@ class ASTASSIGN extends TypeSensitive {
     else
       compatibleType = this.symbolTable.getSymbol(varName).getType();
 
-    secondChild.addSymbolTable(this.symbolTable);
     secondChild.eval(analysis);
 
     if(!this.validType(secondChild, compatibleType, analysis)){

@@ -15,7 +15,7 @@ public class CodeGenerator {
 
 
     protected void writeToFile() {
-        File file = new File("test/fixtures/libs/compiled/" + classNode.className + ".j");
+        File file = new File("test/fixtures/libs/compiled/jasminCode/" + classNode.className + ".j");
 
         try{
             if (!file.exists())
@@ -48,7 +48,7 @@ public class CodeGenerator {
     }
 
     protected static String standardInitializer(String extendedClass) {
-        String code = nl() + ".method <init>()V" + nl();
+        String code = nl() + ".method public <init>()V" + nl();
         code += tab() + "aload_0" + nl();
         code += tab() + "invokenonvirtual " + extendedClass + "/<init>()V" + nl();
         code += tab() + "return" + nl();
@@ -164,9 +164,9 @@ public class CodeGenerator {
             if(child.equalsNodeType(ParserTreeConstants.JJTVARIABLE))
                 classBodyCode += convertVarDeclaration((ASTVARIABLE) child);
             else if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD))
-                classBodyCode += convertMethodDeclaration((ASTMETHOD) child);
+                classBodyCode += nl() + convertMethodDeclaration((ASTMETHOD) child);
             else if(child.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
-                classBodyCode += convertMainMethodDeclaration((ASTMAINMETHOD) child);
+                classBodyCode += nl() + convertMainMethodDeclaration((ASTMAINMETHOD) child);
 
             childIndex++;
         }
@@ -182,8 +182,6 @@ public class CodeGenerator {
         if(varNode.classScope){
             varCode += nl() + ".field public " + varNode.varName + space() + getJasminType(varNode.varName, varNode);
         }
-
-        varCode += nl();
 
         return varCode;
     }

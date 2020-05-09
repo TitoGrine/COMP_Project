@@ -15,6 +15,7 @@ class ASTNEW_ARRAY extends TypeSensitive {
     SimpleNode childNode = (SimpleNode) this.jjtGetChild(0);
 
     childNode.addSymbolTable(this.symbolTable);
+    childNode.eval(analysis);
 
     if(!this.validType(childNode, TypeEnum.INT, analysis))
       analysis.addError(this.getCoords(), "Integer array initialized with invalid size.");

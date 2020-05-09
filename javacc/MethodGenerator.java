@@ -5,7 +5,6 @@ public class MethodGenerator extends CodeGenerator{
 
     ASTMETHOD methodNode;
     private static List<String> locals;
-    private int localsCounter = 1;
 
     MethodGenerator(ASTMETHOD methodNode, ASTCLASS classNode, List<String> classVars, int labelCounter){
         super.classNode = classNode;
@@ -14,7 +13,7 @@ public class MethodGenerator extends CodeGenerator{
 
         this.methodNode = methodNode;
         locals = new ArrayList<>(methodNode.localSize);
-        locals.add(methodNode.methodName); //TODO: methodName or 'this'?
+        locals.add(0, "this"); //TODO: methodName or 'this'?
     }
 
     private String parametersCode(){
@@ -83,14 +82,12 @@ public class MethodGenerator extends CodeGenerator{
 
             if(child.equalsNodeType(ParserTreeConstants.JJTARGUMENT)){
                 locals.add(((ASTARGUMENT) child).argName);
-                this.localsCounter++;
             }
         }
     }
 
     private void addVariable(ASTVARIABLE varNode){
         locals.add(varNode.varName);
-        this.localsCounter++;
     }
 
     private String addStoreVar(SimpleNode node, int identation){
@@ -109,26 +106,30 @@ public class MethodGenerator extends CodeGenerator{
 
         if(index != -1){
             if(arrayAccess){
-                storeCode += "astore " + index;
+                storeCode += "aload_" + index + nl();
+                storeCode += generateTypeSensitiveCode((SimpleNode) ((ASTARRAY_ACCESS) node).jjtGetChild(1), identation);
+
             } else{
                 TypeEnum type = node.symbolTable.getSymbol(varName).getType();
 
-                if(type == TypeEnum.ARRAY)
-                    storeCode += "iastore ";
-                else if (type == TypeEnum.OBJECT)
-                    storeCode += "astore "; //TODO: Confirm its always the case
+                if(type == TypeEnum.ARRAY || type == TypeEnum.OBJECT)
+                    storeCode += "astore_"; //TODO: Confirm its always the case
                 else
-                    storeCode += "istore ";
+                    storeCode += "istore_";
 
-                storeCode += index;
+                storeCode += index + nl();
             }
         } else {
             index = classVars.indexOf(varName); //TODO: Necessary?
+            storeCode += "aload_0" + nl(); //TODO: Check if it's in the correct place (first line of assign?)
 
-            storeCode += "putfield " + classNode.className + "/" + varName + space() + getJasminType(varName, node);
+            if(arrayAccess){
+                storeCode += tab(identation) + "getfield " + classNode.className + "/" + varName + space() + getJasminType(varName, node) + nl();
+                storeCode += generateTypeSensitiveCode((SimpleNode) ((ASTARRAY_ACCESS) node).jjtGetChild(1), identation);
+            } else{
+                storeCode += tab(identation) + "putfield " + classNode.className + "/" + varName + space() + getJasminType(varName, node) + nl();
+            }
         }
-
-        storeCode += nl();
 
         return storeCode;
     }
@@ -162,7 +163,7 @@ public class MethodGenerator extends CodeGenerator{
             operationCode += generateTypeSensitiveCode(secondChild, identation);
         }
 
-        operationCode += nl() + tab(identation);
+        operationCode += tab(identation);
 
         switch(operationNode.id){
             case ParserTreeConstants.JJTADD:
@@ -187,7 +188,7 @@ public class MethodGenerator extends CodeGenerator{
                 operationCode += "if_cmple label_" + labelCounter + nl();
                 operationCode += tab(identation) + "iconst_0" + nl();
                 operationCode += tab(identation) + "goto label_" + (labelCounter + 1) + nl();
-                operationCode += tab(identation) + "label_" + labelCounter + ":";
+                operationCode += tab(identation) + "label_" + labelCounter + ":" + nl();
                 operationCode += tab(identation) + "iconst_1" + nl();
                 operationCode += tab(identation) + "label_" + (labelCounter + 1) + ":";
 
@@ -216,6 +217,12 @@ public class MethodGenerator extends CodeGenerator{
         SimpleNode child = (SimpleNode) arrayNode.jjtGetChild(0);
 
         return generateTypeSensitiveCode(child, identation) + tab(identation) + "newarray int";
+    }
+
+    private String generateLengthCode(ASTLENGTH lengthNode, int identation){
+        SimpleNode child = (SimpleNode) lengthNode.jjtGetChild(0);
+
+        return generateTypeSensitiveCode(child, identation) + tab(identation) + "arraylength"; //TODO: Only for arrays?
     }
 
     private String generateVarCode(ASTIDENT identNode, int identation){
@@ -251,10 +258,10 @@ public class MethodGenerator extends CodeGenerator{
 
         switch(child.id){
             case ParserTreeConstants.JJTNUM:
-                code += generateNumCode((ASTNUM) child, identation);
+                code += generateNumCode((ASTNUM) child, identation) + nl();
                 break;
             case ParserTreeConstants.JJTBOOL:
-                code += generateBoolCode((ASTBOOL) child, identation);
+                code += generateBoolCode((ASTBOOL) child, identation) + nl();
                 break;
             case ParserTreeConstants.JJTADD:
             case ParserTreeConstants.JJTSUB:
@@ -263,35 +270,33 @@ public class MethodGenerator extends CodeGenerator{
             case ParserTreeConstants.JJTAND:
             case ParserTreeConstants.JJTLESSTHAN:
             case ParserTreeConstants.JJTNEGATION:
-                code += generateOperationCode(child, identation);
+                code += generateOperationCode(child, identation) + nl();
                 break;
             case ParserTreeConstants.JJTNEW:
-                code += generateNewCode((ASTNEW) child);
+                code += generateNewCode((ASTNEW) child) + nl();
                 break;
             case ParserTreeConstants.JJTNEW_ARRAY:
-                code += generateNewArrayCode((ASTNEW_ARRAY) child, identation);
+                code += generateNewArrayCode((ASTNEW_ARRAY) child, identation) + nl();
                 break;
             case ParserTreeConstants.JJTARRAY_ACCESS:
-                code += generateArrayAccessCode((ASTARRAY_ACCESS) child, identation);
+                code += generateArrayAccessCode((ASTARRAY_ACCESS) child, identation) + nl();
                 break;
             case ParserTreeConstants.JJTFUNC_METHOD:
-                code += generateCallCode((ASTFUNC_METHOD) child);
+                code += generateCallCode((ASTFUNC_METHOD) child) + nl();;
 
                 /*if(!assigned)
                     code += nl() + tab(identation) + "pop";*/ //TODO: Check if this is needed
 
                 break;
             case ParserTreeConstants.JJTLENGTH:
-                code += ""; //TODO: generateLengthCode((ASTLENGTH) child);
+                code += generateLengthCode((ASTLENGTH) child, identation) + nl(); //TODO: generateLengthCode((ASTLENGTH) child);
                 break;
             case ParserTreeConstants.JJTIDENT:
-                code += generateVarCode((ASTIDENT) child, identation);
+                code += generateVarCode((ASTIDENT) child, identation) + nl();
                 break;
             default:
                 break;
         }
-
-        code += nl();
 
         return code;
     }
@@ -334,7 +339,7 @@ public class MethodGenerator extends CodeGenerator{
             childIndex++;
         }
 
-        methodCode += ".end method" + nl();
+        methodCode += ".end method";
 
         return methodCode;
     }
@@ -345,11 +350,10 @@ public class MethodGenerator extends CodeGenerator{
         ASTMETHOD_BODY secondChild = (ASTMETHOD_BODY) methodNode.jjtGetChild(1);
 
         locals.add(firstChild.name);
-        localsCounter++;
 
         methodCode += generateBodyCode(secondChild);
         methodCode += tab() + "return" + nl();
-        methodCode += ".end method" + nl();
+        methodCode += ".end method";
 
         return methodCode;
     }
@@ -386,8 +390,15 @@ public class MethodGenerator extends CodeGenerator{
         SimpleNode firstChild = (SimpleNode) assignNode.jjtGetChild(0);
         SimpleNode secondChild = (SimpleNode) assignNode.jjtGetChild(1);
 
-        assignCode += generateTypeSensitiveCode(secondChild, 1, true);
-        assignCode += addStoreVar(firstChild, 1);
+        if(firstChild.equalsNodeType(ParserTreeConstants.JJTARRAY_ACCESS)){
+            assignCode += addStoreVar(firstChild, 1);
+            assignCode += generateTypeSensitiveCode(secondChild, 1, true);
+            assignCode += tab() + "iastore" + nl();
+        } else {
+            assignCode += generateTypeSensitiveCode(secondChild, 1, true);
+            assignCode += addStoreVar(firstChild, 1);
+        }
+
         assignCode += nl();
 
         return assignCode;
@@ -403,11 +414,11 @@ public class MethodGenerator extends CodeGenerator{
             if(objectNode.equalsNodeType(ParserTreeConstants.JJTTHIS))
                 callCode += tab() + "aload_0";
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTIDENT))
-                callCode += tab() + "aload " + locals.indexOf(((ASTIDENT) objectNode).name);
+                callCode += tab() + "aload_" + locals.indexOf(((ASTIDENT) objectNode).name);
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTFUNC_METHOD))
                 callCode += tab() + generateCallCode((ASTFUNC_METHOD) objectNode); //TODO: Probs wrong
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTNEW))
-                callCode += tab() + generateNewCode((ASTNEW) objectNode); //TODO: Probs wrong
+                callCode += generateNewCode((ASTNEW) objectNode); //TODO: Probs wrong
 
             callCode += nl();
         }

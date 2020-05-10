@@ -205,7 +205,9 @@ public class CodeGenerator {
             childIndex++;
         }
 
-        //writeToFile();
-        System.out.println(generatedCode);
+        if(ControlVars.SAVE_JASMIN_CODE)
+            writeToFile();
+        else
+            System.out.println(generatedCode);
     }
 }

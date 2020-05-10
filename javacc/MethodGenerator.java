@@ -273,7 +273,7 @@ public class MethodGenerator extends CodeGenerator{
                 code += generateOperationCode(child, indentation) + nl();
                 break;
             case ParserTreeConstants.JJTNEW:
-                code += generateNewCode((ASTNEW) child) + nl();
+                code += generateNewCode((ASTNEW) child, indentation) + nl();
                 break;
             case ParserTreeConstants.JJTNEW_ARRAY:
                 code += generateNewArrayCode((ASTNEW_ARRAY) child, indentation) + nl();
@@ -282,7 +282,7 @@ public class MethodGenerator extends CodeGenerator{
                 code += generateArrayAccessCode((ASTARRAY_ACCESS) child, indentation) + nl();
                 break;
             case ParserTreeConstants.JJTFUNC_METHOD:
-                code += generateCallCode((ASTFUNC_METHOD) child) + nl();;
+                code += generateCallCode((ASTFUNC_METHOD) child, indentation) + nl();;
 
                 /*if(!assigned)
                     code += nl() + tab(indentation) + "pop";*/ //TODO: Check if this is needed
@@ -375,7 +375,7 @@ public class MethodGenerator extends CodeGenerator{
         return assignCode;
     }
 
-    private String generateCallCode(ASTFUNC_METHOD funcNode){
+    private String generateCallCode(ASTFUNC_METHOD funcNode, int indentation){
         String callCode = "";
         SimpleNode objectNode = (SimpleNode) funcNode.jjtGetChild(0);
         ASTCALL callNode = (ASTCALL) funcNode.jjtGetChild(1);
@@ -383,13 +383,13 @@ public class MethodGenerator extends CodeGenerator{
 
         if(!isStatic(funcNode)){
             if(objectNode.equalsNodeType(ParserTreeConstants.JJTTHIS))
-                callCode += tab() + "aload_0";
+                callCode += tab(indentation) + "aload_0";
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTIDENT))
-                callCode += tab() + "aload_" + locals.indexOf(((ASTIDENT) objectNode).name);
+                callCode += tab(indentation) + "aload_" + locals.indexOf(((ASTIDENT) objectNode).name);
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTFUNC_METHOD))
-                callCode += tab() + generateCallCode((ASTFUNC_METHOD) objectNode); //TODO: Probs wrong
+                callCode += tab(indentation) + generateCallCode((ASTFUNC_METHOD) objectNode, indentation); //TODO: Probs wrong
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTNEW))
-                callCode += generateNewCode((ASTNEW) objectNode); //TODO: Probs wrong
+                callCode += generateNewCode((ASTNEW) objectNode, indentation); //TODO: Probs wrong
 
             callCode += nl();
         }
@@ -402,32 +402,31 @@ public class MethodGenerator extends CodeGenerator{
             while(childIndex < numArgs){
                 child = (SimpleNode) argumentsNode.jjtGetChild(childIndex);
 
-                callCode += generateTypeSensitiveCode(child, 1);
+                callCode += generateTypeSensitiveCode(child, indentation);
 
                 childIndex++;
             }
         }
 
-        callCode += tab() + (isStatic(funcNode) ? "invokestatic " : "invokevirtual ") + funcNode.call.replace('.', '/');
+        callCode += tab(indentation) + (isStatic(funcNode) ? "invokestatic " : "invokevirtual ") + funcNode.call.replace('.', '/');
         callCode += "(" + argumentsCode(funcNode) + ")" + methodReturnCode(funcNode);
 
         return callCode;
     }
 
-    private String generateNewCode(ASTNEW newNode){
+    private String generateNewCode(ASTNEW newNode, int indentation){
         String newCode = "";
 
-        newCode += tab() + "new " + newNode.object + nl();
-        newCode += tab() + "dup" + nl();
-        newCode += tab() + "invokespecial " + newNode.object + "/<init>()V";
+        newCode += tab(indentation) + "new " + newNode.object + nl();
+        newCode += tab(indentation) + "dup" + nl();
+        newCode += tab(indentation) + "invokespecial " + newNode.object + "/<init>()V";
 
         return newCode;
     }
 
-    private String generateConditionCode(ASTCONDITION conditionNode, boolean loopCondition, int indentation){
+    private String generateConditionCode(ASTCONDITION conditionNode, int indentation){
         String conditionCode = "";
         SimpleNode child = (SimpleNode) conditionNode.jjtGetChild(0);
-        int index = loopCondition ? loopCounter : conditionalCounter;
 
         switch(child.id){
             case ParserTreeConstants.JJTLESSTHAN:
@@ -445,14 +444,6 @@ public class MethodGenerator extends CodeGenerator{
                 break;
         }
 
-        conditionCode += space() + (loopCondition ? "endloop_" : "else_") + index + nl();
-
-        if (loopCondition)
-            loopCounter++;
-        else
-            conditionalCounter++;
-
-
         return conditionCode;
     }
 
@@ -464,14 +455,15 @@ public class MethodGenerator extends CodeGenerator{
         SimpleNode ifScopeNode = (SimpleNode) ifNode.jjtGetChild(1);
 
         String conditionalCode = "";
-        int conditionalIndex = conditionalCounter;
+        int index = conditionalCounter;
+        conditionalCounter++;
 
-        conditionalCode += generateConditionCode(conditionNode, false, indentation);
+        conditionalCode += generateConditionCode(conditionNode, indentation) + space() + "else_" + index + nl();
         conditionalCode += generateScopeCode(ifScopeNode, indentation + 1);
-        conditionalCode += tab(indentation + 1) + "goto endif_" + conditionalIndex + nl();
-        conditionalCode += tab(indentation) + "else_" + conditionalIndex + entry() + nl();
+        conditionalCode += tab(indentation + 1) + "goto endif_" + index + nl();
+        conditionalCode += tab(indentation) + "else_" + index + entry() + nl();
         conditionalCode += generateScopeCode(elseNode, indentation + 1);
-        conditionalCode += tab(indentation) + "endif_" + conditionalIndex + entry() + nl(2);
+        conditionalCode += tab(indentation) + "endif_" + index + entry() + nl(2);
 
         return conditionalCode;
     }
@@ -481,13 +473,14 @@ public class MethodGenerator extends CodeGenerator{
         SimpleNode loopScopeNode = (SimpleNode) loopNode.jjtGetChild(1);
 
         String loopCode = "";
-        int loopIndex = loopCounter;
+        int index = loopCounter;
+        loopCounter++;
 
-        loopCode += tab(indentation) + "loop_" + loopIndex + entry() + nl();
-        loopCode += generateConditionCode(conditionNode, true, indentation + 1) + nl();
+        loopCode += tab(indentation) + "loop_" + index + entry() + nl();
+        loopCode += generateConditionCode(conditionNode, indentation + 1) + space() + "endloop_" + index + nl(2);
         loopCode += generateScopeCode(loopScopeNode, indentation + 1);
-        loopCode += tab(indentation + 1) + "goto loop_" + loopIndex + nl();
-        loopCode += tab(indentation) + "endloop_" + loopIndex + entry() + nl(2);
+        loopCode += tab(indentation + 1) + "goto loop_" + index + nl();
+        loopCode += tab(indentation) + "endloop_" + index + entry() + nl(2);
 
         return loopCode;
     }

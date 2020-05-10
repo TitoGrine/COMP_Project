@@ -1,13 +1,13 @@
 import static io.println(int);
 class LoopGen {
 
-    int m;
 	int[] jk;
 
 	public static void main(String[] args) {
 		int a;
 		int i;
 		int j;
+		boolean sum_complete;
 
 		a = 1;
 		i = 1;
@@ -18,8 +18,10 @@ class LoopGen {
 		    j = 0;
 		    a = 0;
 
-		    while(j < i){
+		    sum_complete = false;
+		    while(!sum_complete){
 		        a = a + jk[j];
+		        sum_complete = j < i;
 		    }
 
 		    jk[i] = a;

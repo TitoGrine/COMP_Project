@@ -1,0 +1,30 @@
+import static io.println(int);
+class LoopGen {
+
+    int m;
+	int[] jk;
+
+	public static void main(String[] args) {
+		int a;
+		int i;
+		int j;
+
+		a = 1;
+		i = 1;
+		jk = new int[10];
+        jk[0] = a;
+
+		while(i < jk.length){
+		    j = 0;
+		    a = 0;
+
+		    while(j < i){
+		        a = a + jk[j];
+		    }
+
+		    jk[i] = a;
+		}
+
+        io.println(jk[jk.length - 1]);
+	}
+}

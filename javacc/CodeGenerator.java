@@ -10,6 +10,7 @@ public class CodeGenerator {
     private static String generatedCode;
     protected int labelCounter = 0;
     protected int conditionalCounter = 0;
+    protected int loopCounter = 0;
     protected List<String> classVars;
 
     //private static List<String> locals;

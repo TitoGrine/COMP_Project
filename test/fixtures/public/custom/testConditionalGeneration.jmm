@@ -29,9 +29,9 @@ class ConditionalGen {
         } else if(e && jk[1] < a + b){
             m = a + b / jk[0];
         } else {
-            m = 0 - 1;
+            m = 0 -  1;
         }
 
-        jk[jk.length] = m;
+        jk[jk.length - 1] = m;
 	}
 }

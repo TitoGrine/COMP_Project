@@ -212,6 +212,6 @@ public class ParserTest {
     @Test
     public void testJVMGeneration() {
         if(ControlVars.RUN_CUSTOM_TESTS)
-            test("fixtures/public/custom/TestJVM.jmm", false);
+            test("fixtures/public/custom/testSimpleJVM.jmm", false);
     }
 }

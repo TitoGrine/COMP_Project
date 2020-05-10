@@ -9,10 +9,10 @@ public class CodeGenerator {
     protected ASTCLASS classNode;
     private static String generatedCode;
     protected int labelCounter = 0;
+    protected int conditionalCounter = 0;
     protected List<String> classVars;
 
     //private static List<String> locals;
-
 
     protected void writeToFile() {
         File file = new File("test/fixtures/libs/compiled/jasminCode/" + classNode.className + ".j");
@@ -35,6 +35,16 @@ public class CodeGenerator {
         return " ";
     }
 
+    protected static String entry() {
+        return ":";
+    }
+
+    protected static String rnl() { return "\r\b\r"; }
+
+    protected static String nl(int num) {
+        return "\n".repeat(num);
+    }
+
     protected static String nl() {
         return "\n";
     }
@@ -44,7 +54,7 @@ public class CodeGenerator {
     }
 
     protected static String tab() {
-        return tab(1);
+        return "\t";
     }
 
     protected static String standardInitializer(String extendedClass) {
@@ -108,6 +118,70 @@ public class CodeGenerator {
         return jasminType;
     }
 
+    protected String convertClass(){
+        String classCode = ".class public " + this.classNode.className + nl();
+
+        String extendedClass = ((ClassSymbol) this.classNode.symbolTable.getSymbol(this.classNode.className)).getExtendedClass();
+
+        boolean extendsClass = extendedClass == null;
+
+        classCode += ".super " + (extendsClass ? "java/lang/Object" : extendedClass) + nl();
+
+        classCode += standardInitializer(extendsClass ? "java/lang/Object" : extendedClass);
+
+        classCode += convertClassBody(extendsClass);
+
+        return classCode;
+    }
+
+    protected String convertClassBody(boolean extendsClass){
+        String classBodyCode = "";
+
+        int numChildren = this.classNode.jjtGetNumChildren();
+        int childIndex = (extendsClass ? 1 : 0);
+
+        SimpleNode child;
+
+        while(childIndex < numChildren){
+            child = (SimpleNode) this.classNode.jjtGetChild(childIndex);
+
+            if(child.equalsNodeType(ParserTreeConstants.JJTVARIABLE))
+                classBodyCode += convertVarDeclaration((ASTVARIABLE) child);
+            else if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD))
+                classBodyCode += nl() + convertMethodDeclaration((ASTMETHOD) child);
+            else if(child.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
+                classBodyCode += nl() + convertMainMethodDeclaration((ASTMAINMETHOD) child);
+
+            childIndex++;
+        }
+
+        return classBodyCode;
+    }
+
+    protected String convertVarDeclaration(ASTVARIABLE varNode){
+        String varCode = "";
+
+        classVars.add(varNode.varName);
+
+        if(varNode.classScope){
+            varCode += nl() + ".field public " + varNode.varName + space() + getJasminType(varNode.varName, varNode);
+        }
+
+        return varCode;
+    }
+
+    protected String convertMethodDeclaration(ASTMETHOD methodNode){
+        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, labelCounter);
+
+        return methodGenerator.generateMethodCode();
+    }
+
+    protected String convertMainMethodDeclaration(ASTMAINMETHOD methodNode){
+        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, labelCounter);
+
+        return methodGenerator.generateMainMethodCode();
+    }
+
     public void generate(SimpleNode root){
         this.generatedCode = "";
 
@@ -132,69 +206,5 @@ public class CodeGenerator {
 
         //writeToFile();
         System.out.println(generatedCode);
-    }
-
-    public String convertClass(){
-        String classCode = ".class public " + this.classNode.className + nl();
-
-        String extendedClass = ((ClassSymbol) this.classNode.symbolTable.getSymbol(this.classNode.className)).getExtendedClass();
-
-        boolean extendsClass = extendedClass == null;
-
-        classCode += ".super " + (extendsClass ? "java/lang/Object" : extendedClass) + nl();
-
-        classCode += standardInitializer(extendsClass ? "java/lang/Object" : extendedClass);
-
-        classCode += convertClassBody(extendsClass);
-
-        return classCode;
-    }
-
-    public String convertClassBody(boolean extendsClass){
-        String classBodyCode = "";
-
-        int numChildren = this.classNode.jjtGetNumChildren();
-        int childIndex = (extendsClass ? 1 : 0);
-
-        SimpleNode child;
-
-        while(childIndex < numChildren){
-            child = (SimpleNode) this.classNode.jjtGetChild(childIndex);
-
-            if(child.equalsNodeType(ParserTreeConstants.JJTVARIABLE))
-                classBodyCode += convertVarDeclaration((ASTVARIABLE) child);
-            else if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD))
-                classBodyCode += nl() + convertMethodDeclaration((ASTMETHOD) child);
-            else if(child.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
-                classBodyCode += nl() + convertMainMethodDeclaration((ASTMAINMETHOD) child);
-
-            childIndex++;
-        }
-
-        return classBodyCode;
-    }
-
-    public String convertVarDeclaration(ASTVARIABLE varNode){
-        String varCode = "";
-
-        classVars.add(varNode.varName);
-
-        if(varNode.classScope){
-            varCode += nl() + ".field public " + varNode.varName + space() + getJasminType(varNode.varName, varNode);
-        }
-
-        return varCode;
-    }
-
-    public String convertMethodDeclaration(ASTMETHOD methodNode){
-        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, labelCounter);
-
-        return methodGenerator.generateMethodCode();
-    }
-
-    public String convertMainMethodDeclaration(ASTMAINMETHOD methodNode){
-        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, labelCounter);
-
-        return methodGenerator.generateMainMethodCode();
     }
 }

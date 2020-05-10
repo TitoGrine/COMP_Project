@@ -45,54 +45,34 @@ To test the program, run ``gradle test``. This will execute the build, and run t
 In the ``javacc`` folder there is a class ``ControlVars.java`` that hold some variables that control the execution of the parser, allowing for some
 costumization. Here are the description of each of those variables.
 
-|         Variable        |                                                                    Description                                                                   |
-|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| ANALYSE_SEMANTICS       | If **true**, it performs the semantic analysis of the code.                                                                                         |
-| ANALYSE_SCOPE_VAR_INIT  | If **true**, it will check whether variable are only initialized within if, else or while scopes and  therefore might not be initialized when used. |
+|         Variable        |                                                                    Description                                                                     |
+|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| ANALYSE_SEMANTICS       | If **true**, it performs the semantic analysis of the code.                                                                                        |
+| ANALYSE_SCOPE_VAR_INIT  | If **true**, it will check whether variable are only initialized within if, else or while scopes and  therefore might not be initialized when used.|
 | THROW_VAR_INIT_ERROR    | If **true**, variables that are used but are not initialized will throw an error instead of a warning.                                             |
 | THROW_WARNING_EXCEPTION | If **true**, warnings will throw an exception causing the semantic analysis to fail.                                                               |
 | PRINT_SYMBOL_TABLE      | If **true**, it prints the symbol table of each meaningful scope.                                                                                  |
 | PRINT_AST               | If **true**, it prints the Abstract Syntax Tree.                                                                                                   |
 | RUN_CUSTOM_TESTS        | If **true**, it will run tests for custom made ``.jmm`` files.                                                                                     |
-
+| SAVE_JASMIN_CODE        | If **true**, it will save the generated Jasmin code in a file, otherwise it will print it to the terminal.                                         |
 
 ## Checklist
 
- **Symbol Table**  
- 
- * ~~global: inclui info de imports e a classe declarada~~
- * ~~classe-specific: inclui info de extends, fields e methods~~
- * ~~method-specific: inclui info dos arguments e local variables~~
- * ~~tem de permitir method overload (i.e. métodos com mesmo nome mas assinatura de parâmetros diferente)~~
- * ~~tem de permitir consulta da tabela por parte da análise semantica (e geração de código)~~
- * ~~tem de permitir ligar e desligar a sua impressão para fins de debug (neste caso para fins de avaliação)~~
-  
- **Type Verification**  
- 
- * ~~verificar se operações são efetuadas com o mesmo tipo (e.g. int + boolean tem de dar erro)~~
- * ~~não é possível utilizar arrays diretamente para operações aritmeticas (e.g. array1 + array2)~~
- * ~~verificar se um array access é de facto feito sobre um array~~
- * ~~verificar se o indice do array access é um inteiro~~
- * ~~verificar se valor do assignee é igual ao do assigned (a_int = b_boolean não é permitido!)~~
- * ~~verificar se operação booleana é efetuada só com booleanos~~
- * ~~verificar se conditional expressions (if e while) resulta num booleano~~
- * ~~verificar se variáveis são inicializadas, dando um WARNING em vez de ERRO~~
- * ~~parametros são assumidos como inicializados~~
- * ~~devem fazer uma análise através do control flow, i.e., se há um if e a variável só é inicializada dentro de ou o then ou o else, deve-se dar um warning a indicar que poderá não estar inicializada.~~
- 
- **Function Verification**  
- 
- * ~~verificar se o "target" do método existe, e se este contém o método (e.g. a.foo, ver se 'a' existe e se tem um método 'foo')~~
- * ~~caso seja do tipo da classe declarada (e.g. a usar o this), verificar se é método do extends olhando para o que foi importado (isto se a classe fizer extends de outra classe importada)~~
- * ~~caso o método não seja da classe declarada, isto é importada, verificar se método foi importado~~
- * ~~verificar se o número de argumentos na invocação é igual ao número de parâmetros da declaração~~
- * ~~verificar se o tipo dos parâmetros coincide com o tipo dos argumentos~~
-  
- **Code Generation**
+1. ~~Develop a parser for **Java--** using JavaCC and taking as starting point the Java-- grammar furnished.~~
+2. ~~Include error treatment and recovery mechanisms.~~
+3. ~~Proceed with the specification of the file **jjt** to generate, using JJTree, a new version of the parser
+including in this case the generation of the syntax tree (the generated tree should be an AST), annotating the nodes
+and leafs of the tree with the information (including tokens) necessary to perform the subsequent compiler steps.~~
+4. ~~Include the necessary symbol tables.~~
+5. ~~Semantic Analysis.~~
+6. ~~Generate JVM code accepted by jasmin corresponding to the invocation of functions in **Java--**.~~
+7. ~~Generate JVM code accepted by jasmin for arithmetic expressions.~~
+8. Generate JVM code accepted by jasmin for conditional instructions (if and if-else).
+9. Generate JVM code accepted by jasmin for loops.
+10. Generate JVM code accepted by jasmin to deal with arrays.
+11. Complete the compiler and test it using a set of Java-- classes.
+12. Proceed with the optimizations related to the code generation, related to the register allocation (“-r” option) 
+and the optimizations related to the “-o” option.
 
- * ~~estrutura básica de classe (incluindo construtor ``<init>``)~~
- * ~~estrutura básica de fields~~
- * ~~estrutura básica de métodos (podem desconsiderar os limites neste checkpoint: limit_stack 99, limit_locals 99)~~
- * ~~assignments~~
- * ~~operações aritméticas (com prioridade de operações correta)~~
- * ~~invocação de métodos~~
+ 
+ 

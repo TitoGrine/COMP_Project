@@ -9,8 +9,8 @@ class LoopGen {
 		int j;
 		boolean sum_complete;
 
-		a = 1;
 		i = 1;
+		a = 1;
 		jk = new int[10];
         jk[0] = a;
 

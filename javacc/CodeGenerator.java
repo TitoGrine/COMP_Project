@@ -13,8 +13,6 @@ public class CodeGenerator {
     protected int loopCounter = 0;
     protected List<String> classVars;
 
-    //private static List<String> locals;
-
     protected void writeToFile() {
         File file = new File("test/fixtures/libs/compiled/jasminCode/" + classNode.className + ".j");
 
@@ -184,7 +182,7 @@ public class CodeGenerator {
     }
 
     public void generate(SimpleNode root){
-        this.generatedCode = "";
+        generatedCode = "";
 
         int numChildren = root.jjtGetNumChildren();
         int childIndex = 0;

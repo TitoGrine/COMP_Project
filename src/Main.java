@@ -31,6 +31,7 @@ public class Main {
             }
 
             if(ControlVars.GENERATE_JASMIN_CODE){
+                System.out.println(ControlVars.GREEN + "\n +++++++++++ Generated Jasmin Code +++++++++++\n" + ControlVars.RESET);
                 new CodeGenerator().generate(root);
             }
 

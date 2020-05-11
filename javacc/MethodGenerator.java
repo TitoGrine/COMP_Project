@@ -185,7 +185,7 @@ public class MethodGenerator extends CodeGenerator{
                 operationCode += "ineg";
                 break;
             case ParserTreeConstants.JJTLESSTHAN:
-                operationCode += "if_cmple label_" + labelCounter + nl();
+                operationCode += "if_cmplt label_" + labelCounter + nl();
                 operationCode += tab(indentation + 1) + "iconst_0" + nl();
                 operationCode += tab(indentation + 1) + "goto label_" + (labelCounter + 1) + nl();
                 operationCode += tab(indentation) + "label_" + labelCounter + ":" + nl();

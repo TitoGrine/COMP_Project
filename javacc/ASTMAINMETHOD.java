@@ -46,7 +46,7 @@ class ASTMAINMETHOD extends ASTMETHOD {
     methodBody.addSymbolTable(symbolTable);
     methodBody.eval(analysis);
 
-    this.localSize = 2 + methodBody.numVars;
+    this.localSize = 1 + methodBody.numVars;
 
     if(ControlVars.PRINT_SYMBOLTABLE)
       this.symbolTable.print(this.methodName);

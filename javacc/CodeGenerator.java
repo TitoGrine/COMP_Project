@@ -38,6 +38,8 @@ public class CodeGenerator {
         return ":";
     }
 
+    protected static String us() { return "_"; }
+
     protected static String rnl() { return "\r\b\r"; }
 
     protected static String nl(int num) {

@@ -5,6 +5,9 @@ public class MethodGenerator extends CodeGenerator{
 
     ASTMETHOD methodNode;
     private static List<String> locals;
+    private int maxStack = 0;
+    private int stack = 0;
+
 
     MethodGenerator(ASTMETHOD methodNode, ASTCLASS classNode, List<String> classVars, int labelCounter){
         super.classNode = classNode;
@@ -13,6 +16,15 @@ public class MethodGenerator extends CodeGenerator{
 
         this.methodNode = methodNode;
         locals = new ArrayList<>(methodNode.localSize);
+    }
+
+    private void pushStack(int n){
+        stack += n;
+    }
+
+    private void popStack(int n){
+        maxStack = Math.max(stack, maxStack);
+        stack -= n;
     }
 
     private void addArguments(ASTARGUMENTS argumentsNode){
@@ -55,6 +67,7 @@ public class MethodGenerator extends CodeGenerator{
         if(index != -1){
 
             if(arrayAccess){
+                pushStack(1);
                 storeCode += tab(indentation);
                 storeCode += "aload" + (index < 4 ? us() : space()) + nl();
                 storeCode += generateTypeSensitiveCode((SimpleNode) ((ASTARRAY_ACCESS) varNode).jjtGetChild(1), indentation);
@@ -64,6 +77,7 @@ public class MethodGenerator extends CodeGenerator{
                 storeCode += generateTypeSensitiveCode(expNode, indentation);
                 storeCode += tab(indentation);
 
+                popStack(1);
                 if(type == TypeEnum.ARRAY || type == TypeEnum.OBJECT)
                     storeCode += "astore";
                 else
@@ -73,12 +87,15 @@ public class MethodGenerator extends CodeGenerator{
             }
         } else {
             index = classVars.indexOf(varName); //TODO: Necessary?
+            pushStack(1);
             storeCode += tab(indentation) + "aload_0" + nl();
             storeCode += generateTypeSensitiveCode(expNode, indentation);
+
             if(arrayAccess){
                 storeCode += tab(indentation) + "getfield " + classNode.className + "/" + varName + space() + getJasminType(varName, varNode) + nl();
                 storeCode += generateTypeSensitiveCode((SimpleNode) ((ASTARRAY_ACCESS) varNode).jjtGetChild(1), indentation);
             } else{
+                popStack(2);
                 storeCode += tab(indentation) + "putfield " + classNode.className + "/" + varName + space() + getJasminType(varName, varNode) + nl();
             }
         }
@@ -122,7 +139,7 @@ public class MethodGenerator extends CodeGenerator{
     private String generateStackCode(){
         String stackCode = "";
 
-        stackCode += tab() + ".limit stack " + 99 + nl(); //TODO: Provisório!!
+        stackCode += tab() + ".limit stack " + maxStack + nl();
         stackCode += tab() + ".limit locals " + methodNode.localSize + nl();
 
         return stackCode;
@@ -147,10 +164,12 @@ public class MethodGenerator extends CodeGenerator{
     }
 
     private String generateNumCode(ASTNUM numNode, int indentation){
+        pushStack(1);
         return tab(indentation) + (numNode.value > -2 && numNode.value < 6 ? "iconst_" :"bipush ") + numNode.value;
     }
 
     private String generateBoolCode(ASTBOOL boolNode, int indentation){
+        pushStack(1);
         return tab(indentation) + (boolNode.truth_value ? "iconst_1" : "iconst_0");
     }
 
@@ -170,32 +189,38 @@ public class MethodGenerator extends CodeGenerator{
 
         switch(operationNode.id){
             case ParserTreeConstants.JJTADD:
+                popStack(1);
                 operationCode += "iadd";
                 break;
             case ParserTreeConstants.JJTSUB:
+                popStack(1);
                 operationCode += "isub";
                 break;
             case ParserTreeConstants.JJTMUL:
+                popStack(1);
                 operationCode += "imul";
                 break;
             case ParserTreeConstants.JJTDIV:
+                popStack(1);
                 operationCode += "idiv";
                 break;
             case ParserTreeConstants.JJTAND:
+                popStack(1);
                 operationCode += "iand";
                 break;
             case ParserTreeConstants.JJTNEGATION:
                 operationCode += "ineg";
                 break;
             case ParserTreeConstants.JJTLESSTHAN:
-                operationCode += "if_icmplt label_" + labelCounter + nl();
+                popStack(2);
+                operationCode += "if_icmplt branch_" + labelCounter + nl();
                 operationCode += tab(indentation + 1) + "iconst_0" + nl();
-                operationCode += tab(indentation + 1) + "goto label_" + (labelCounter + 1) + nl();
-                operationCode += tab(indentation) + "label_" + labelCounter + ":" + nl();
+                operationCode += tab(indentation + 1) + "goto end_" + labelCounter + nl();
+                operationCode += tab(indentation) + "branch_" + labelCounter + ":" + nl();
                 operationCode += tab(indentation + 1) + "iconst_1" + nl();
-                operationCode += tab(indentation) + "label_" + (labelCounter + 1) + ":";
-
-                labelCounter += 2;
+                operationCode += tab(indentation) + "end_" + labelCounter + ":";
+                pushStack(1);
+                labelCounter ++;
                 break;
             default:
                 break;
@@ -211,6 +236,7 @@ public class MethodGenerator extends CodeGenerator{
         String accessCode = "";
         accessCode += generateTypeSensitiveCode(firstChild, indentation);
         accessCode += generateTypeSensitiveCode(secondChild, indentation);
+        popStack(1);
         accessCode += tab(indentation) + "iaload";
 
         return accessCode;
@@ -253,6 +279,7 @@ public class MethodGenerator extends CodeGenerator{
 
             varCode += tab(indentation);
 
+            pushStack(1);
             if(varType == TypeEnum.ARRAY || varType == TypeEnum.OBJECT)
                 varCode += "aload" + (index < 4 ? us() : space());
             else
@@ -260,6 +287,7 @@ public class MethodGenerator extends CodeGenerator{
         } else {
             index = classVars.indexOf(varName); //TODO: necessary?
 
+            pushStack(1);
             varCode += tab(indentation) + "aload_0" + nl();
             varCode += tab(indentation) + "getfield " + classNode.className + "/" + varName + space() + getJasminType(varName, identNode);
         }
@@ -307,7 +335,7 @@ public class MethodGenerator extends CodeGenerator{
 
                 break;
             case ParserTreeConstants.JJTLENGTH:
-                code += generateLengthCode((ASTLENGTH) child, indentation) + nl(); //TODO: generateLengthCode((ASTLENGTH) child);
+                code += generateLengthCode((ASTLENGTH) child, indentation) + nl();
                 break;
             case ParserTreeConstants.JJTIDENT:
                 code += generateVarCode((ASTIDENT) child, indentation) + nl();
@@ -326,6 +354,7 @@ public class MethodGenerator extends CodeGenerator{
         returnCode += generateTypeSensitiveCode(child, 1);
         returnCode += tab();
 
+        popStack(stack);
         if(returnNode.expType == TypeEnum.OBJECT || returnNode.expType == TypeEnum.ARRAY)
             returnCode += "areturn";
         else if(returnNode.expType == TypeEnum.VOID)
@@ -382,6 +411,7 @@ public class MethodGenerator extends CodeGenerator{
         assignCode += addStoreVar(firstChild, secondChild, indentation);
 
         if(firstChild.equalsNodeType(ParserTreeConstants.JJTARRAY_ACCESS)){
+            popStack(3);
             assignCode += tab(indentation) + "iastore" + nl();
         }
 
@@ -397,8 +427,10 @@ public class MethodGenerator extends CodeGenerator{
         int numArgs = funcNode.arguments.size();
 
         if(!isStatic(funcNode)){
-            if(objectNode.equalsNodeType(ParserTreeConstants.JJTTHIS))
+            if(objectNode.equalsNodeType(ParserTreeConstants.JJTTHIS)){
+                pushStack(1);
                 callCode += tab(indentation) + "aload_0";
+            }
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTIDENT))
                 callCode += generateVarCode((ASTIDENT) objectNode, indentation); //TODO: Check this is correct
             else if(objectNode.equalsNodeType(ParserTreeConstants.JJTFUNC_METHOD))
@@ -423,8 +455,17 @@ public class MethodGenerator extends CodeGenerator{
             }
         }
 
-        callCode += tab(indentation) + (isStatic(funcNode) ? "invokestatic " : "invokevirtual ") + funcNode.call.replace('.', '/');
-        callCode += "(" + argumentsCode(funcNode) + ")" + methodReturnCode(funcNode);
+        callCode += tab(indentation);
+
+        if(isStatic(funcNode)){
+            popStack(numArgs - 1);
+            callCode += "invokestatic ";
+        } else {
+            popStack(numArgs);
+            callCode += "invokevirtual ";
+        }
+
+        callCode += space() + funcNode.call.replace('.', '/') + "(" + argumentsCode(funcNode) + ")" + methodReturnCode(funcNode);
 
         return callCode;
     }
@@ -432,7 +473,9 @@ public class MethodGenerator extends CodeGenerator{
     private String generateNewCode(ASTNEW newNode, int indentation){
         String newCode = "";
 
+        pushStack(1);
         newCode += tab(indentation) + "new " + newNode.object + nl();
+        pushStack(1);
         newCode += tab(indentation) + "dup" + nl();
         newCode += tab(indentation) + "invokespecial " + newNode.object + "/<init>()V";
 
@@ -450,11 +493,13 @@ public class MethodGenerator extends CodeGenerator{
 
                 conditionCode += generateTypeSensitiveCode(leftSideNode, indentation);
                 conditionCode += generateTypeSensitiveCode(rightSideNode, indentation);
+                popStack(2);
                 conditionCode += tab(indentation) + "if_icmpge";
 
                 break;
             default:
                 conditionCode += generateTypeSensitiveCode(child, indentation);
+                popStack(1);
                 conditionCode += tab(indentation) + "ifeq";
                 break;
         }
@@ -502,7 +547,8 @@ public class MethodGenerator extends CodeGenerator{
 
     public String generateMethodCode(){
         locals.add(0, "this");
-        String methodCode = nl() + generateMethodHeader();
+        String methodCode = "";
+        String auxCode = "";
         int numChildren = methodNode.jjtGetNumChildren();
         int childIndex = 0;
         SimpleNode child;
@@ -513,26 +559,32 @@ public class MethodGenerator extends CodeGenerator{
             if(child.equalsNodeType(ParserTreeConstants.JJTARGUMENTS))
                 addArguments((ASTARGUMENTS) child);
             else if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD_BODY))
-                methodCode += generateScopeCode(child, 1);
+                auxCode += generateScopeCode(child, 1);
             else if(child.equalsNodeType(ParserTreeConstants.JJTRETURN_EXP))
-                methodCode += generateReturnCode((ASTRETURN_EXP) child);
+                auxCode += generateReturnCode((ASTRETURN_EXP) child);
 
             childIndex++;
         }
 
+        methodCode += nl() + generateMethodHeader();
+        methodCode += auxCode;
         methodCode += ".end method";
 
         return methodCode;
     }
 
     public String generateMainMethodCode(){
-        String methodCode = nl() + generateMainMethodHeader();
+        String methodCode = "";
+        String auxCode = "";
         ASTIDENT firstChild = (ASTIDENT) methodNode.jjtGetChild(0);
         SimpleNode secondChild = (SimpleNode) methodNode.jjtGetChild(1);
 
         locals.add(firstChild.name);
 
-        methodCode += generateScopeCode(secondChild, 1);
+        auxCode += generateScopeCode(secondChild, 1);
+
+        methodCode += nl() + generateMainMethodHeader();
+        methodCode += auxCode;
         methodCode += tab() + "return" + nl();
         methodCode += ".end method";
 

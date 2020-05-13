@@ -8,7 +8,6 @@ public class MethodGenerator extends CodeGenerator{
     private int maxStack = 0;
     private int stack = 0;
 
-
     MethodGenerator(ASTMETHOD methodNode, ASTCLASS classNode, List<String> classVars, int labelCounter){
         super.classNode = classNode;
         super.classVars = classVars;
@@ -69,7 +68,7 @@ public class MethodGenerator extends CodeGenerator{
             if(arrayAccess){
                 pushStack(1);
                 storeCode += tab(indentation);
-                storeCode += "aload" + (index < 4 ? us() : space()) + nl();
+                storeCode += "aload" + (index < 4 ? us() : space()) + index + nl();
                 storeCode += generateTypeSensitiveCode((SimpleNode) ((ASTARRAY_ACCESS) varNode).jjtGetChild(1), indentation);
                 storeCode += generateTypeSensitiveCode(expNode, indentation);
             } else{
@@ -165,7 +164,7 @@ public class MethodGenerator extends CodeGenerator{
 
     private String generateNumCode(ASTNUM numNode, int indentation){
         pushStack(1);
-        return tab(indentation) + (numNode.value > -2 && numNode.value < 6 ? "iconst_" :"bipush ") + numNode.value;
+        return tab(indentation) + (numNode.value > -2 && numNode.value < 6 ? "iconst_" : (numNode.value < 128 ? "bipush " : "ldc ")) + numNode.value;
     }
 
     private String generateBoolCode(ASTBOOL boolNode, int indentation){
@@ -281,9 +280,9 @@ public class MethodGenerator extends CodeGenerator{
 
             pushStack(1);
             if(varType == TypeEnum.ARRAY || varType == TypeEnum.OBJECT)
-                varCode += "aload" + (index < 4 ? us() : space());
+                varCode += "aload" + (index < 4 ? us() : space()) + index;
             else
-                varCode += "iload" + (index < 4 ? us() : space());
+                varCode += "iload" + (index < 4 ? us() : space()) + index;
         } else {
             index = classVars.indexOf(varName); //TODO: necessary?
 

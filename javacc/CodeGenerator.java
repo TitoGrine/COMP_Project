@@ -6,28 +6,45 @@ import java.util.List;
 
 public class CodeGenerator {
 
-    protected ASTCLASS classNode;
+    private PrintWriter writer;
     private static String generatedCode;
+    protected ASTCLASS classNode;
     protected int labelCounter = 0;
     protected int conditionalCounter = 0;
     protected int loopCounter = 0;
     protected List<String> classVars;
 
-    protected void writeToFile() {
-        File file = new File("test/fixtures/libs/compiled/jasminCode/" + classNode.className + ".j");
+    private void createFile(){
+        if(!ControlVars.SAVE_JASMIN_CODE)
+            return;
 
-        try{
+        try {
+            File file = new File("test/fixtures/libs/compiled/jasminCode/" + classNode.className + ".j");
+
             if (!file.exists())
-            file.createNewFile();
+                file.createNewFile();
 
-            PrintWriter writer = new PrintWriter(file);
+            writer = new PrintWriter(file);
 
-            writer.println(generatedCode);
-
-            writer.close();
         } catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private void writeToFile(String code) {
+        try{
+            if(ControlVars.SAVE_JASMIN_CODE)
+                writer.print(code);
+            else
+                System.out.println(code);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void closeFile(){
+        if(ControlVars.SAVE_JASMIN_CODE)
+            writer.close();
     }
 
     protected static String space() {
@@ -63,7 +80,7 @@ public class CodeGenerator {
         code += tab() + "aload_0" + nl();
         code += tab() + "invokenonvirtual " + extendedClass + "/<init>()V" + nl();
         code += tab() + "return" + nl();
-        code += ".end method" + nl();
+        code += ".end method";
 
         return code;
     }
@@ -119,44 +136,61 @@ public class CodeGenerator {
         return jasminType;
     }
 
-    protected String convertClass(){
-        String classCode = ".class public " + this.classNode.className + nl();
-
+    protected int convertClassHeader(){
         String extendedClass = ((ClassSymbol) this.classNode.symbolTable.getSymbol(this.classNode.className)).getExtendedClass();
-
         boolean extendsClass = extendedClass == null;
 
-        classCode += ".super " + (extendsClass ? "java/lang/Object" : extendedClass) + nl();
+        String classHeaderCode = "";
 
-        classCode += standardInitializer(extendsClass ? "java/lang/Object" : extendedClass);
-
-        classCode += convertClassBody(extendsClass);
-
-        return classCode;
-    }
-
-    protected String convertClassBody(boolean extendsClass){
-        String classBodyCode = "";
+        classHeaderCode += ".class public " + this.classNode.className + nl();
+        classHeaderCode += ".super " + (extendsClass ? "java/lang/Object" : extendedClass) + nl();
 
         int numChildren = this.classNode.jjtGetNumChildren();
         int childIndex = (extendsClass ? 1 : 0);
 
         SimpleNode child;
 
-        while(childIndex < numChildren){
+        while(childIndex < numChildren) {
             child = (SimpleNode) this.classNode.jjtGetChild(childIndex);
 
             if(child.equalsNodeType(ParserTreeConstants.JJTVARIABLE))
-                classBodyCode += convertVarDeclaration((ASTVARIABLE) child);
-            else if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD))
-                classBodyCode += nl() + convertMethodDeclaration((ASTMETHOD) child);
-            else if(child.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
-                classBodyCode += nl() + convertMainMethodDeclaration((ASTMAINMETHOD) child);
+                classHeaderCode += nl() + convertVarDeclaration((ASTVARIABLE) child);
+            else{
+                classHeaderCode += nl();
+                break;
+            }
 
             childIndex++;
         }
 
-        return classBodyCode;
+        classHeaderCode += standardInitializer(extendsClass ? "java/lang/Object" : extendedClass);;
+
+        writeToFile(classHeaderCode);
+
+        return childIndex;
+    }
+
+    protected void convertClass(){
+        int numChildren = this.classNode.jjtGetNumChildren();
+        int childIndex = convertClassHeader();
+
+        String classBodyCode = "";
+        SimpleNode child;
+
+        while(childIndex < numChildren){
+            child = (SimpleNode) this.classNode.jjtGetChild(childIndex);
+
+            classBodyCode = "";
+
+            if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD))
+                classBodyCode += nl() + convertMethodDeclaration((ASTMETHOD) child);
+            else if(child.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
+                classBodyCode += nl() + convertMainMethodDeclaration((ASTMAINMETHOD) child);
+
+            writeToFile(classBodyCode);
+
+            childIndex++;
+        }
     }
 
     protected String convertVarDeclaration(ASTVARIABLE varNode){
@@ -165,7 +199,7 @@ public class CodeGenerator {
         classVars.add(varNode.varName);
 
         if(varNode.classScope){
-            varCode += nl() + ".field public " + varNode.varName + space() + getJasminType(varNode.varName, varNode);
+            varCode += ".field private" + varNode.varName + space() + getJasminType(varNode.varName, varNode);
         }
 
         return varCode;
@@ -199,15 +233,14 @@ public class CodeGenerator {
 
                 classVars = new ArrayList<>(classNode.classVars);
 
-                generatedCode += convertClass();
+                createFile();
+
+                convertClass();
+
+                closeFile();
             }
 
             childIndex++;
         }
-
-        if(ControlVars.SAVE_JASMIN_CODE)
-            writeToFile();
-        else
-            System.out.println(generatedCode);
     }
 }

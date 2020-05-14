@@ -458,10 +458,10 @@ public class MethodGenerator extends CodeGenerator{
 
         if(isStatic(funcNode)){
             popStack(numArgs - 1);
-            callCode += "invokestatic ";
+            callCode += "invokestatic";
         } else {
             popStack(numArgs);
-            callCode += "invokevirtual ";
+            callCode += "invokevirtual";
         }
 
         callCode += space() + funcNode.call.replace('.', '/') + "(" + argumentsCode(funcNode) + ")" + methodReturnCode(funcNode);

@@ -75,6 +75,15 @@ public class CodeGenerator {
         return "\t";
     }
 
+    protected static String cleanseVar(String varName){
+        switch (varName){
+            case "field":
+                return "field_";
+            default:
+                return varName;
+        }
+    }
+
     protected static String standardInitializer(String extendedClass) {
         String code = nl() + ".method public <init>()V" + nl();
         code += tab() + "aload_0" + nl();
@@ -199,7 +208,7 @@ public class CodeGenerator {
         classVars.add(varNode.varName);
 
         if(varNode.classScope){
-            varCode += ".field private " + varNode.varName + space() + getJasminType(varNode.varName, varNode);
+            varCode += ".field private " + cleanseVar(varNode.varName) + space() + getJasminType(varNode.varName, varNode);
         }
 
         return varCode;

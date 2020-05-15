@@ -95,7 +95,7 @@ public class MethodGenerator extends CodeGenerator{
                 storeCode += generateTypeSensitiveCode((SimpleNode) ((ASTARRAY_ACCESS) varNode).jjtGetChild(1), indentation);
             } else{
                 popStack(2);
-                storeCode += tab(indentation) + "putfield " + classNode.className + "/" + varName + space() + getJasminType(varName, varNode) + nl();
+                storeCode += tab(indentation) + "putfield " + classNode.className + "/" + cleanseVar(varName) + space() + getJasminType(varName, varNode) + nl();
             }
         }
 
@@ -288,7 +288,7 @@ public class MethodGenerator extends CodeGenerator{
 
             pushStack(1);
             varCode += tab(indentation) + "aload_0" + nl();
-            varCode += tab(indentation) + "getfield " + classNode.className + "/" + varName + space() + getJasminType(varName, identNode);
+            varCode += tab(indentation) + "getfield " + classNode.className + "/" + cleanseVar(varName) + space() + getJasminType(varName, identNode);
         }
 
         return varCode;
@@ -328,7 +328,6 @@ public class MethodGenerator extends CodeGenerator{
                 break;
             case ParserTreeConstants.JJTFUNC_METHOD:
                 code += generateCallCode((ASTFUNC_METHOD) child, indentation) + nl();;
-                System.out.println(((ASTFUNC_METHOD) child).call);
                 /*if(!assigned)
                     code += nl() + tab(indentation) + "pop";*/ //TODO: Check if this is needed
 
@@ -526,8 +525,6 @@ public class MethodGenerator extends CodeGenerator{
         ASTCONDITION conditionNode = (ASTCONDITION) ifNode.jjtGetChild(0);
         SimpleNode ifScopeNode = (SimpleNode) ifNode.jjtGetChild(1);
         SimpleNode elseScopeNode = (SimpleNode) elseNode.jjtGetChild(0);
-
-        System.out.println(ifScopeNode.id);
 
         String conditionalCode = "";
         int index = conditionalCounter;

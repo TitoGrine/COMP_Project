@@ -328,7 +328,7 @@ public class MethodGenerator extends CodeGenerator{
                 break;
             case ParserTreeConstants.JJTFUNC_METHOD:
                 code += generateCallCode((ASTFUNC_METHOD) child, indentation) + nl();;
-
+                System.out.println(((ASTFUNC_METHOD) child).call);
                 /*if(!assigned)
                     code += nl() + tab(indentation) + "pop";*/ //TODO: Check if this is needed
 
@@ -366,38 +366,51 @@ public class MethodGenerator extends CodeGenerator{
         return returnCode;
     }
 
+    private String generateSimpleScopeCode(SimpleNode node, int indentation){
+        String simpleCode = "";
+
+        switch(node.id){
+            case ParserTreeConstants.JJTVARIABLE:
+                addVariable((ASTVARIABLE) node);
+                break;
+            case ParserTreeConstants.JJTASSIGN:
+                simpleCode += generateAssignCode((ASTASSIGN) node, indentation);
+                break;
+            case ParserTreeConstants.JJTSCOPE:
+                simpleCode += generateScopeCode(node, indentation);
+                break;
+            case ParserTreeConstants.JJTIF_ELSE:
+                simpleCode += generateConditionalCode((ASTIF_ELSE) node, indentation);
+                break;
+            case ParserTreeConstants.JJTWHILE:
+                simpleCode += generateLoopCode((ASTWHILE) node, indentation);
+                break;
+            default:
+                simpleCode += generateTypeSensitiveCode(node, indentation);
+                break;
+        }
+
+        return simpleCode;
+    }
+
     private String generateScopeCode(SimpleNode scopeNode, int indentation){
         String scopeCode = "";
-        int numChildren = scopeNode.jjtGetNumChildren();
-        int childIndex = 0;
-        SimpleNode child;
 
-        while(childIndex < numChildren){
-            child = (SimpleNode) scopeNode.jjtGetChild(childIndex);
+        if (scopeNode.equalsNodeType(ParserTreeConstants.JJTSCOPE) || scopeNode.equalsNodeType(ParserTreeConstants.JJTMETHOD_BODY)) {
+            int numChildren = scopeNode.jjtGetNumChildren();
+            int childIndex = 0;
+            SimpleNode child;
 
-            switch(child.id){
-                case ParserTreeConstants.JJTVARIABLE:
-                    addVariable((ASTVARIABLE) child);
-                    break;
-                case ParserTreeConstants.JJTASSIGN:
-                    scopeCode += generateAssignCode((ASTASSIGN) child, indentation);
-                    break;
-                case ParserTreeConstants.JJTSCOPE:
-                    scopeCode += generateScopeCode(child, indentation);
-                    break;
-                case ParserTreeConstants.JJTIF_ELSE:
-                    scopeCode += generateConditionalCode((ASTIF_ELSE) child, indentation);
-                    break;
-                case ParserTreeConstants.JJTWHILE:
-                    scopeCode += generateLoopCode((ASTWHILE) child, indentation);
-                    break;
-                default:
-                    scopeCode += generateTypeSensitiveCode(child, indentation);
-                    break;
+            while(childIndex < numChildren){
+                child = (SimpleNode) scopeNode.jjtGetChild(childIndex);
+
+                scopeCode += generateSimpleScopeCode(child, indentation);
+
+                childIndex++;
             }
+        } else
+            scopeCode += generateSimpleScopeCode(scopeNode, indentation);
 
-            childIndex++;
-        }
 
         return scopeCode;
     }
@@ -512,6 +525,9 @@ public class MethodGenerator extends CodeGenerator{
 
         ASTCONDITION conditionNode = (ASTCONDITION) ifNode.jjtGetChild(0);
         SimpleNode ifScopeNode = (SimpleNode) ifNode.jjtGetChild(1);
+        SimpleNode elseScopeNode = (SimpleNode) elseNode.jjtGetChild(0);
+
+        System.out.println(ifScopeNode.id);
 
         String conditionalCode = "";
         int index = conditionalCounter;
@@ -521,7 +537,7 @@ public class MethodGenerator extends CodeGenerator{
         conditionalCode += generateScopeCode(ifScopeNode, indentation + 1);
         conditionalCode += tab(indentation + 1) + "goto endif_" + index + nl();
         conditionalCode += tab(indentation) + "else_" + index + entry() + nl();
-        conditionalCode += generateScopeCode(elseNode, indentation + 1);
+        conditionalCode += generateScopeCode(elseScopeNode, indentation + 1);
         conditionalCode += tab(indentation) + "endif_" + index + entry() + nl(2);
 
         return conditionalCode;

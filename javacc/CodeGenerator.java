@@ -199,7 +199,7 @@ public class CodeGenerator {
         classVars.add(varNode.varName);
 
         if(varNode.classScope){
-            varCode += ".field private" + varNode.varName + space() + getJasminType(varNode.varName, varNode);
+            varCode += ".field private " + varNode.varName + space() + getJasminType(varNode.varName, varNode);
         }
 
         return varCode;

@@ -19,7 +19,8 @@ public class CodeGenerator {
             return;
 
         try {
-            File file = new File("test/fixtures/libs/compiled/jasminCode/" + classNode.className + ".j");
+            // File file = new File("test/fixtures/libs/compiled/jasminCode/" + classNode.className + ".j");
+            File file = new File("test/fixtures/libs/compiled/" + classNode.className + ".j");
 
             if (!file.exists())
                 file.createNewFile();
@@ -94,7 +95,7 @@ public class CodeGenerator {
         return code;
     }
 
-    protected static String getSimpleJasminType(TypeEnum type){
+    protected String getSimpleJasminType(TypeEnum type){
         switch (type) {
             case INT:
                 return "I";
@@ -104,12 +105,14 @@ public class CodeGenerator {
                 return "Z";
             case ARRAY:
                 return "[I";
+            case OBJECT:
+                return "L" + this.classNode.className + ";";
             default:
                 return "V";
         }
     }
 
-    protected static String getJasminType(String key, SimpleNode node){
+    protected String getJasminType(String key, SimpleNode node){
         String jasminType = "";
         Symbol symbol;
 

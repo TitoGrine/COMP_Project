@@ -1,0 +1,28 @@
+import static io.println(int);
+class Simple {
+
+	public static void main(String[] args) {
+		int a;
+		int b;
+		int c;
+		Simple simple;
+		Simple new_simple;
+
+		simple = new Simple();
+		new_simple = simple.instance();
+
+		a = 20;
+		b = 20;
+
+		io.println(new_simple.add(a,b));
+	}
+
+	public Simple instance() {
+		return new Simple();
+	}
+
+	public int add(int a, int b) {
+		return a+b;
+	}
+
+}

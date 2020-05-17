@@ -32,7 +32,7 @@ class ASTARRAY_ACCESS extends TypeSensitive {
         if(this.symbolTable.existsMethodSymbol(method.call)){
           MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(method.call);
 
-          if(methodSymbol.getReturnType(method.arguments) != TypeEnum.ARRAY)
+          if(methodSymbol.getReturnType(method.arguments) != ControlVars.ARRAY)
             analysis.addError(this.getCoords(), "Return of function method isn't an array, but it's being accessed as one.");
           else
             this.object = method.call;
@@ -51,7 +51,7 @@ class ASTARRAY_ACCESS extends TypeSensitive {
           this.object = "this." + this.object;
       }
 
-      if (!this.validType(firstChild, TypeEnum.ARRAY, analysis)) {
+      if (!this.validType(firstChild, ControlVars.ARRAY, analysis)) {
         if (this.object != null)
           analysis.addError(this.getCoords(), "Variable " + this.object + " isn't an array but it's being accessed as one.");
       }
@@ -64,7 +64,7 @@ class ASTARRAY_ACCESS extends TypeSensitive {
     secondChild.addSymbolTable(this.symbolTable);
     secondChild.eval(analysis);
 
-    if(!this.validType(secondChild, TypeEnum.INT, analysis)){
+    if(!this.validType(secondChild, ControlVars.INT, analysis)){
       System.out.println("Second child: " + secondChild);
       analysis.addError(this.getCoords(), "Access to array " + this.object + " with invalid index.");
     }

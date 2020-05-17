@@ -6,8 +6,8 @@ public
 class ASTMETHOD extends SimpleNode {
 
   protected String methodName;
-  protected TypeEnum returnType;
-  protected ArrayList<TypeEnum> parameters = new ArrayList<>();
+  protected String returnType;
+  protected ArrayList<String> parameters = new ArrayList<>();
   protected int localSize = 0;
 
   public ASTMETHOD(int id) {
@@ -70,7 +70,7 @@ class ASTMETHOD extends SimpleNode {
     returnExp.addSymbolTable(this.symbolTable);
     returnExp.eval(analysis);
 
-    if(returnExp.expType != this.returnType)
+    if(!returnExp.expType.equals(this.returnType))
       analysis.addError(this.getCoords(), "Method " + methodName + " returns type different from declaration.");
 
     if(ControlVars.PRINT_SYMBOLTABLE)

@@ -35,8 +35,10 @@ public class CodeGenerator {
         try{
             if(ControlVars.SAVE_JASMIN_CODE)
                 writer.print(code);
-            else
+            else{
+                System.out.println(ControlVars.GREEN + "\n +++++++++++ Generated Jasmin Code +++++++++++\n" + ControlVars.RESET);
                 System.out.println(code);
+            }
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -94,18 +96,22 @@ public class CodeGenerator {
         return code;
     }
 
-    protected static String getSimpleJasminType(TypeEnum type){
-        switch (type) {
-            case INT:
-                return "I";
-            case STRING:
-                return "Ljava/lang/String;";
-            case BOOL:
+    protected static String getSimpleJasminType(String type){
+        switch(type){
+            case ControlVars.BOOL:
                 return "Z";
-            case ARRAY:
+            case ControlVars.INT:
+                return "I";
+            case ControlVars.ARRAY:
                 return "[I";
-            default:
+            case ControlVars.STRING:
+                return "Ljava/lang/String;";
+            case ControlVars.VOID:
                 return "V";
+            case ControlVars.METHOD:
+                return "";
+            default:
+                return "L" + type + ";";
         }
     }
 
@@ -124,15 +130,12 @@ public class CodeGenerator {
         }
 
         switch (symbol.getType()) {
-            case OBJECT:
-                jasminType = symbol.getClassType();
+            case ControlVars.METHOD:
                 break;
-            case METHOD:
-                break;
-            case ARRAY:
+            case ControlVars.ARRAY:
                 jasminType = "[";
 
-                if(((ArraySymbol) symbol).getReturnType() == TypeEnum.INT)
+                if(((ArraySymbol) symbol).getReturnType().equals(ControlVars.INT))
                     jasminType += "I";
                 else
                     jasminType += "Ljava/lang/String;";

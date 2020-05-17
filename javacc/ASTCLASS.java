@@ -33,7 +33,7 @@ class ASTCLASS extends SimpleNode {
     firstChild.addSymbolTable(this.symbolTable);
     this.className = firstChild.name;
 
-    ClassSymbol classSymbol = new ClassSymbol();
+    ClassSymbol classSymbol = new ClassSymbol(this.className);
     List<ASTMETHOD> methods = new ArrayList<>();
     ASTMAINMETHOD mainMethod = null;
 

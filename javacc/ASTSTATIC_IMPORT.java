@@ -25,8 +25,8 @@ class ASTSTATIC_IMPORT extends SimpleNode {
     firstChild.addSymbolTable(this.symbolTable);
     secondChild.addSymbolTable(this.symbolTable);
 
-    TypeEnum returnType = TypeEnum.VOID;
-    ArrayList<TypeEnum> parameters = new ArrayList<>();
+    String returnType = ControlVars.VOID;
+    ArrayList<String> parameters = new ArrayList<>();
 
     if(numChildren > 2) {
       SimpleNode thirdChild = (SimpleNode) this.jjtGetChild(2);

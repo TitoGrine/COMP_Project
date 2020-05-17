@@ -26,12 +26,12 @@ class ASTAND extends TypeSensitive {
     firstChild.eval(analysis);
     secondChild.eval(analysis);
 
-    if(!this.validType(firstChild, TypeEnum.BOOL, analysis))
+    if(!this.validType(firstChild, ControlVars.BOOL, analysis))
       analysis.addError(this.getCoords(), "AND must have left hand side expression returning a boolean.");
 
     this.initializedUse(firstChild, analysis);
 
-    if(!this.validType(secondChild, TypeEnum.BOOL, analysis))
+    if(!this.validType(secondChild, ControlVars.BOOL, analysis))
       analysis.addError(this.getCoords(), "AND must have right hand side expression returning a boolean.");
 
     this.initializedUse(secondChild, analysis);

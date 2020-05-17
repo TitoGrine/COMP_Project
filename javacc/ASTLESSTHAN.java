@@ -27,12 +27,12 @@ class ASTLESSTHAN extends TypeSensitive {
     firstChild.eval(analysis);
     secondChild.eval(analysis);
 
-    if(!this.validType(firstChild, TypeEnum.INT, analysis))
+    if(!this.validType(firstChild, ControlVars.INT, analysis))
       analysis.addError(this.getCoords(), "LESSTHAN must have left hand side expression returning an integer.");
 
     this.initializedUse(firstChild, analysis);
 
-    if(!this.validType(secondChild, TypeEnum.INT, analysis))
+    if(!this.validType(secondChild, ControlVars.INT, analysis))
       analysis.addError(this.getCoords(), "LESSTHAN must have right hand side expression returning an integer.");
 
     this.initializedUse(secondChild, analysis);

@@ -2,7 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTRETURN_EXP extends TypeSensitive {
-  TypeEnum expType = null;
+  String expType = null;
 
   public ASTRETURN_EXP(int id) {
     super(id);

@@ -20,7 +20,7 @@ class ASTASSIGN extends TypeSensitive {
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
     String varName;
-    TypeEnum compatibleType;
+    String compatibleType;
 
     firstChild.addSymbolTable(this.symbolTable);
     secondChild.addSymbolTable(this.symbolTable);
@@ -53,6 +53,9 @@ class ASTASSIGN extends TypeSensitive {
     secondChild.eval(analysis);
 
     if(!this.validType(secondChild, compatibleType, analysis)){
+      System.out.println("Variable: " + varName + " - Type: " + compatibleType);
+      System.out.println("Actual type: " + this.getType(secondChild, analysis));
+
       if(varName != null)
         analysis.addError(this.getCoords(), "Assignment of variable " + varName + " to incompatible type.");
     }

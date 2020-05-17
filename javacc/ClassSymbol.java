@@ -2,16 +2,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClassSymbol extends Symbol{
-    List<TypeEnum> parameters = new ArrayList<>();
+    List<String> parameters = new ArrayList<>();
     String extendedClass = null;
 
-    public ClassSymbol(){
-        super(TypeEnum.OBJECT);
+    public ClassSymbol(String className){
+        super(className);
+        this.classType = className;
     }
 
-    public ClassSymbol(ArrayList<TypeEnum> parameters) {
-        super(TypeEnum.OBJECT);
+    public ClassSymbol(String className, ArrayList<String> parameters) {
+        super(className);
         this.parameters = parameters;
+        this.classType = className;
     }
 
     public void setExtendedClass(String extendedClass){

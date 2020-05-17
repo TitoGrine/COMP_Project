@@ -20,8 +20,8 @@ class ASTIMPORT extends SimpleNode {
 
     firstChild.addSymbolTable(this.symbolTable);
     String key = firstChild.name;
-    TypeEnum returnType = TypeEnum.VOID;
-    ArrayList<TypeEnum> parameters = new ArrayList<>();
+    String returnType = ControlVars.VOID;
+    ArrayList<String> parameters = new ArrayList<>();
 
     int childIndex = 1;
     boolean classImport = true;
@@ -59,7 +59,7 @@ class ASTIMPORT extends SimpleNode {
     }
 
     if(classImport) {
-      this.symbolTable.addSymbol(key, new ClassSymbol(parameters));
+      this.symbolTable.addSymbol(key, new ClassSymbol(key, parameters));
     }
     else{
       if(this.symbolTable.repeatedMethod(key, returnType, parameters)){

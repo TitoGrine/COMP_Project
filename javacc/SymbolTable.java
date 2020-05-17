@@ -12,14 +12,14 @@ public class SymbolTable {
         this.parent = parent;
     }
 
-    public void addStaticMethodSymbol(String key, ArrayList<TypeEnum> parameters, TypeEnum returnType){
+    public void addStaticMethodSymbol(String key, ArrayList<String> parameters, String returnType){
         if(table.containsKey(key))
             ((MethodSymbol) table.get(key)).addParameters(parameters, returnType, true);
         else
             table.put(key, new MethodSymbol(returnType, parameters, true));
     }
 
-    public void addMethodSymbol(String key, ArrayList<TypeEnum> parameters, TypeEnum returnType){
+    public void addMethodSymbol(String key, ArrayList<String> parameters, String returnType){
         if(table.containsKey(key))
             ((MethodSymbol) table.get(key)).addParameters(parameters, returnType);
         else
@@ -55,7 +55,7 @@ public class SymbolTable {
 
         Symbol symbol = this.getSymbol(key);
 
-        return symbol != null && symbol.type == TypeEnum.ARRAY;
+        return symbol != null && symbol.type.equals(ControlVars.ARRAY);
     }
 
     public boolean existsMethodSymbol(String key){
@@ -64,7 +64,7 @@ public class SymbolTable {
 
         Symbol symbol = this.getSymbol(key);
 
-        return symbol != null && symbol.type == TypeEnum.METHOD;
+        return symbol != null && symbol.type.equals(ControlVars.METHOD);
     }
 
     public boolean existsClassSymbol(String key){
@@ -73,7 +73,7 @@ public class SymbolTable {
 
         Symbol symbol = this.getSymbol(key);
 
-        return symbol != null && symbol.type == TypeEnum.OBJECT;
+        return symbol != null && symbol.type.equals(key);
     }
 
     public void setInitialized(String key){
@@ -86,7 +86,7 @@ public class SymbolTable {
             symbol.incInitialized();
     }
 
-    public boolean repeatedMethod(String key, TypeEnum returnType, ArrayList<TypeEnum> arguments){
+    public boolean repeatedMethod(String key, String returnType, ArrayList<String> arguments){
         if(existsMethodSymbol(key))
             return ((MethodSymbol) this.getSymbol(key)).repeatedMethod(returnType, arguments);
 
@@ -95,9 +95,6 @@ public class SymbolTable {
 
     public String getClassType(String key){
         Symbol symbol = this.getSymbol(key);
-
-        if(symbol.getType() != TypeEnum.OBJECT)
-            return null;
 
         if(symbol instanceof ClassSymbol)
             return key;

@@ -72,15 +72,21 @@ public class MethodGenerator extends CodeGenerator{
                 storeCode += generateTypeSensitiveCode((SimpleNode) ((ASTARRAY_ACCESS) varNode).jjtGetChild(1), indentation);
                 storeCode += generateTypeSensitiveCode(expNode, indentation);
             } else{
-                TypeEnum type = varNode.symbolTable.getSymbol(varName).getType();
+                String type = varNode.symbolTable.getSymbol(varName).getType();
                 storeCode += generateTypeSensitiveCode(expNode, indentation);
                 storeCode += tab(indentation);
 
                 popStack(1);
-                if(type == TypeEnum.ARRAY || type == TypeEnum.OBJECT)
-                    storeCode += "astore";
-                else
-                    storeCode += "istore";
+                switch(type){
+                    case ControlVars.BOOL:
+                    case ControlVars.INT:
+                    case ControlVars.VOID:
+                        storeCode += "istore";
+                        break;
+                    default:
+                        storeCode += "astore";
+                        break;
+                }
 
                 storeCode += (index < 4 ? us() : space()) + index + nl();
             }
@@ -104,9 +110,9 @@ public class MethodGenerator extends CodeGenerator{
 
     private String parametersCode(){
         String code = "";
-        List<TypeEnum> parameters = methodNode.parameters;
+        List<String> parameters = methodNode.parameters;
 
-        for (TypeEnum parameterType : parameters) {
+        for (String parameterType : parameters) {
             code += getSimpleJasminType(parameterType);
         }
 
@@ -115,9 +121,9 @@ public class MethodGenerator extends CodeGenerator{
 
     private String argumentsCode(ASTFUNC_METHOD funcNode){
         String code = "";
-        List<TypeEnum> arguments = funcNode.arguments;
+        List<String> arguments = funcNode.arguments;
 
-        for (TypeEnum argumentType : arguments) {
+        for (String argumentType : arguments) {
             code += getSimpleJasminType(argumentType);
         }
 
@@ -125,7 +131,7 @@ public class MethodGenerator extends CodeGenerator{
     }
 
     private String methodReturnCode(ASTFUNC_METHOD funcNode){
-        TypeEnum returnType = TypeEnum.VOID;
+        String returnType = ControlVars.VOID;
 
         if(funcNode.symbolTable.existsMethodSymbol(funcNode.call)){
             MethodSymbol methodSymbol = (MethodSymbol) funcNode.symbolTable.getSymbol(funcNode.call);
@@ -148,6 +154,7 @@ public class MethodGenerator extends CodeGenerator{
         String headerCode = "";
 
         headerCode += ".method public " + methodNode.methodName + "(" + parametersCode() + ")" + getSimpleJasminType(methodNode.returnType) + nl();
+
         headerCode += generateStackCode() + nl();
 
         return headerCode;
@@ -274,15 +281,21 @@ public class MethodGenerator extends CodeGenerator{
         int index = locals.indexOf(varName);
 
         if(index != -1){
-            TypeEnum varType = ((Symbol) identNode.symbolTable.getSymbol(varName)).getType();
+            String varType = ((Symbol) identNode.symbolTable.getSymbol(varName)).getType();
 
             varCode += tab(indentation);
 
             pushStack(1);
-            if(varType == TypeEnum.ARRAY || varType == TypeEnum.OBJECT)
-                varCode += "aload" + (index < 4 ? us() : space()) + index;
-            else
-                varCode += "iload" + (index < 4 ? us() : space()) + index;
+            switch(varType){
+                case ControlVars.BOOL:
+                case ControlVars.INT:
+                case ControlVars.VOID:
+                    varCode += "iload" + (index < 4 ? us() : space()) + index;
+                    break;
+                default:
+                    varCode += "aload" + (index < 4 ? us() : space()) + index;
+                    break;
+            }
         } else {
             index = classVars.indexOf(varName); //TODO: necessary?
 
@@ -353,12 +366,16 @@ public class MethodGenerator extends CodeGenerator{
         returnCode += tab();
 
         popStack(stack);
-        if(returnNode.expType == TypeEnum.OBJECT || returnNode.expType == TypeEnum.ARRAY)
-            returnCode += "areturn";
-        else if(returnNode.expType == TypeEnum.VOID)
-            returnCode += "return";
-        else
-            returnCode += "ireturn";
+        switch(returnNode.expType){
+            case ControlVars.BOOL:
+            case ControlVars.INT:
+                returnCode += "ireturn";
+                break;
+            case ControlVars.VOID:
+                returnCode += "return";
+            default:
+                returnCode += "areturn";
+        }
 
         returnCode += nl();
 

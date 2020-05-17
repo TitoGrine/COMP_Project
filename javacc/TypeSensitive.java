@@ -8,7 +8,7 @@ public class TypeSensitive extends SimpleNode {
         super(p, id);
     }
 
-    public TypeEnum getType(SimpleNode node, SemanticAnalysis analysis){
+    public String getType(SimpleNode node, SemanticAnalysis analysis){
         switch(node.id){
             case ParserTreeConstants.JJTADD:
             case ParserTreeConstants.JJTSUB:
@@ -16,22 +16,24 @@ public class TypeSensitive extends SimpleNode {
             case ParserTreeConstants.JJTDIV:
             case ParserTreeConstants.JJTNUM:
             case ParserTreeConstants.JJTLENGTH:
-                return TypeEnum.INT;
+                return ControlVars.INT;
             case ParserTreeConstants.JJTAND:
             case ParserTreeConstants.JJTLESSTHAN:
             case ParserTreeConstants.JJTNEGATION:
             case ParserTreeConstants.JJTBOOL:
-                return TypeEnum.BOOL;
+                return ControlVars.BOOL;
             case ParserTreeConstants.JJTVOID:
-                return TypeEnum.VOID;
+                return ControlVars.VOID;
             case ParserTreeConstants.JJTNEW_ARRAY:
-                return TypeEnum.ARRAY;
+                return ControlVars.ARRAY;
             case ParserTreeConstants.JJTFUNC_METHOD:
                 ASTFUNC_METHOD funcMethod = ((ASTFUNC_METHOD) node);
                 String call = funcMethod.call;
 
-                if(!this.symbolTable.existsMethodSymbol(call))
+                if(!this.symbolTable.existsMethodSymbol(call)){
+                    System.out.println(call);
                     return null;
+                }
 
                 MethodSymbol methodSymbol = (MethodSymbol) this.symbolTable.getSymbol(call);
 
@@ -43,14 +45,14 @@ public class TypeSensitive extends SimpleNode {
                 String object = ((ASTARRAY_ACCESS) node).object;
 
                 if(object != null && object.equals("[new int array]"))
-                    return TypeEnum.INT;
+                    return ControlVars.INT;
 
                 if(!this.symbolTable.existsArraySymbol(object) && !this.symbolTable.existsArraySymbol("this." + object)){
                     if(object != null && !this.symbolTable.existsSymbol(object) && !this.symbolTable.existsSymbol("this." + object))
                         analysis.addError(this.getCoords(), "Variable " + object + " used, but isn't previously declared.");
 
                     if(object != null && this.symbolTable.existsMethodSymbol(object)){
-                        return TypeEnum.INT;
+                        return ControlVars.INT;
                     }
 
                     return null;
@@ -183,10 +185,10 @@ public class TypeSensitive extends SimpleNode {
         }
     }
 
-    public boolean validType(SimpleNode node, TypeEnum type, SemanticAnalysis analysis){
+    public boolean validType(SimpleNode node, String type, SemanticAnalysis analysis){
 
-        TypeEnum expType = this.getType(node, analysis);
+        String expType = this.getType(node, analysis);
 
-        return expType != null && expType == type;
+        return expType != null && expType.equals(type);
     }
 }

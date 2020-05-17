@@ -17,7 +17,7 @@ class ASTNEW_ARRAY extends TypeSensitive {
     childNode.addSymbolTable(this.symbolTable);
     childNode.eval(analysis);
 
-    if(!this.validType(childNode, TypeEnum.INT, analysis))
+    if(!this.validType(childNode, ControlVars.INT, analysis))
       analysis.addError(this.getCoords(), "Integer array initialized with invalid size.");
   }
 }

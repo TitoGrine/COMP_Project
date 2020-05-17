@@ -2,17 +2,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class MethodSymbol extends Symbol{
-    ArrayList<TypeEnum> returnType = new ArrayList<>();
-    ArrayList<ArrayList<TypeEnum>> parametersOverload = new ArrayList<>();
+    ArrayList<String> returnType = new ArrayList<>();
+    ArrayList<ArrayList<String>> parametersOverload = new ArrayList<>();
     ArrayList<Boolean> staticValues = new ArrayList<>();
 
-    private void addParameter(TypeEnum returnType, boolean staticValue){
-        ArrayList<TypeEnum> parameters = new ArrayList<>(Collections.singleton(TypeEnum.VOID));
+    private void addParameter(String returnType, boolean staticValue){
+        ArrayList<String> parameters = new ArrayList<>();
+        parameters.add(ControlVars.VOID);
 
         addParameter(parameters, returnType, staticValue);
     }
 
-    private void addParameter(ArrayList<TypeEnum> parameter, TypeEnum returnType, boolean staticValue){
+    private void addParameter(ArrayList<String> parameter, String returnType, boolean staticValue){
         if(!this.acceptedParameters(parameter)){
             this.returnType.add(returnType);
             this.parametersOverload.add(parameter);
@@ -20,22 +21,26 @@ public class MethodSymbol extends Symbol{
         }
     }
 
-    public MethodSymbol(TypeEnum returnType, ArrayList<TypeEnum> parameters, boolean staticValue) {
-        super(TypeEnum.METHOD);
+    public MethodSymbol(String returnType, ArrayList<String> parameters, boolean staticValue) {
+        super(ControlVars.METHOD);
 
-        if(parameters.isEmpty())
-            parameters = new ArrayList<>(Collections.singleton(TypeEnum.VOID));
+        if(parameters.isEmpty()){
+            parameters = new ArrayList<>();
+            parameters.add(ControlVars.VOID);
+        }
 
         this.addParameter(parameters, returnType, staticValue);
     }
 
-    public MethodSymbol(TypeEnum returnType, ArrayList<TypeEnum> parameters) {
+    public MethodSymbol(String returnType, ArrayList<String> parameters) {
         this(returnType, parameters, false);
     }
 
-    public TypeEnum getReturnType(ArrayList<TypeEnum> parameters) {
-        if(parameters.isEmpty())
-            parameters = new ArrayList<>(Collections.singleton(TypeEnum.VOID));
+    public String getReturnType(ArrayList<String> parameters) {
+        if(parameters.isEmpty()){
+            parameters = new ArrayList<>();
+            parameters.add(ControlVars.VOID);
+        }
 
         int index = this.parametersOverload.indexOf(parameters);
 
@@ -45,9 +50,11 @@ public class MethodSymbol extends Symbol{
         return returnType.get(index);
     }
 
-    public boolean isStatic(ArrayList<TypeEnum> parameters) {
-        if(parameters.isEmpty())
-            parameters = new ArrayList<>(Collections.singleton(TypeEnum.VOID));
+    public boolean isStatic(ArrayList<String> parameters) {
+        if(parameters.isEmpty()){
+            parameters = new ArrayList<>();
+            parameters.add(ControlVars.VOID);
+        }
 
         int index = this.parametersOverload.indexOf(parameters);
 
@@ -58,26 +65,26 @@ public class MethodSymbol extends Symbol{
     }
 
 
-    public void addParameters(ArrayList<TypeEnum> parameters, TypeEnum returnType){
+    public void addParameters(ArrayList<String> parameters, String returnType){
         this.addParameters(parameters, returnType, false);
     }
 
-    public void addParameters(ArrayList<TypeEnum> parameters, TypeEnum returnType, boolean staticValue){
+    public void addParameters(ArrayList<String> parameters, String returnType, boolean staticValue){
         if(parameters.isEmpty())
             this.addParameter(returnType, staticValue);
         else
             this.addParameter(parameters, returnType, staticValue);
     }
 
-    public boolean repeatedMethod(TypeEnum returnType, ArrayList<TypeEnum> arguments){
-        return acceptedParameters(arguments) && returnType != this.getReturnType(arguments);
+    public boolean repeatedMethod(String returnType, ArrayList<String> arguments){
+        return acceptedParameters(arguments) && !returnType.equals(this.getReturnType(arguments));
     }
 
-    public boolean acceptedParameters(ArrayList<TypeEnum> arguments){
+    public boolean acceptedParameters(ArrayList<String> arguments){
         if(!arguments.isEmpty())
             return parametersOverload.contains(arguments);
 
-        return parametersOverload.contains(arguments) || parametersOverload.contains(new ArrayList<>(Collections.singleton(TypeEnum.VOID)));
+        return parametersOverload.contains(arguments) || parametersOverload.contains(new ArrayList<>(Collections.singleton(ControlVars.VOID)));
     }
 
     @Override

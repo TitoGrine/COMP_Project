@@ -97,7 +97,7 @@ public class MethodGenerator extends CodeGenerator{
             storeCode += generateTypeSensitiveCode(expNode, indentation);
 
             if(arrayAccess){
-                storeCode += tab(indentation) + "getfield " + classNode.className + "/" + varName + space() + getJasminType(varName, varNode) + nl();
+                storeCode += tab(indentation) + "getfield " + classNode.className + "/" + cleanseVar(varName) + space() + getJasminType(varName, varNode) + nl();
                 storeCode += generateTypeSensitiveCode((SimpleNode) ((ASTARRAY_ACCESS) varNode).jjtGetChild(1), indentation);
             } else{
                 popStack(2);
@@ -257,20 +257,7 @@ public class MethodGenerator extends CodeGenerator{
     private String generateLengthCode(ASTLENGTH lengthNode, int indentation){
         SimpleNode child = (SimpleNode) lengthNode.jjtGetChild(0);
         String lengthCode = generateTypeSensitiveCode(child, indentation);
-
-        switch(child.id){
-            case ParserTreeConstants.JJTARRAY_ACCESS:
-                lengthCode += tab(indentation) + "arraylength";
-                break;
-            case ParserTreeConstants.JJTIDENT:
-                //TODO: Ver objetos
-                break;
-            case ParserTreeConstants.JJTFUNC_METHOD:
-                //TODO: Ver retorno de funções
-                break;
-            default:
-                break;
-        }
+        lengthCode += tab(indentation) + "arraylength";
 
         return lengthCode;
     }

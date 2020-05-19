@@ -78,12 +78,9 @@ public class CodeGenerator {
     }
 
     protected static String cleanseVar(String varName){
-        switch (varName){
-            case "field":
-                return "field_";
-            default:
-                return varName;
-        }
+        varName = varName.replace("this.", "");
+
+        return '_' + varName;
     }
 
     protected static String standardInitializer(String extendedClass) {
@@ -154,6 +151,7 @@ public class CodeGenerator {
 
         String classHeaderCode = "";
 
+        classHeaderCode += ".source " + this.classNode.className + ".j" + nl();
         classHeaderCode += ".class public " + this.classNode.className + nl();
         classHeaderCode += ".super " + (extendsClass ? "java/lang/Object" : extendedClass) + nl();
 

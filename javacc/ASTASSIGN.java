@@ -41,8 +41,10 @@ class ASTASSIGN extends TypeSensitive {
         return;
       }
 
-      if(varName != null)
+      if(varName != null){
         varName = "this." + varName;
+        this.setMethodThis();
+      }
     }
 
     if(compareNode(firstChild, ParserTreeConstants.JJTARRAY_ACCESS))

@@ -20,7 +20,7 @@ class ASTLENGTH extends TypeSensitive {
       childNode.eval(analysis);
 
       // TODO: Check if only these types can be sized!
-      if(this.validType(childNode, ControlVars.INT, analysis) || this.validType(childNode, ControlVars.BOOL, analysis) || this.validType(childNode, ControlVars.VOID, analysis) || this.validType(childNode, ControlVars.METHOD, analysis))
+      if(!this.validType(childNode, ControlVars.ARRAY, analysis) && !this.validType(childNode, ControlVars.STRING, analysis))
           analysis.addError(this.getCoords(), "Length method isn't applied to a sizable object.");
     }
   }

@@ -562,12 +562,14 @@ public class MethodGenerator extends CodeGenerator{
     }
 
     public String generateMethodCode(){
-        locals.add(0, "this");
         String methodCode = "";
         String auxCode = "";
         int numChildren = methodNode.jjtGetNumChildren();
         int childIndex = 0;
         SimpleNode child;
+
+        if(methodNode.thisRequired)
+            locals.add("this");
 
         while(childIndex < numChildren){
             child = (SimpleNode) methodNode.jjtGetChild(childIndex);

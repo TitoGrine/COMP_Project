@@ -28,8 +28,7 @@ class ASTARGUMENTS extends TypeSensitive {
 
       if(compareNode(childNode, ParserTreeConstants.JJTARGUMENT)){
         this.arguments.add(((ASTARGUMENT) childNode).type);
-      }
-      else if (compareNode(childNode, ParserTreeConstants.JJTFUNC_METHOD)){
+      } else if (compareNode(childNode, ParserTreeConstants.JJTFUNC_METHOD)){
         ASTFUNC_METHOD funcMethod = ((ASTFUNC_METHOD) childNode);
         String call = funcMethod.call;
 

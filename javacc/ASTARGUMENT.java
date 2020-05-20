@@ -28,7 +28,7 @@ class ASTARGUMENT extends SimpleNode {
 
     Symbol symbol;
 
-    if(firstChild.typeID == ControlVars.ARRAY)
+    if(firstChild.typeID.equals(ControlVars.ARRAY))
       symbol = new ArraySymbol(ControlVars.INT);
     else
       symbol = new Symbol(firstChild.typeID);

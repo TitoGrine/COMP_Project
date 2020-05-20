@@ -60,8 +60,10 @@ public class TypeSensitive extends SimpleNode {
 
                 ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(object);
 
-                if(arraySymbol == null)
+                if(arraySymbol == null){
                     arraySymbol = (ArraySymbol) this.symbolTable.getSymbol("this." + object);
+                    this.setMethodThis();
+                }
 
                 if(arraySymbol == null)
                     return null;
@@ -79,8 +81,10 @@ public class TypeSensitive extends SimpleNode {
 
                 Symbol symbol = this.symbolTable.getSymbol(name);
 
-                if(symbol == null)
+                if(symbol == null){
+                    this.setMethodThis();
                     symbol = this.symbolTable.getSymbol("this." + name);
+                }
 
                 if(symbol == null)
                     return null;
@@ -127,8 +131,10 @@ public class TypeSensitive extends SimpleNode {
 
                 ArraySymbol arraySymbol = (ArraySymbol) this.symbolTable.getSymbol(object);
 
-                if(arraySymbol == null)
+                if(arraySymbol == null){
+                    this.setMethodThis();
                     arraySymbol = (ArraySymbol) this.symbolTable.getSymbol("this." + object);
+                }
 
                 if(arraySymbol == null)
                     return;
@@ -156,8 +162,10 @@ public class TypeSensitive extends SimpleNode {
 
                 Symbol symbol = this.symbolTable.getSymbol(name);
 
-                if(symbol == null)
+                if(symbol == null){
+                    this.setMethodThis();
                     symbol = this.symbolTable.getSymbol("this." + name);
+                }
 
                 if(symbol == null)
                     return;

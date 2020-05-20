@@ -16,6 +16,18 @@ class SimpleNode implements Node {
     return node.id == type;
   }
 
+  protected void setMethodThis(){
+    SimpleNode parent = (SimpleNode) this.jjtGetParent();
+
+    if(parent == null)
+      return;
+
+    if(parent.equalsNodeType(ParserTreeConstants.JJTMETHOD))
+      ((ASTMETHOD) parent).thisRequired = true;
+    else
+      parent.setMethodThis();
+  }
+
   public SimpleNode(int i) {
     id = i;
   }
@@ -101,8 +113,6 @@ class SimpleNode implements Node {
   public int getId() {
     return id;
   }
-
-
 
   String getJasmin() {
     return "";

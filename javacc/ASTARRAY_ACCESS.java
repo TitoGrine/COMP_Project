@@ -47,8 +47,10 @@ class ASTARRAY_ACCESS extends TypeSensitive {
             analysis.addError(this.getCoords(), "Trying to assign variable " + this.object + " that wasn't previously declared.");
         }
 
-        if (this.object != null)
+        if (this.object != null){
           this.object = "this." + this.object;
+          this.setMethodThis();
+        }
       }
 
       if (!this.validType(firstChild, ControlVars.ARRAY, analysis)) {

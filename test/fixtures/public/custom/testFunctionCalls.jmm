@@ -4,9 +4,12 @@ class Simple {
 	public static void main(String[] args) {
 		int a;
 		int b;
-		int c;
+		int boring_variable1;
 		Simple simple;
 		Simple new_simple;
+		boolean i_need_coffee;
+		boolean i_slept_enough;
+		boolean boring_variable2;
 
 		simple = new Simple();
 		new_simple = simple.instance();
@@ -14,7 +17,14 @@ class Simple {
 		a = 20;
 		b = 20;
 
-		io.println(new_simple.add(a,b));
+		boring_variable1 = new_simple.add(a,b);
+
+		i_slept_enough = false;
+		i_need_coffee = true;
+
+		boring_variable2 = new_simple.and_operator(i_slept_enough, i_need_coffee);
+
+		io.println(boring_variable1);
 	}
 
 	public Simple instance() {
@@ -25,4 +35,7 @@ class Simple {
 		return a+b;
 	}
 
+	public boolean and_operator(boolean a, boolean b) {
+		return a && b;
+	}
 }

@@ -10,7 +10,7 @@
 
 .method public static main([Ljava/lang/String;)V
 	.limit stack 4
-	.limit locals 6
+	.limit locals 9
 
 	new Simple
 	dup
@@ -31,6 +31,21 @@
 	iload_1
 	iload_2
 	invokevirtual Simple/add(II)I
+	istore_3
+
+	iconst_0
+	istore 7
+
+	iconst_1
+	istore 6
+
+	aload 5
+	iload 7
+	iload 6
+	invokevirtual Simple/and_operator(ZZ)Z
+	istore 8
+
+	iload_3
 	invokestatic io/println(I)V
 	return
 .end method
@@ -52,5 +67,15 @@
 	iload_1
 	iload_2
 	iadd
+	ireturn
+.end method
+
+.method public and_operator(ZZ)Z
+	.limit stack 2
+	.limit locals 3
+
+	iload_1
+	iload_2
+	iand
 	ireturn
 .end method

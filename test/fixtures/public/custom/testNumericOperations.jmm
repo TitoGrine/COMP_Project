@@ -1,0 +1,26 @@
+import static io.println(int);
+class Simple {
+
+	public static void main(String[] args) {
+        int a;
+        int b;
+        int trust_me_its_correct;
+        Simple simple;
+
+        a = 2;
+        b = 5;
+        simple = new Simple();
+
+        trust_me_its_correct = simple.spam_calculator(a,b,7,9);
+        io.println(trust_me_its_correct);
+	}
+
+    public int spam_calculator(int a, int b, int c, int d) {
+        int e;
+        int f;
+        e = 1534;
+        f = 191;
+
+        return 2*f+(f+a-5*3)-e-34+(26*f+2345-b*(3+c-2*9));
+    }
+}

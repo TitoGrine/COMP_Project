@@ -9,24 +9,26 @@
 .end method
 
 .method public static main([Ljava/lang/String;)V
-	.limit stack 4
+	.limit stack 6
 	.limit locals 5
+
+	iconst_2
+	istore_1
+
+	iconst_5
+	istore_2
 
 	new Simple
 	dup
 	invokespecial Simple/<init>()V
 	astore 4
 
-	bipush 9
-	istore_1
-
-	bipush 10
-	istore_2
-
 	aload 4
 	iload_1
 	iload_2
-	invokevirtual Simple/whatsNinePlusTen(II)I
+	bipush 7
+	bipush 9
+	invokevirtual Simple/spam_calculator(IIII)I
 	istore_3
 
 	iload_3
@@ -34,23 +36,46 @@
 	return
 .end method
 
-.method public whatsNinePlusTen(II)I
-	.limit stack 3
-	.limit locals 3
+.method public spam_calculator(IIII)I
+	.limit stack 6
+	.limit locals 7
 
-	aload_0
-	bipush 10
-	bipush 11
-	invokevirtual Simple/add(II)I
-	ireturn
-.end method
+	ldc 1534
+	istore 5
 
-.method public add(II)I
-	.limit stack 2
-	.limit locals 3
+	ldc 191
+	istore 6
 
+	iconst_2
+	iload 6
+	imul
+	iload 6
 	iload_1
+	iadd
+	iconst_5
+	iconst_3
+	imul
+	isub
+	iadd
+	iload 5
+	isub
+	bipush 34
+	isub
+	bipush 26
+	iload 6
+	imul
+	ldc 2345
+	iadd
 	iload_2
+	iconst_3
+	iload_3
+	iadd
+	iconst_2
+	bipush 9
+	imul
+	isub
+	imul
+	isub
 	iadd
 	ireturn
 .end method

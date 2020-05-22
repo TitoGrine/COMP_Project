@@ -1,0 +1,35 @@
+import static io.println(int);
+class Simple {
+
+	public static void main(String[] args) {
+        int field;
+        int putfield;
+        int bipush;
+        int ldc;
+        int ireturn;
+        boolean imul;
+        boolean iconst_3;
+        Simple simple;
+
+        simple = new Simple();
+        ireturn = 0;
+        field = 4;
+        putfield = 5;
+        bipush = 6;
+        ldc = 7;
+        imul = true;
+        iconst_3 = true;
+
+        if (imul && iconst_3) {
+            ireturn = simple.add(field, putfield, bipush, ldc);
+        } else {
+
+        }
+
+        io.println(ireturn);
+	}
+
+    public int add(int a, int b, int c, int d) {
+        return a+b+c+d;
+    }
+}

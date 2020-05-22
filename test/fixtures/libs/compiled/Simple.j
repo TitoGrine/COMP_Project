@@ -9,8 +9,8 @@
 .end method
 
 .method public static main([Ljava/lang/String;)V
-	.limit stack 6
-	.limit locals 10
+	.limit stack 4
+	.limit locals 9
 
 	new Simple
 	dup
@@ -29,77 +29,37 @@
 	bipush 9
 	istore 5
 
-	aload_1
-	iload_2
-	iload_3
-	invokevirtual Simple/add(II)I
+	iconst_1
 	istore 6
 
-	aload_1
-	iload_2
-	iload_3
-	iload 4
-	invokevirtual Simple/add(III)I
+	iconst_1
 	istore 7
 
-	aload_1
-	iload_2
 	iload_3
-	iload 4
-	iload 5
-	invokevirtual Simple/add(IIII)I
-	istore 8
-
-	aload_1
+	iload_2
+	if_icmplt branch_0
+		iconst_0
+		goto end_0
+	branch_0:
+		iconst_1
+	end_0:
+	ineg
 	iload 6
 	iload 7
-	iload 8
-	invokevirtual Simple/add(III)I
-	istore 9
+	iand
+	iand
+	ifeq else_0
+		iconst_1
+		istore 8
 
-	iload 6
-	invokestatic io/println(I)V
-	iload 7
-	invokestatic io/println(I)V
+		goto endif_0
+	else_0:
+		iconst_1
+		istore 8
+
+	endif_0:
+
 	iload 8
-	invokestatic io/println(I)V
-	iload 9
 	invokestatic io/println(I)V
 	return
-.end method
-
-.method public add(II)I
-	.limit stack 2
-	.limit locals 3
-
-	iload_1
-	iload_2
-	iadd
-	ireturn
-.end method
-
-.method public add(III)I
-	.limit stack 2
-	.limit locals 4
-
-	iload_1
-	iload_2
-	iadd
-	iload_3
-	iadd
-	ireturn
-.end method
-
-.method public add(IIII)I
-	.limit stack 2
-	.limit locals 5
-
-	iload_1
-	iload_2
-	iadd
-	iload_3
-	iadd
-	iload 4
-	iadd
-	ireturn
 .end method

@@ -1,0 +1,31 @@
+import static io.println(int);
+class Simple {
+
+	public static void main(String[] args) {
+        Simple simple;
+        int a;
+        int b;
+        int c;
+        int d;
+        boolean e;
+        boolean f;
+        int result;
+
+        simple = new Simple();
+        a = 3;
+        b = 5;
+        c = 8;
+        d = 9;
+        e = true;
+        f = true;
+
+        if (!(b < a) && (e && f)) {
+            result=1;
+        } else {
+            result = 1;
+        }
+
+		io.println(result);
+	}
+
+}

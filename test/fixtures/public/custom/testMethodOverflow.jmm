@@ -1,0 +1,44 @@
+import static io.println(int);
+class Simple {
+
+	public static void main(String[] args) {
+        Simple simple;
+        int a;
+        int b;
+        int c;
+        int d;
+        int result1;
+        int result2;
+        int result3;
+        int result4;
+
+        simple = new Simple();
+        a = 3;
+        b = 5;
+        c = 8;
+        d = 9;
+
+        result1 = simple.add(a,b);
+        result2 = simple.add(a,b,c);
+        result3 = simple.add(a,b,c,d);
+
+        result4 = simple.add(result1, result2, result3);
+
+		io.println(result1);
+		io.println(result2);
+		io.println(result3);
+		io.println(result4);
+	}
+
+	public int add(int a, int b) {
+		return a+b;
+	}
+
+	public int add(int a, int b, int c) {
+		return a+b+c;
+	}
+
+	public int add(int a, int b, int c, int d) {
+		return a+b+c+d;
+	}
+}

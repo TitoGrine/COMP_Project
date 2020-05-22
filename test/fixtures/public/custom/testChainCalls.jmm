@@ -1,0 +1,36 @@
+import static io.println(int);
+class Simple {
+
+	public static void main(String[] args) {
+
+        int a;
+        int b;
+        int result;
+        Simple simple;
+
+        simple = new Simple();
+
+        a=2;
+        b=6;
+
+        result = simple.sum(simple.multiply(a, simple.sum(b, simple.subtract(b,a))), simple.divide(simple.sum(a,b), simple.divide(b, a)));
+
+		io.println(result);
+	}
+
+	public int sum(int a, int b) {
+		return a + b;
+	}
+
+	public int subtract(int a, int b) {
+		return a - b;
+	}
+
+	public int multiply(int a, int b) {
+		return a * b;
+	}
+
+	public int divide(int a, int b) {
+		return a / b;
+	}
+}

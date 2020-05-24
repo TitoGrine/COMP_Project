@@ -49,6 +49,42 @@ public class MethodGenerator extends CodeGenerator{
         return false;
     }
 
+    private String checkSpecialCompare(SimpleNode lhside, SimpleNode rhside){
+        // lhside.equalsNodeType(ParserTreeConstants.JJTIDENT) && TODO: Should we only do this for vars?
+        if (rhside.equalsNodeType(ParserTreeConstants.JJTNUM)) {
+            int num = ((ASTNUM) rhside).value;
+
+            if (num == 0){
+                popStack(1);
+                return "if_lt";
+            }
+        }
+
+        return null;
+    }
+
+    private String checkSpecialAddition(SimpleNode leftNode, SimpleNode rightNode){
+        String varName;
+
+        if(leftNode.equalsNodeType(ParserTreeConstants.JJTIDENT)) {
+            varName = ((ASTIDENT) leftNode).name;
+
+            if (rightNode.equalsNodeType(ParserTreeConstants.JJTADD) || rightNode.equalsNodeType(ParserTreeConstants.JJTSUB)) {
+                SimpleNode lhside = (SimpleNode) rightNode.jjtGetChild(0);
+                SimpleNode rhside = (SimpleNode) rightNode.jjtGetChild(1);
+
+                if (lhside.equalsNodeType(ParserTreeConstants.JJTIDENT) && rhside.equalsNodeType(ParserTreeConstants.JJTNUM)) {
+                    int num = ((ASTNUM) rhside).value;
+
+                    if (((ASTIDENT) lhside).name.equals(varName) && num < 127 && num > -128)
+                        return "iinc " + locals.indexOf(varName) + space() + num;
+                }
+            }
+        }
+
+        return null;
+    }
+
     private String addStoreVar(SimpleNode varNode, SimpleNode expNode, int indentation){
         String varName;
         String storeCode = "";
@@ -177,20 +213,6 @@ public class MethodGenerator extends CodeGenerator{
     private String generateBoolCode(ASTBOOL boolNode, int indentation){
         pushStack(1);
         return tab(indentation) + (boolNode.truth_value ? "iconst_1" : "iconst_0");
-    }
-
-    private String checkSpecialCompare(SimpleNode lhside, SimpleNode rhside){
-        // lhside.equalsNodeType(ParserTreeConstants.JJTIDENT) && TODO: Should we only do this for vars?
-        if (rhside.equalsNodeType(ParserTreeConstants.JJTNUM)) {
-                int num = ((ASTNUM) rhside).value;
-
-                if (num == 0){
-                    popStack(1);
-                    return "if_lt";
-                }
-        }
-
-        return null;
     }
 
     private String generateOperationCode(SimpleNode operationNode, int indentation){
@@ -436,28 +458,6 @@ public class MethodGenerator extends CodeGenerator{
 
 
         return scopeCode;
-    }
-
-    private String checkSpecialAddition(SimpleNode leftNode, SimpleNode rightNode){
-        String varName;
-
-        if(leftNode.equalsNodeType(ParserTreeConstants.JJTIDENT)) {
-            varName = ((ASTIDENT) leftNode).name;
-
-            if (rightNode.equalsNodeType(ParserTreeConstants.JJTADD) || rightNode.equalsNodeType(ParserTreeConstants.JJTSUB)) {
-                SimpleNode lhside = (SimpleNode) rightNode.jjtGetChild(0);
-                SimpleNode rhside = (SimpleNode) rightNode.jjtGetChild(1);
-
-                if (lhside.equalsNodeType(ParserTreeConstants.JJTIDENT) && rhside.equalsNodeType(ParserTreeConstants.JJTNUM)) {
-                    int num = ((ASTNUM) rhside).value;
-
-                    if (((ASTIDENT) lhside).name.equals(varName) && num < 127 && num > -128)
-                        return "iinc " + locals.indexOf(varName) + space() + num;
-                }
-            }
-        }
-
-        return null;
     }
 
     private String generateAssignCode(ASTASSIGN assignNode, int indentation){

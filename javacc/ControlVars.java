@@ -9,6 +9,14 @@ public class ControlVars {
     public static final boolean GENERATE_JASMIN_CODE = true;
     public static final boolean SAVE_JASMIN_CODE = true;
 
+    // Var Types
+    public static final String BOOL = "BOOL";
+    public static final String INT = "INT";
+    public static final String ARRAY = "ARRAY";
+    public static final String METHOD = "METHOD";
+    public static final String STRING = "STRING";
+    public static final String VOID = "VOID";
+
     // Terminal Colors
     public static final String RESET = "\033[0m";  // Text Reset
 

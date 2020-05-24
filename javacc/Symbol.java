@@ -4,21 +4,21 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class Symbol {
-    TypeEnum type;
+    String type;
     String classType;
     int initialized = 0;
     boolean volatileVar = false;
 
-    public Symbol(TypeEnum type){
+    public Symbol(String type){
         this.type = type;
     }
 
-    public Symbol(TypeEnum type, String classType){
+    public Symbol(String type, String classType){
         this.type = type;
         this.classType = classType;
     }
 
-    public TypeEnum getType() {
+    public String getType() {
         return type;
     }
 
@@ -26,7 +26,7 @@ public class Symbol {
         return classType;
     }
 
-    public void setType(TypeEnum type) {
+    public void setType(String type) {
         this.type = type;
     }
 

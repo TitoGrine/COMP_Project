@@ -33,7 +33,7 @@ class ASTCLASS extends SimpleNode {
     firstChild.addSymbolTable(this.symbolTable);
     this.className = firstChild.name;
 
-    ClassSymbol classSymbol = new ClassSymbol();
+    ClassSymbol classSymbol = new ClassSymbol(this.className);
     List<ASTMETHOD> methods = new ArrayList<>();
     ASTMAINMETHOD mainMethod = null;
 
@@ -72,6 +72,10 @@ class ASTCLASS extends SimpleNode {
         methods.add(method);
 
         key = className + '.' + method.methodName;
+
+        System.out.println("Key: " + key);
+        if(this.symbolTable.repeatedMethod(key, method.returnType, method.parameters))
+          analysis.addError(this.getCoords(), "Method " + method.methodName + " already exists with the given parameters.");
 
         this.symbolTable.addMethodSymbol(key, method.parameters, method.returnType);
       } else if (compareNode(childNode, ParserTreeConstants.JJTMAINMETHOD)){

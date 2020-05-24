@@ -25,8 +25,8 @@ class ASTSTATIC_IMPORT extends SimpleNode {
     firstChild.addSymbolTable(this.symbolTable);
     secondChild.addSymbolTable(this.symbolTable);
 
-    TypeEnum returnType = TypeEnum.VOID;
-    ArrayList<TypeEnum> parameters = new ArrayList<>();
+    String returnType = ControlVars.VOID;
+    ArrayList<String> parameters = new ArrayList<>();
 
     if(numChildren > 2) {
       SimpleNode thirdChild = (SimpleNode) this.jjtGetChild(2);
@@ -47,7 +47,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
     }
 
     if(this.symbolTable.repeatedMethod(key, returnType, parameters)){
-      analysis.addError(this.getCoords(), "Method " + key + " was already imported.");
+      //analysis.addError(this.getCoords(), "Method " + key + " was already imported.");
       return;
     }
 

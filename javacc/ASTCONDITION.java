@@ -17,7 +17,7 @@ class ASTCONDITION extends TypeSensitive {
     childNode.addSymbolTable(this.symbolTable);
     childNode.eval(analysis);
 
-    if(!this.validType(childNode, TypeEnum.BOOL, analysis))
+    if(!this.validType(childNode, ControlVars.BOOL, analysis))
       analysis.addError(this.getCoords(), "Expression in condition doesn't return a boolean value.");
   }
 }

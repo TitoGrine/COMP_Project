@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public
 class ASTCALL extends TypeSensitive {
   protected String method;
-  protected ArrayList<TypeEnum> arguments = new ArrayList<>();
+  protected ArrayList<String> arguments = new ArrayList<>();
 
   public ASTCALL(int id) {
     super(id);

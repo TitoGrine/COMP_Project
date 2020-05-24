@@ -2,7 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTARGUMENT extends SimpleNode {
-  protected TypeEnum type;
+  protected String type;
   protected String argName;
 
   public ASTARGUMENT(int id) {
@@ -28,8 +28,8 @@ class ASTARGUMENT extends SimpleNode {
 
     Symbol symbol;
 
-    if(firstChild.typeID == TypeEnum.ARRAY)
-      symbol = new ArraySymbol(TypeEnum.INT);
+    if(firstChild.typeID.equals(ControlVars.ARRAY))
+      symbol = new ArraySymbol(ControlVars.INT);
     else
       symbol = new Symbol(firstChild.typeID);
 

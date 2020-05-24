@@ -6,8 +6,8 @@ public
 class ASTMETHOD extends SimpleNode {
 
   protected String methodName;
-  protected TypeEnum returnType;
-  protected ArrayList<TypeEnum> parameters = new ArrayList<>();
+  protected String returnType;
+  protected ArrayList<String> parameters = new ArrayList<>();
   protected int localSize = 0;
 
   public ASTMETHOD(int id) {
@@ -18,13 +18,13 @@ class ASTMETHOD extends SimpleNode {
     super(p, id);
   }
 
-  public void preProcessMethod(SemanticAnalysis errors){
+  public void preProcessMethod(SemanticAnalysis analysis){
     ASTRETURN firstChild = (ASTRETURN) this.jjtGetChild(0);
     ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
     firstChild.addSymbolTable(this.symbolTable);
     secondChild.addSymbolTable(this.symbolTable);
-    firstChild.eval(errors);
+    firstChild.eval(analysis);
 
     this.returnType = firstChild.type;
     this.methodName = secondChild.name;
@@ -35,11 +35,11 @@ class ASTMETHOD extends SimpleNode {
       ASTARGUMENTS arguments = (ASTARGUMENTS) thirdChild;
 
       arguments.addSymbolTable(this.symbolTable);
-      arguments.eval(errors);
+      arguments.eval(analysis);
 
       this.parameters = arguments.arguments;
     }
-  }
+   }
 
   @Override
   public void addSymbolTable(SymbolTable symbolTable){
@@ -70,7 +70,7 @@ class ASTMETHOD extends SimpleNode {
     returnExp.addSymbolTable(this.symbolTable);
     returnExp.eval(analysis);
 
-    if(returnExp.expType != this.returnType)
+    if(!returnExp.expType.equals(this.returnType))
       analysis.addError(this.getCoords(), "Method " + methodName + " returns type different from declaration.");
 
     if(ControlVars.PRINT_SYMBOLTABLE)

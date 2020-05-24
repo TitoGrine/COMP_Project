@@ -23,7 +23,7 @@ class ASTNEGATION extends TypeSensitive {
     childNode.addSymbolTable(this.symbolTable);
     childNode.eval(analysis);
 
-    if(!this.validType(childNode, TypeEnum.BOOL, analysis))
+    if(!this.validType(childNode, ControlVars.BOOL, analysis))
       analysis.addError(this.getCoords(), "NEGATION of a non boolean type.");
 
     this.initializedUse(childNode, analysis);

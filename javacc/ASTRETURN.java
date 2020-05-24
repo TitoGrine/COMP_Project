@@ -2,7 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTRETURN extends SimpleNode {
-  TypeEnum type;
+  protected String type;
 
   public ASTRETURN(int id) {
     super(id);
@@ -20,6 +20,7 @@ class ASTRETURN extends SimpleNode {
     childNode.eval(analysis);
 
     this.type = childNode.typeID;
+
   }
 }
 /* JavaCC - OriginalChecksum=cbb0390d4299ac5f8d468f97868a53a4 (do not edit this line) */

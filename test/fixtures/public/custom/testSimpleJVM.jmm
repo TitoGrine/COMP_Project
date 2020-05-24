@@ -1,4 +1,6 @@
 import static io.println(int);
+import Tenso;
+
 class SimpleJVM {
 
     int m;
@@ -8,6 +10,9 @@ class SimpleJVM {
 		int a;
 		int b;
 		boolean e;
+		SimpleJVM object;
+
+		object = new SimpleJVM();
 
 		jk = new int[5];
 		a = 10;
@@ -34,5 +39,11 @@ class SimpleJVM {
         }
 
         jk[jk.length] = m;
+
+        object = this.instance(object, new Tenso());
 	}
+
+    public SimpleJVM instance(SimpleJVM object, Tenso tenso){
+        return new SimpleJVM();
+    }
 }

@@ -102,8 +102,6 @@ class SimpleNode implements Node {
     return id;
   }
 
-
-
   String getJasmin() {
     return "";
   }

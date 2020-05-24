@@ -9,14 +9,17 @@ public class CodeGenerator {
     private PrintWriter writer;
     private static String generatedCode;
     protected ASTCLASS classNode;
-    protected int labelCounter = 0;
-    protected int conditionalCounter = 0;
-    protected int loopCounter = 0;
+    protected Counter counter = new Counter();
     protected List<String> classVars;
 
+    /**
+     * Creates an appropriately named file to store the generated Jasmin Code.
+     */
     private void createFile(){
-        if(!ControlVars.SAVE_JASMIN_CODE)
+        if(!ControlVars.SAVE_JASMIN_CODE){
+            System.out.println(ControlVars.GREEN + "\n +++++++++++ Generated Jasmin Code +++++++++++\n" + ControlVars.RESET);
             return;
+        }
 
         try {
             // File file = new File("test/fixtures/libs/compiled/jasminCode/" + classNode.className + ".j");
@@ -32,59 +35,117 @@ public class CodeGenerator {
         }
     }
 
+    /**
+     * Writes the given code either in a file or in the terminal depending on the control variable.
+     *
+     * @param code      Code to write.
+     */
     private void writeToFile(String code) {
+
+        if(code.length() == 0)
+            return;
+
         try{
             if(ControlVars.SAVE_JASMIN_CODE)
                 writer.print(code);
-            else
+            else{
                 System.out.println(code);
+            }
         } catch (Exception e){
             e.printStackTrace();
         }
     }
 
+    /**
+     * If the generated code was written to a file, it closes said file.
+     */
     private void closeFile(){
         if(ControlVars.SAVE_JASMIN_CODE)
             writer.close();
     }
 
+    /**
+     * Shortcut for writing a space character.
+     *
+     * @return      A space character.
+     */
     protected static String space() {
         return " ";
     }
 
+    /**
+     * Shortcut for writing an entry.
+     *
+     * @return      A colon character.
+     */
     protected static String entry() {
         return ":";
     }
 
+    /**
+     * Shortcut for writing an underscore character.
+     *
+     * @return      An underscore character.
+     */
     protected static String us() { return "_"; }
 
-    protected static String rnl() { return "\r\b\r"; }
-
+    /**
+     * Short cut for writing num new lines.
+     *
+     * @param num   Number of newlines to add.
+     * @return      Return num newline characters.
+     */
     protected static String nl(int num) {
         return "\n".repeat(num);
     }
 
+    /**
+     * Short cut for writing a new line.
+     *
+     * @return      A newline character.
+     */
     protected static String nl() {
         return "\n";
     }
 
+    /**
+     * Short cut for writing num tab characters.
+     *
+     * @param indentation   Number of tabs to add.
+     * @return              Return num tab characters.
+     */
     protected static String tab(int indentation){
         return "\t".repeat(indentation);
     }
 
+    /**
+     * Short cut for writing a tab.
+     *
+     * @return      A tab character.
+     */
     protected static String tab() {
         return "\t";
     }
 
+    /**
+     * Prepends an underscore to the end of the given variable name in order to
+     * prevent name conflicts with Jasmin keywords.
+     *
+     * @param varName       Variable name to prepend.
+     * @return              Secure variable name to be used in Jasmin code.
+     */
     protected static String cleanseVar(String varName){
-        switch (varName){
-            case "field":
-                return "field_";
-            default:
-                return varName;
-        }
+        varName = varName.replace("this.", "");
+
+        return '_' + varName;
     }
 
+    /**
+     * Forms the standard code for class declaration.
+     *
+     * @param extendedClass     Name of the class the main class extends (default is Object).
+     * @return                  A string with the standard code.
+     */
     protected static String standardInitializer(String extendedClass) {
         String code = nl() + ".method public <init>()V" + nl();
         code += tab() + "aload_0" + nl();
@@ -95,24 +156,39 @@ public class CodeGenerator {
         return code;
     }
 
-    protected String getSimpleJasminType(TypeEnum type){
-        switch (type) {
-            case INT:
-                return "I";
-            case STRING:
-                return "Ljava/lang/String;";
-            case BOOL:
+    /**
+     * Converts a given simple variable type into its appropriate Jasmin encoding.
+     *
+     * @param type      A given type.
+     * @return          Jasmin encoding for the given type.
+     */
+    protected static String getSimpleJasminType(String type){
+        switch(type){
+            case ControlVars.BOOL:
                 return "Z";
-            case ARRAY:
+            case ControlVars.INT:
+                return "I";
+            case ControlVars.ARRAY:
                 return "[I";
-            case OBJECT:
-                return "L" + this.classNode.className + ";";
-            default:
+            case ControlVars.STRING:
+                return "Ljava/lang/String;";
+            case ControlVars.VOID:
                 return "V";
+            case ControlVars.METHOD:
+                return "";
+            default:
+                return "L" + type + ";";
         }
     }
 
-    protected String getJasminType(String key, SimpleNode node){
+    /**
+     * Finds the correct Jasmin encoding of the given variable type.
+     *
+     * @param key       Key in the symbol table of the variable.
+     * @param node      SimpleNode where key appeared, used to access the symbol table.
+     * @return          Jasmin encoding for the type of the given key.
+     */
+    protected static String getJasminType(String key, SimpleNode node){
         String jasminType = "";
         Symbol symbol;
 
@@ -127,15 +203,12 @@ public class CodeGenerator {
         }
 
         switch (symbol.getType()) {
-            case OBJECT:
-                jasminType = symbol.getClassType();
+            case ControlVars.METHOD:
                 break;
-            case METHOD:
-                break;
-            case ARRAY:
+            case ControlVars.ARRAY:
                 jasminType = "[";
 
-                if(((ArraySymbol) symbol).getReturnType() == TypeEnum.INT)
+                if(((ArraySymbol) symbol).getReturnType().equals(ControlVars.INT))
                     jasminType += "I";
                 else
                     jasminType += "Ljava/lang/String;";
@@ -148,12 +221,18 @@ public class CodeGenerator {
         return jasminType;
     }
 
+    /**
+     * Forms the Jasmin header code for the file's class.
+     *
+     * @return      Jasmin code representing  the header.
+     */
     protected int convertClassHeader(){
         String extendedClass = ((ClassSymbol) this.classNode.symbolTable.getSymbol(this.classNode.className)).getExtendedClass();
         boolean extendsClass = extendedClass == null;
 
         String classHeaderCode = "";
 
+        classHeaderCode += ".source " + this.classNode.className + ".j" + nl();
         classHeaderCode += ".class public " + this.classNode.className + nl();
         classHeaderCode += ".super " + (extendsClass ? "java/lang/Object" : extendedClass) + nl();
 
@@ -182,6 +261,9 @@ public class CodeGenerator {
         return childIndex;
     }
 
+    /**
+     * Iterates through all class methods and writes their generated code in the appropriate output.
+     */
     protected void convertClass(){
         int numChildren = this.classNode.jjtGetNumChildren();
         int childIndex = convertClassHeader();
@@ -205,6 +287,12 @@ public class CodeGenerator {
         }
     }
 
+    /**
+     * Generates the Jasmin code for the class variable declaration.
+     *
+     * @param varNode       Node of the variable declaration,
+     * @return              Jasmin code representing the variable declaration.
+     */
     protected String convertVarDeclaration(ASTVARIABLE varNode){
         String varCode = "";
 
@@ -217,18 +305,35 @@ public class CodeGenerator {
         return varCode;
     }
 
+    /**
+     * Generates the Jasmin code representing the given method declaration.
+     *
+     * @param methodNode    Node of the method declaration.
+     * @return              Jasmin code representing the method declaration and body.
+     */
     protected String convertMethodDeclaration(ASTMETHOD methodNode){
-        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, labelCounter);
+        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
 
         return methodGenerator.generateMethodCode();
     }
 
+    /**
+     * Generates the Jasmin code representing the main method declaration.
+     *
+     * @param methodNode    Node of the main method declaration.
+     * @return              Jasmin code representing the main method declaration and body.
+     */
     protected String convertMainMethodDeclaration(ASTMAINMETHOD methodNode){
-        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, labelCounter);
+        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
 
         return methodGenerator.generateMainMethodCode();
     }
 
+    /**
+     * Generates the necessary Jasmin code of the code represented in the given AST.
+     *
+     * @param root      Root node of the AST.
+     */
     public void generate(SimpleNode root){
         generatedCode = "";
 

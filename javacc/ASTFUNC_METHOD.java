@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public
 class ASTFUNC_METHOD extends TypeSensitive {
   protected String call;
-  protected ArrayList<TypeEnum> arguments = new ArrayList<>();
+  protected ArrayList<String> arguments = new ArrayList<>();
 
   public ASTFUNC_METHOD(int id) {
     super(id);
@@ -39,7 +39,18 @@ class ASTFUNC_METHOD extends TypeSensitive {
       if(this.symbolTable.existsSymbol(object)){
         Symbol symbol = this.symbolTable.getSymbol(object);
 
-        if(symbol.getType() == TypeEnum.OBJECT)
+        switch(symbol.getType()){
+          case ControlVars.BOOL:
+          case ControlVars.INT:
+          case ControlVars.VOID:
+          case ControlVars.METHOD:
+          case ControlVars.STRING:
+          case ControlVars.ARRAY:
+            break;
+          default:
+            object = symbol.getType();
+            break;
+        }
           object = this.symbolTable.getClassType(object);
 
         if(this.symbolTable.existsClassSymbol(object))

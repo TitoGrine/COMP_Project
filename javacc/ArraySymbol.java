@@ -2,14 +2,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArraySymbol extends Symbol{
-    TypeEnum returnType;
+    String returnType;
 
-    public ArraySymbol(TypeEnum returnType) {
-        super(TypeEnum.ARRAY);
+    public ArraySymbol(String returnType) {
+        super(ControlVars.ARRAY);
         this.returnType = returnType;
     }
 
-    public TypeEnum getReturnType() {
+    public String getReturnType() {
         return returnType;
     }
 }

@@ -18,7 +18,7 @@ class ASTVARIABLE extends SimpleNode {
     SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     ASTIDENT secondChild = (ASTIDENT) this.jjtGetChild(1);
 
-    TypeEnum type;
+    String type;
     String name = "";
 
     firstChild.addSymbolTable(this.symbolTable);
@@ -52,16 +52,8 @@ class ASTVARIABLE extends SimpleNode {
 
     Symbol symbol;
 
-    if(type == TypeEnum.ARRAY){
-      symbol = new ArraySymbol(TypeEnum.INT);
-
-      if(classScope)
-        symbol.incInitialized();
-
-      this.symbolTable.addSymbol(key, symbol);
-    }
-    else if(type == TypeEnum.OBJECT){
-      symbol = new Symbol(type, name);
+    if(type == ControlVars.ARRAY){
+      symbol = new ArraySymbol(ControlVars.INT);
 
       if(classScope)
         symbol.incInitialized();

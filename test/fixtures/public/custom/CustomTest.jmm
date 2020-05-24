@@ -34,7 +34,7 @@ class CustomTest extends Test{
             star = true;
         }
 
-        while(num < 4){
+        while(num < 0){
             num = num/2 * 3+2;
         }
 
@@ -49,12 +49,15 @@ class CustomTest extends Test{
         a = 8 / 2 + num * 5 / 2 - 2;
 
         new int[5];
-        new Stonk();
 
-        ioPlus.length;
+        this.methodOverload(new CustomTest());
 
 		ioPlus.printHelloWorld();
 
 		return num;
+	}
+
+	public int methodOverload(CustomTest i){
+	    return 1;
 	}
 }

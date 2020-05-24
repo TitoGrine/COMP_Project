@@ -4,7 +4,7 @@ import java.util.ArrayList;
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTARGUMENTS extends TypeSensitive {
-  protected ArrayList<TypeEnum> arguments = new ArrayList<>();
+  protected ArrayList<String> arguments = new ArrayList<>();
 
   public ASTARGUMENTS(int id) {
     super(id);
@@ -28,8 +28,7 @@ class ASTARGUMENTS extends TypeSensitive {
 
       if(compareNode(childNode, ParserTreeConstants.JJTARGUMENT)){
         this.arguments.add(((ASTARGUMENT) childNode).type);
-      }
-      else if (compareNode(childNode, ParserTreeConstants.JJTFUNC_METHOD)){
+      } else if (compareNode(childNode, ParserTreeConstants.JJTFUNC_METHOD)){
         ASTFUNC_METHOD funcMethod = ((ASTFUNC_METHOD) childNode);
         String call = funcMethod.call;
 

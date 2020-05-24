@@ -4,7 +4,7 @@ import java.util.ArrayList;
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTPARAMETERS extends SimpleNode {
-  ArrayList<TypeEnum> parameters = new ArrayList<>();
+  ArrayList<String> parameters = new ArrayList<>();
 
   public ASTPARAMETERS(int id) {
     super(id);

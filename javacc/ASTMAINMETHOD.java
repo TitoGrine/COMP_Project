@@ -17,8 +17,8 @@ class ASTMAINMETHOD extends ASTMETHOD {
   @Override
   public void preProcessMethod(SemanticAnalysis errors) {
     methodName = "main";
-    returnType = TypeEnum.VOID;
-    parameters = new ArrayList<>(Collections.singleton(TypeEnum.ARRAY));
+    returnType = ControlVars.VOID;
+    parameters.add(ControlVars.ARRAY);
   }
 
   @Override
@@ -33,7 +33,7 @@ class ASTMAINMETHOD extends ASTMETHOD {
 
     firstChild.addSymbolTable(this.symbolTable);
 
-    ArraySymbol arraySymbol = new ArraySymbol(TypeEnum.STRING);
+    ArraySymbol arraySymbol = new ArraySymbol(ControlVars.STRING);
 
     arraySymbol.incInitialized();
 

@@ -229,13 +229,13 @@ void Type() #void : {}
 
 void NonIdentifierType() #TYPE : {}
 {
-    <BOOL> {jjtThis.typeID = TypeEnum.BOOL;}
+    <BOOL> {jjtThis.typeID = ControlVars.BOOL;}
     |
-    <INT> (<LSQBRACKET> <RSQBRACKET>  {jjtThis.typeID = TypeEnum.ARRAY;} | {jjtThis.typeID = TypeEnum.INT;})
+    <INT> (<LSQBRACKET> <RSQBRACKET>  {jjtThis.typeID = ControlVars.ARRAY;} | {jjtThis.typeID = ControlVars.INT;})
     |
-    <STRING> {jjtThis.typeID = TypeEnum.STRING;}
+    <STRING> {jjtThis.typeID = ControlVars.STRING;}
     |
-    <VOID> {jjtThis.typeID = TypeEnum.VOID;}
+    <VOID> {jjtThis.typeID = ControlVars    .VOID;}
 }
 
 void MethodDeclaration() #void : {}

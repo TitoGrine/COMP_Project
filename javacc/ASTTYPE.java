@@ -2,7 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTTYPE extends SimpleNode {
-  public TypeEnum typeID = null;
+  public String typeID = null;
   public String varName;
 
   public ASTTYPE(int id) {

@@ -49,7 +49,6 @@ class ASTARRAY_ACCESS extends TypeSensitive {
 
         if (this.object != null){
           this.object = "this." + this.object;
-          this.setMethodThis();
         }
       }
 

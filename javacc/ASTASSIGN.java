@@ -43,7 +43,6 @@ class ASTASSIGN extends TypeSensitive {
 
       if(varName != null){
         varName = "this." + varName;
-        this.setMethodThis();
       }
     }
 

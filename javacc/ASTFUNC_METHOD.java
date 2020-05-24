@@ -33,7 +33,6 @@ class ASTFUNC_METHOD extends TypeSensitive {
       object = ((ASTTHIS) firstChild).className;
 
       extendedClass = classSymbol.getExtendedClass();
-      this.setMethodThis();
     } else if(compareNode(firstChild, ParserTreeConstants.JJTIDENT)){
       object = ((ASTIDENT) firstChild).name;
 

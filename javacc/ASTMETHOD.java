@@ -9,7 +9,6 @@ class ASTMETHOD extends SimpleNode {
   protected String returnType;
   protected ArrayList<String> parameters = new ArrayList<>();
   protected int localSize = 0;
-  protected boolean thisRequired = false;
 
   public ASTMETHOD(int id) {
     super(id);

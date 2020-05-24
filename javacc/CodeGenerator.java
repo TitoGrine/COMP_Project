@@ -9,9 +9,7 @@ public class CodeGenerator {
     private PrintWriter writer;
     private static String generatedCode;
     protected ASTCLASS classNode;
-    protected int labelCounter = 0;
-    protected int conditionalCounter = 0;
-    protected int loopCounter = 0;
+    protected Counter counter = new Counter();
     protected List<String> classVars;
 
     /**
@@ -313,7 +311,7 @@ public class CodeGenerator {
      * @return              Jasmin code representing the method declaration and body.
      */
     protected String convertMethodDeclaration(ASTMETHOD methodNode){
-        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, labelCounter);
+        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
 
         return methodGenerator.generateMethodCode();
     }
@@ -325,7 +323,7 @@ public class CodeGenerator {
      * @return              Jasmin code representing the main method declaration and body.
      */
     protected String convertMainMethodDeclaration(ASTMAINMETHOD methodNode){
-        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, labelCounter);
+        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
 
         return methodGenerator.generateMainMethodCode();
     }

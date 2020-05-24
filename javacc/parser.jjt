@@ -235,7 +235,7 @@ void NonIdentifierType() #TYPE : {}
     |
     <STRING> {jjtThis.typeID = ControlVars.STRING;}
     |
-    <VOID> {jjtThis.typeID = ControlVars.VOID;}
+    <VOID> {jjtThis.typeID = ControlVars    .VOID;}
 }
 
 void MethodDeclaration() #void : {}

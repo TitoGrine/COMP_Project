@@ -179,6 +179,20 @@ public class MethodGenerator extends CodeGenerator{
         return tab(indentation) + (boolNode.truth_value ? "iconst_1" : "iconst_0");
     }
 
+    private String checkSpecialCompare(SimpleNode lhside, SimpleNode rhside){
+        // lhside.equalsNodeType(ParserTreeConstants.JJTIDENT) && TODO: Should we only do this for vars?
+        if (rhside.equalsNodeType(ParserTreeConstants.JJTNUM)) {
+                int num = ((ASTNUM) rhside).value;
+
+                if (num == 0){
+                    popStack(1);
+                    return "if_lt";
+                }
+        }
+
+        return null;
+    }
+
     private String generateOperationCode(SimpleNode operationNode, int indentation){
         String operationCode = "";
         boolean binaryOperation = operationNode.jjtGetNumChildren() > 1;
@@ -188,6 +202,17 @@ public class MethodGenerator extends CodeGenerator{
 
         if(binaryOperation){
             SimpleNode secondChild = (SimpleNode) operationNode.jjtGetChild(1);
+
+            if(operationNode.equalsNodeType(ParserTreeConstants.JJTLESSTHAN)){
+                String aux = checkSpecialCompare(firstchild, secondChild);
+
+                if(aux != null){
+                    operationCode += tab(indentation) + aux;
+
+                    return operationCode;
+                }
+            }
+
             operationCode += generateTypeSensitiveCode(secondChild, indentation, true);
         }
 
@@ -326,7 +351,6 @@ public class MethodGenerator extends CodeGenerator{
                 code += generateCallCode((ASTFUNC_METHOD) child, indentation) + nl();;
                 if(!used)
                     code += tab(indentation) + "pop" + nl(2);
-
                 break;
             case ParserTreeConstants.JJTLENGTH:
                 code += generateLengthCode((ASTLENGTH) child, indentation) + nl();
@@ -530,6 +554,15 @@ public class MethodGenerator extends CodeGenerator{
                 SimpleNode rightSideNode = (SimpleNode) ((ASTLESSTHAN) child).jjtGetChild(1);
 
                 conditionCode += generateTypeSensitiveCode(leftSideNode, indentation, true);
+
+                String aux = checkSpecialCompare(leftSideNode, rightSideNode);
+
+                if(aux != null){
+                    conditionCode += tab(indentation) + aux;
+
+                    return conditionCode;
+                }
+
                 conditionCode += generateTypeSensitiveCode(rightSideNode, indentation, true);
                 popStack(2);
                 conditionCode += tab(indentation) + "if_icmpge";

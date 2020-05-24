@@ -34,7 +34,7 @@ class CustomTest extends Test{
             star = true;
         }
 
-        while(num < 4){
+        while(num < 0){
             num = num/2 * 3+2;
         }
 
@@ -51,7 +51,6 @@ class CustomTest extends Test{
         new int[5];
 
         this.methodOverload(new CustomTest());
-        this.methodOverload(test);
 
 		ioPlus.printHelloWorld();
 
@@ -61,8 +60,4 @@ class CustomTest extends Test{
 	public int methodOverload(CustomTest i){
 	    return 1;
 	}
-
-	public boolean methodOverload(CustomTest f){
-    	return true;
-    }
 }

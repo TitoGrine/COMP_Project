@@ -31,7 +31,6 @@ public class TypeSensitive extends SimpleNode {
                 String call = funcMethod.call;
 
                 if(!this.symbolTable.existsMethodSymbol(call)){
-                    System.out.println(call);
                     return null;
                 }
 

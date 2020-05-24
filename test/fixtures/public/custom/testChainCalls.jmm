@@ -1,14 +1,14 @@
 import static io.println(int);
-class Simple {
+class ChainCalls {
 
 	public static void main(String[] args) {
 
         int a;
         int b;
         int result;
-        Simple simple;
+        ChainCalls simple;
 
-        simple = new Simple();
+        simple = new ChainCalls();
 
         a=2;
         b=6;

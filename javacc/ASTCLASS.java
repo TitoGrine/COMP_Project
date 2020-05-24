@@ -73,7 +73,6 @@ class ASTCLASS extends SimpleNode {
 
         key = className + '.' + method.methodName;
 
-        System.out.println("Key: " + key);
         if(this.symbolTable.repeatedMethod(key, method.returnType, method.parameters))
           analysis.addError(this.getCoords(), "Method " + method.methodName + " already exists with the given parameters.");
 

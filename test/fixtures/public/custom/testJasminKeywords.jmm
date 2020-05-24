@@ -1,5 +1,5 @@
 import static io.println(int);
-class Simple {
+class Keywords {
 
 	public static void main(String[] args) {
         int field;
@@ -9,9 +9,9 @@ class Simple {
         int ireturn;
         boolean imul;
         boolean iconst_3;
-        Simple simple;
+        Keywords simple;
 
-        simple = new Simple();
+        simple = new Keywords();
         ireturn = 0;
         field = 4;
         putfield = 5;

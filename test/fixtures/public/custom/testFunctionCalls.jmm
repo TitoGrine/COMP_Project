@@ -1,17 +1,17 @@
 import static io.println(int);
-class Simple {
+class FunctionCalls {
 
 	public static void main(String[] args) {
 		int a;
 		int b;
 		int boring_variable1;
-		Simple simple;
-		Simple new_simple;
+		FunctionCalls simple;
+		FunctionCalls new_simple;
 		boolean i_need_coffee;
 		boolean i_slept_enough;
 		boolean boring_variable2;
 
-		simple = new Simple();
+		simple = new FunctionCalls();
 		new_simple = simple.instance();
 
 		a = 20;
@@ -27,8 +27,8 @@ class Simple {
 		io.println(boring_variable1);
 	}
 
-	public Simple instance() {
-		return new Simple();
+	public FunctionCalls instance() {
+		return new FunctionCalls();
 	}
 
 	public int add(int a, int b) {

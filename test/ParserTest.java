@@ -208,10 +208,4 @@ public class ParserTest {
         if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
             test("fixtures/public/custom/WeirdArrayAccess.jmm", false);
     }
-
-    @Test
-    public void testJVMGeneration() {
-        if(ControlVars.RUN_CUSTOM_TESTS)
-            test("fixtures/public/custom/testSimpleJVM.jmm", false);
-    }
 }

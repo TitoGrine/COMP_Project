@@ -1,44 +1,39 @@
+import io;
 import static io.println(int);
-class Simple {
+
+class Overflow {
 
 	public static void main(String[] args) {
-        Simple simple;
+        Overflow simple;
         int a;
         int b;
-        int c;
-        int d;
         int result1;
         int result2;
         int result3;
-        int result4;
 
-        simple = new Simple();
+        simple = new Overflow();
         a = 3;
         b = 5;
-        c = 8;
-        d = 9;
 
-        result1 = simple.add(a,b);
-        result2 = simple.add(a,b,c);
-        result3 = simple.add(a,b,c,d);
+        result1 = simple.add(a, simple);
+        result2 = simple.add(b, new io());
 
-        result4 = simple.add(result1, result2, result3);
+        result3 = simple.add(result1, result2);
 
 		io.println(result1);
 		io.println(result2);
 		io.println(result3);
-		io.println(result4);
 	}
 
 	public int add(int a, int b) {
 		return a+b;
 	}
 
-	public int add(int a, int b, int c) {
-		return a+b+c;
+	public int add(int a, Overflow b) {
+		return a-20;
 	}
 
-	public int add(int a, int b, int c, int d) {
-		return a+b+c+d;
+	public int add(int a, io b) {
+		return a+15;
 	}
 }

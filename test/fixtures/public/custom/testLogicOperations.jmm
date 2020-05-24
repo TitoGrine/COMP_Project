@@ -1,8 +1,8 @@
 import static io.println(int);
-class Simple {
+class LogicOp {
 
 	public static void main(String[] args) {
-        Simple simple;
+        LogicOp simple;
         int a;
         int b;
         int c;
@@ -11,7 +11,7 @@ class Simple {
         boolean f;
         int result;
 
-        simple = new Simple();
+        simple = new LogicOp();
         a = 3;
         b = 5;
         c = 8;
@@ -20,9 +20,9 @@ class Simple {
         f = true;
 
         if (!(b < a) && (e && f)) {
-            result=1;
-        } else {
             result = 1;
+        } else {
+            result = 0-1;
         }
 
 		io.println(result);

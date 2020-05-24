@@ -1,15 +1,15 @@
 import static io.println(int);
-class Simple {
+class NumericOp {
 
 	public static void main(String[] args) {
         int a;
         int b;
         int trust_me_its_correct;
-        Simple simple;
+        NumericOp simple;
 
         a = 2;
         b = 5;
-        simple = new Simple();
+        simple = new NumericOp();
 
         trust_me_its_correct = simple.spam_calculator(a,b,7,9);
         io.println(trust_me_its_correct);

@@ -260,7 +260,16 @@ public class MethodGenerator extends CodeGenerator{
                 operationCode += "iand";
                 break;
             case ParserTreeConstants.JJTNEGATION:
-                operationCode += "ineg";
+                //operationCode += "ineg"; TODO: Ask why this doesn't work xD
+                popStack(1);
+                operationCode += "ifeq branch_" + counter.labelCounter + nl();
+                operationCode += tab(indentation + 1) + "iconst_0" + nl();
+                operationCode += tab(indentation + 1) + "goto end_" + counter.labelCounter + nl();
+                operationCode += tab(indentation) + "branch_" + counter.labelCounter + ":" + nl();
+                operationCode += tab(indentation + 1) + "iconst_1" + nl();
+                operationCode += tab(indentation) + "end_" + counter.labelCounter + ":";
+                counter.labelCounter ++;
+
                 break;
             case ParserTreeConstants.JJTLESSTHAN:
                 popStack(2);

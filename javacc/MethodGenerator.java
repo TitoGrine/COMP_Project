@@ -76,11 +76,13 @@ public class MethodGenerator extends CodeGenerator{
                 if (lhside.equalsNodeType(ParserTreeConstants.JJTIDENT) && rhside.equalsNodeType(ParserTreeConstants.JJTNUM)) {
                     int num = ((ASTNUM) rhside).value;
 
+                    boolean addition = rightNode.equalsNodeType(ParserTreeConstants.JJTADD);
+
                     if (((ASTIDENT) lhside).name.equals(varName) && num < 127 && num > -128){
                         int index = locals.indexOf(varName);
 
                         if(index != -1)
-                            return "iinc " + locals.indexOf(varName) + space() + num;
+                            return "iinc " + locals.indexOf(varName) + space() + (addition ? "" : "-") + num;
                     }
                 }
             }

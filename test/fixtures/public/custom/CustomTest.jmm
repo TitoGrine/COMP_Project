@@ -49,12 +49,20 @@ class CustomTest extends Test{
         a = 8 / 2 + num * 5 / 2 - 2;
 
         new int[5];
-        new Stonk();
 
-        ioPlus.length;
+        this.methodOverload(new CustomTest());
+        this.methodOverload(test);
 
 		ioPlus.printHelloWorld();
 
 		return num;
 	}
+
+	public int methodOverload(CustomTest i){
+	    return 1;
+	}
+
+	public boolean methodOverload(CustomTest f){
+    	return true;
+    }
 }

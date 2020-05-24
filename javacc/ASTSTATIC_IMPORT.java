@@ -47,7 +47,7 @@ class ASTSTATIC_IMPORT extends SimpleNode {
     }
 
     if(this.symbolTable.repeatedMethod(key, returnType, parameters)){
-      analysis.addError(this.getCoords(), "Method " + key + " was already imported.");
+      //analysis.addError(this.getCoords(), "Method " + key + " was already imported.");
       return;
     }
 

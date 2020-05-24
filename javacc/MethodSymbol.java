@@ -21,6 +21,26 @@ public class MethodSymbol extends Symbol{
         }
     }
 
+    private boolean existsParameters(ArrayList<String> parameters){
+        for(ArrayList<String> acceptedParameters : parametersOverload){
+            if(acceptedParameters.size() == parameters.size()){
+                boolean match = true;
+
+                for(int i = 0; i < acceptedParameters.size(); i++){
+                    if(!acceptedParameters.get(i).equals(parameters.get(i))){
+                        match = false;
+                        break;
+                    }
+                }
+
+                if(match)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
     public MethodSymbol(String returnType, ArrayList<String> parameters, boolean staticValue) {
         super(ControlVars.METHOD);
 
@@ -77,14 +97,14 @@ public class MethodSymbol extends Symbol{
     }
 
     public boolean repeatedMethod(String returnType, ArrayList<String> arguments){
-        return acceptedParameters(arguments) && !returnType.equals(this.getReturnType(arguments));
+        return acceptedParameters(arguments);
     }
 
     public boolean acceptedParameters(ArrayList<String> arguments){
         if(!arguments.isEmpty())
-            return parametersOverload.contains(arguments);
+            return this.existsParameters(arguments);
 
-        return parametersOverload.contains(arguments) || parametersOverload.contains(new ArrayList<>(Collections.singleton(ControlVars.VOID)));
+        return this.existsParameters(arguments) || this.existsParameters(new ArrayList<>(Collections.singleton(ControlVars.VOID)));
     }
 
     @Override

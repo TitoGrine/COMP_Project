@@ -22,8 +22,8 @@ public class CodeGenerator {
         }
 
         try {
-            // File file = new File("test/fixtures/libs/compiled/jasminCode/" + classNode.className + ".j");
-            File file = new File("test/fixtures/libs/compiled/" + classNode.className + ".j");
+             File file = new File("test/fixtures/libs/compiled/jasminCode/" + classNode.className + ".j");
+            //File file = new File("test/fixtures/libs/compiled/" + classNode.className + ".j");
 
             if (!file.exists())
                 file.createNewFile();
@@ -137,7 +137,7 @@ public class CodeGenerator {
     protected static String cleanseVar(String varName){
         varName = varName.replace("this.", "");
 
-        return '_' + varName;
+        return "$_" + varName;
     }
 
     /**

@@ -56,7 +56,7 @@ public class MethodGenerator extends CodeGenerator{
 
             if (num == 0){
                 popStack(1);
-                return "iflt";
+                return "ifge";
             }
         }
 
@@ -460,7 +460,7 @@ public class MethodGenerator extends CodeGenerator{
                 simpleCode += generateLoopCode((ASTWHILE) node, indentation);
                 break;
             default:
-                simpleCode += generateTypeSensitiveCode(node, indentation, false);
+                simpleCode += generateTypeSensitiveCode(node, indentation, false) + nl();
                 break;
         }
 

@@ -225,62 +225,86 @@ public class MethodGenerator extends CodeGenerator{
 
     private String generateOperationCode(SimpleNode operationNode, int indentation){
         String operationCode = "";
+        String leftSide, rightSide = "";
         boolean binaryOperation = operationNode.jjtGetNumChildren() > 1;
 
         SimpleNode firstchild = (SimpleNode) operationNode.jjtGetChild(0);
-        operationCode += generateTypeSensitiveCode(firstchild, indentation, true);
+
+        leftSide = generateTypeSensitiveCode(firstchild, indentation, true);
 
         if(binaryOperation){
             SimpleNode secondChild = (SimpleNode) operationNode.jjtGetChild(1);
 
-            operationCode += generateTypeSensitiveCode(secondChild, indentation, true);
-        }
 
-        operationCode += tab(indentation);
+
+            rightSide = generateTypeSensitiveCode(secondChild, indentation + (operationNode.equalsNodeType(ParserTreeConstants.JJTAND) ? 1 : 0), true);
+        }
 
         switch(operationNode.id){
             case ParserTreeConstants.JJTADD:
+                operationCode += leftSide;
+                operationCode += rightSide;
                 popStack(1);
-                operationCode += "iadd";
+                operationCode += tab(indentation) + "iadd";
                 break;
             case ParserTreeConstants.JJTSUB:
+                operationCode += leftSide;
+                operationCode += rightSide;
                 popStack(1);
-                operationCode += "isub";
+                operationCode += tab(indentation) + "isub";
                 break;
             case ParserTreeConstants.JJTMUL:
+                operationCode += leftSide;
+                operationCode += rightSide;
                 popStack(1);
-                operationCode += "imul";
+                operationCode += tab(indentation) + "imul";
                 break;
             case ParserTreeConstants.JJTDIV:
+                operationCode += leftSide;
+                operationCode += rightSide;
                 popStack(1);
-                operationCode += "idiv";
+                operationCode += tab(indentation) + "idiv";
                 break;
             case ParserTreeConstants.JJTAND:
+                operationCode += leftSide;
                 popStack(1);
-                operationCode += "iand";
+                operationCode += tab(indentation) + "ifeq and_" + counter.andCounter + nl();
+                operationCode += rightSide;
+                popStack(1);
+                operationCode += tab(indentation + 1) + "ifeq and_" + counter.andCounter + nl();
+                operationCode += tab(indentation + 2) + "iconst_1" + nl();
+                operationCode += tab(indentation + 2) + "goto end_and_" + counter.andCounter + nl();
+                operationCode += tab(indentation) + "and_" + counter.andCounter + entry() + nl();
+                operationCode += tab(indentation + 1) + "iconst_0" + nl();
+                operationCode += tab(indentation) + "end_and_" + counter.andCounter + entry() + nl();
+                pushStack(1);
+                counter.andCounter++;
                 break;
             case ParserTreeConstants.JJTNEGATION:
-                //operationCode += "ineg"; TODO: Ask why this doesn't work xD
+                operationCode += leftSide;
                 popStack(1);
-                operationCode += "ifeq branch_" + counter.labelCounter + nl();
+                operationCode += tab(indentation) + "ifeq neg_" + counter.negCounter + nl();
                 operationCode += tab(indentation + 1) + "iconst_0" + nl();
-                operationCode += tab(indentation + 1) + "goto end_" + counter.labelCounter + nl();
-                operationCode += tab(indentation) + "branch_" + counter.labelCounter + ":" + nl();
+                operationCode += tab(indentation + 1) + "goto end_neg_" + counter.negCounter + nl();
+                operationCode += tab(indentation) + "neg_" + counter.negCounter + entry() + nl();
                 operationCode += tab(indentation + 1) + "iconst_1" + nl();
-                operationCode += tab(indentation) + "end_" + counter.labelCounter + ":";
-                counter.labelCounter ++;
+                operationCode += tab(indentation) + "end_neg_" + counter.negCounter + entry();
+                pushStack(1);
+                counter.negCounter++;
 
                 break;
             case ParserTreeConstants.JJTLESSTHAN:
+                operationCode += leftSide;
+                operationCode += rightSide;
                 popStack(2);
-                operationCode += "if_icmplt branch_" + counter.labelCounter + nl();
+                operationCode += tab(indentation) + "if_icmplt less_" + counter.lessCounter + nl();
                 operationCode += tab(indentation + 1) + "iconst_0" + nl();
-                operationCode += tab(indentation + 1) + "goto end_" + counter.labelCounter + nl();
-                operationCode += tab(indentation) + "branch_" + counter.labelCounter + ":" + nl();
+                operationCode += tab(indentation + 1) + "goto end_less_" + counter.lessCounter + nl();
+                operationCode += tab(indentation) + "less_" + counter.lessCounter + entry() + nl();
                 operationCode += tab(indentation + 1) + "iconst_1" + nl();
-                operationCode += tab(indentation) + "end_" + counter.labelCounter + ":";
+                operationCode += tab(indentation) + "end_less_" + counter.lessCounter + entry();
                 pushStack(1);
-                counter.labelCounter ++;
+                counter.lessCounter++;
                 break;
             default:
                 break;

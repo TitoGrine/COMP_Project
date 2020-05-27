@@ -67,12 +67,11 @@ and leafs of the tree with the information (including tokens) necessary to perfo
 5. ~~Semantic Analysis.~~
 6. ~~Generate JVM code accepted by jasmin corresponding to the invocation of functions in **Java--**.~~
 7. ~~Generate JVM code accepted by jasmin for arithmetic expressions.~~
-8. Generate JVM code accepted by jasmin for conditional instructions (if and if-else).
-9. Generate JVM code accepted by jasmin for loops.
-10. Generate JVM code accepted by jasmin to deal with arrays.
+8. ~~Generate JVM code accepted by jasmin for conditional instructions (if and if-else).~~
+9. ~~Generate JVM code accepted by jasmin for loops.~~
+10. ~~Generate JVM code accepted by jasmin to deal with arrays.~~
 11. Complete the compiler and test it using a set of Java-- classes.
-12. Proceed with the optimizations related to the code generation, related to the register allocation (“-r” option) 
-and the optimizations related to the “-o” option.
+12. Proceed with the optimizations related to the code generation, related to the register allocation (“-r” option) and the optimizations related to the “-o” option.
 
  
  

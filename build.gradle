@@ -80,3 +80,7 @@ task copyJar() {
     }
 }
 build.dependsOn copyJar
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}

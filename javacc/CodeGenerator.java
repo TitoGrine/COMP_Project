@@ -15,14 +15,16 @@ public class CodeGenerator {
     /**
      * Creates an appropriately named file to store the generated Jasmin Code.
      */
-    private void createFile(){
+    private void createFile(String fileName){
         if(!ControlVars.SAVE_JASMIN_CODE){
             System.out.println(ControlVars.GREEN + "\n +++++++++++ Generated Jasmin Code +++++++++++\n" + ControlVars.RESET);
             return;
         }
 
         try {
-             File file = new File("test/fixtures/libs/compiled/jasminCode/" + classNode.className + ".j");
+            String[] path = fileName.split("/");
+
+             File file = new File("test/fixtures/libs/compiled/jasminCode/" + path[path.length - 1].replace(".jmm", ".j"));
             //File file = new File("test/fixtures/libs/compiled/" + classNode.className + ".j");
 
             if (!file.exists())
@@ -334,7 +336,7 @@ public class CodeGenerator {
      *
      * @param root      Root node of the AST.
      */
-    public void generate(SimpleNode root){
+    public void generate(SimpleNode root, String fileName){
         generatedCode = "";
 
         int numChildren = root.jjtGetNumChildren();
@@ -350,7 +352,7 @@ public class CodeGenerator {
 
                 classVars = new ArrayList<>(classNode.classVars);
 
-                createFile();
+                createFile(fileName);
 
                 convertClass();
 

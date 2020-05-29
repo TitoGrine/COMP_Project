@@ -29,7 +29,7 @@ public class Main {
             }
 
             if(ControlVars.GENERATE_JASMIN_CODE){
-                new CodeGenerator().generate(root);
+                new CodeGenerator().generate(root, args[0]);
             }
 
             analysis.showWarnings(ControlVars.THROW_WARNING_EXCEPTION);

@@ -25,9 +25,8 @@ public class CodeGenerator {
             if(!(new File("test/fixtures/libs/compiled/jasminCode").exists()))
                 new File("test/fixtures/libs/compiled/jasminCode").mkdir();
 
-            String[] path = fileName.split("/");
-
-             File file = new File("test/fixtures/libs/compiled/jasminCode/" + path[path.length - 1].replace(".jmm", ".j"));
+            String jasminFilename = new File(fileName).getName().replace(".jmm", ".j");
+            File file = new File("test/fixtures/libs/compiled/jasminCode/" + jasminFilename);
             //File file = new File("test/fixtures/libs/compiled/" + classNode.className + ".j");
 
             if (!file.exists())

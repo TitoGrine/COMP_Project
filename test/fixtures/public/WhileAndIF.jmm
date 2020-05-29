@@ -1,5 +1,5 @@
 import static io.println(int) void;
-class WhileAndIf {
+class WhileAndIF {
 
  
     public static void main(String[] args){
@@ -16,6 +16,7 @@ class WhileAndIf {
             c = b-1;
         }
 
+
         while((0-1) < c){
             d[c] = a-b; 
             c= c-1;
@@ -23,7 +24,6 @@ class WhileAndIf {
             b= b-1;
         }
         c=0;
-
         while(c < d.length){
             io.println(d[c]);
             c= c+1;

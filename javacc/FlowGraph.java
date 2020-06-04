@@ -25,7 +25,13 @@ public class FlowGraph {
     }
 
     public void methodGraph(SimpleNode node){
+        SimpleNode methodBody = null;
+        int numChildren = node.jjtGetNumChildren();
+        int childIndex = 2;
 
+        while(methodBody == null){
+            SimpleNode child = (SimpleNode)
+        }
     }
 
     public void scopeGraph(SimpleNode node){

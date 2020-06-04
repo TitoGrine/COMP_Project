@@ -28,6 +28,10 @@ public class Main {
                 root.dump(""); // prints the tree on the screen
             }
 
+            if(ControlVars.R_OPTIMIZATION){
+
+            }
+
             if(ControlVars.GENERATE_JASMIN_CODE){
                 new CodeGenerator().generate(root, args[0]);
             }

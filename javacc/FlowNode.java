@@ -13,8 +13,10 @@ public class FlowNode {
     }
 
     public void addSuccessor(FlowNode successor){
-        if(!successors.contains(successor))
+        if(!successors.contains(successor)){
+            successor.addPredecessor(this);
             successors.add(successor);
+        }
     }
 
     public void addPredecessor(FlowNode predecessor){

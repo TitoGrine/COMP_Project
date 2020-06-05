@@ -107,9 +107,6 @@ public class FlowGraph {
                          auxNode.addSuccessor(prevNode);
                      }
 
-//                    System.out.println("HEAD: " + headNode);
-//                    System.out.println("TAIL: " + prevNode);
-
                      break;
                 case ParserTreeConstants.JJTSCOPE:
                     result = scopeGraph(child);
@@ -119,25 +116,19 @@ public class FlowGraph {
                         prevNode = result.getTailNode();
                     } else {
                         auxNode = result.getHeadNode();
-                        auxNode.addPredecessor(prevNode);
+                        prevNode.addSuccessor(auxNode);
                         prevNode = result.getTailNode();
                     }
 
                     break;
                 default:
-                    System.out.println("Well " + child.id);
 
                     if(headNode == null){
                         prevNode = simpleFlowNode(child);
                         headNode = prevNode;
                     } else {
                         auxNode = simpleFlowNode(child);
-//                        System.out.println("\n" + auxNode);
                         prevNode.addSuccessor(auxNode);
-                        System.out.println("Successors:");
-                        for(FlowNode successor : prevNode.getSuccessors()){
-                            System.out.println(successor);
-                        }
                         prevNode = auxNode;
                     }
 
@@ -191,8 +182,8 @@ public class FlowGraph {
         headNode.addSuccessor(ifFlowGraph.getHeadNode());
         headNode.addSuccessor(elseFlowGraph.getHeadNode());
 
-        tailNode.addPredecessor(ifFlowGraph.getTailNode());
-        tailNode.addPredecessor(elseFlowGraph.getTailNode());
+        ifFlowGraph.getTailNode().addSuccessor(tailNode);
+        elseFlowGraph.getTailNode().addSuccessor(tailNode);
     }
 
     public FlowGraph ifGraph(ASTIF ifNode){

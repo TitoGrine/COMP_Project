@@ -29,7 +29,10 @@ public class LivenessAnalysis {
             index++;
         }
 
-        for(FlowGraph graph : flowGraphs)
-            graph.print();
+        for(FlowGraph graph : flowGraphs){
+            graph.cleanGraph();
+            //graph.print();
+            graph.analyseLiveness();
+        }
     }
 }

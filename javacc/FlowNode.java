@@ -19,9 +19,25 @@ public class FlowNode {
         }
     }
 
+    public void addSuccessors(ArrayList<FlowNode> newSuccessors){
+        for(FlowNode successor : newSuccessors)
+            if(!successors.contains(successor)){
+                successor.addPredecessor(this);
+                successors.add(successor);
+            }
+    }
+
     public void addPredecessor(FlowNode predecessor){
         if(!predecessors.contains(predecessor))
             predecessors.add(predecessor);
+    }
+
+    public void removeSuccessor(FlowNode successor){
+        successors.remove(successor);
+    }
+
+    public void removePredecessor(FlowNode predecessor){
+        predecessors.remove(predecessor);
     }
 
     public void addDefinition(String identifier){
@@ -49,8 +65,12 @@ public class FlowNode {
         return predecessors;
     }
 
-    public ArrayList<String> in(){
-        Set<String> set = new HashSet<>(this.out());
+    public void deletePredecessors() {
+        predecessors = new ArrayList<>();
+    }
+
+    public ArrayList<String> in(ArrayList<String> out){
+        Set<String> set = new HashSet<>(out);
 
         for(String definition : definitions){
             set.remove(definition);
@@ -61,18 +81,18 @@ public class FlowNode {
         return new ArrayList<>(set);
     }
 
-    public ArrayList<String> out(){
-        Set<String> set = new HashSet<>();
-
-        for (FlowNode successor : successors) {
-            set.addAll(successor.in());
-        }
-
-        return new ArrayList<>(set);
-    }
-
     @Override
     public String toString() {
-        return " · FlowNode - { def: " + definitions + " | use: " + uses + '}';
+        return " · " + ControlVars.GREEN_BRIGHT + "FlowNode" + ControlVars.RESET + " - { def: " + definitions + " | use: " + uses + '}';
+    }
+
+    public void link() {
+        for(FlowNode predecessor : predecessors){
+            predecessor.addSuccessors(successors);
+            predecessor.removeSuccessor(this);
+        }
+
+        for(FlowNode successor : successors)
+            successor.removePredecessor(this);
     }
 }

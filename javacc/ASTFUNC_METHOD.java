@@ -45,6 +45,8 @@ class ASTFUNC_METHOD extends TypeSensitive {
 
       ClassSymbol classSymbol = (ClassSymbol) this.symbolTable.getSymbol(((ASTTHIS) firstChild).className);
 
+      varCall = "this";
+
       object = ((ASTTHIS) firstChild).className;
 
       extendedClass = classSymbol.getExtendedClass();

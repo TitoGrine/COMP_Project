@@ -1,7 +1,4 @@
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class FlowGraph {
     private FlowNode headNode = null;
@@ -28,6 +25,58 @@ public class FlowGraph {
             mainMethodGraph(node);
         else
             scopeGraph(node);
+    }
+
+    public void cleanGraph(){
+        if(headNode == tailNode)
+            return;
+
+        HashSet visitedNodes = new HashSet();
+        Queue<FlowNode> nodeQueue = new ArrayDeque<>();
+
+        while(headNode.isEmpty()){
+            ArrayList<FlowNode> successors = headNode.getSuccessors();
+
+            if(successors.size() == 1){
+                headNode = successors.get(0);
+                headNode.deletePredecessors();
+            } else if (successors.size() == 0){
+                return;
+            } else {
+                nodeQueue.addAll(successors);
+            }
+
+//            visitedNodes.add(headNode);
+        }
+
+        nodeQueue.add(headNode);
+
+        while(!nodeQueue.isEmpty()){
+            FlowNode node = nodeQueue.poll();
+
+            if(visitedNodes.contains(node))
+                continue;
+
+            visitedNodes.add(node);
+
+            for(FlowNode successor : node.getSuccessors()){
+                if(!visitedNodes.contains(successor))
+                    nodeQueue.add(successor);
+            }
+
+            if(node.isEmpty()){
+                if(node == tailNode){
+                    ArrayList<FlowNode> predecessors = node.getPredecessors();
+
+                    if(predecessors.size() == 1){
+                        tailNode = predecessors.get(0);
+                        node.link();
+                    }
+                } else {
+                    node.link();
+                }
+            }
+        }
     }
 
     public void mainMethodGraph(SimpleNode node){
@@ -227,6 +276,80 @@ public class FlowGraph {
         return flowNode;
     }
 
+    public void analyseLiveness(){
+        HashMap<FlowNode, ArrayList<String>> in = new HashMap<>();
+        HashMap<FlowNode, ArrayList<String>> out = new HashMap<>();
+        Queue<FlowNode> nodeQueue = new ArrayDeque<>();
+
+        nodeQueue.add(tailNode);
+
+        while(!nodeQueue.isEmpty()){
+            FlowNode node = nodeQueue.poll();
+
+            if(in.containsKey(node))
+                continue;
+
+            in.put(node, new ArrayList<>());
+            out.put(node, new ArrayList<>());
+
+            for(FlowNode predecessor : node.getPredecessors()){
+                if(!in.containsKey(predecessor))
+                    nodeQueue.add(predecessor);
+            }
+        }
+
+        boolean finished = false;
+
+
+        while(!finished){
+            HashSet visitedNodes = new HashSet();
+            finished = true;
+            nodeQueue.add(tailNode);
+
+            while(!nodeQueue.isEmpty()){
+                FlowNode node = nodeQueue.poll();
+
+                if(visitedNodes.contains(node))
+                    continue;
+
+                visitedNodes.add(node);
+
+                for(FlowNode predecessor : node.getPredecessors()){
+                    if(!visitedNodes.contains(predecessor))
+                        nodeQueue.add(predecessor);
+                }
+
+                Set<String> set = new HashSet<>();
+
+                for (FlowNode successor : node.getSuccessors()) {
+                    set.addAll(in.get(successor));
+                }
+
+                ArrayList<String> nodeOut = new ArrayList<>(set);
+
+                if(!out.get(node).equals(nodeOut))
+                    finished = false;
+
+                out.replace(node, nodeOut);
+
+                ArrayList<String> nodeIn = node.in(out.get(node));
+
+                if(!in.get(node).equals(nodeIn))
+                    finished = false;
+
+                in.replace(node, nodeIn);
+            }
+        }
+
+        for(FlowNode node : in.keySet()){
+            System.out.println(node);
+            System.out.println("            - " + ControlVars.PURPLE + "IN " + ControlVars.RESET + " = " + in.get(node));
+            System.out.println("            - " + ControlVars.PURPLE + "OUT" + ControlVars.RESET + " = " + out.get(node));
+        }
+
+        System.out.println("");
+    }
+
     public void print(){
         HashSet visitedNodes = new HashSet();
         Queue<FlowNode> nodeQueue = new ArrayDeque<>();
@@ -245,7 +368,12 @@ public class FlowGraph {
 
             System.out.println(node);
 
+            if(node.getSuccessors().size() > 0)
+                System.out.println("   " + ControlVars.CYAN + "Successors" + ControlVars.RESET  + ": ");
+
             for(FlowNode successor : node.getSuccessors()){
+                System.out.println("            " + successor);
+
                 if(!visitedNodes.contains(successor))
                     nodeQueue.add(successor);
             }

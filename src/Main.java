@@ -29,7 +29,7 @@ public class Main {
             }
 
             if(ControlVars.R_OPTIMIZATION){
-                LivenessAnalysis.generateFlowGraphs(root);
+                LivenessAnalysis.generateFlowGraphs(root, 5);
             }
 
             if(ControlVars.GENERATE_JASMIN_CODE){

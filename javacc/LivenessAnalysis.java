@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class LivenessAnalysis {
     private static ArrayList<FlowGraph> flowGraphs = new ArrayList<>();
 
-    public static void generateFlowGraphs(SimpleNode root){
+    public static void generateFlowGraphs(SimpleNode root, int k){
         SimpleNode classNode = null;
         int numChildren;
         int index = 0;
@@ -30,9 +30,9 @@ public class LivenessAnalysis {
         }
 
         for(FlowGraph graph : flowGraphs){
-            graph.cleanGraph();
-            //graph.print();
-            graph.analyseLiveness();
+
+            RIGraph rigraph = new RIGraph(graph.analyseLiveness());
+            rigraph.colorGraph(k);
         }
     }
 }

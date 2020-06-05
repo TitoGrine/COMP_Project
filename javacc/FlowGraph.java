@@ -17,17 +17,7 @@ public class FlowGraph {
         tailNode = tail;
     }
 
-    public FlowGraph(SimpleNode node){
-
-        if(node.equalsNodeType(ParserTreeConstants.JJTMETHOD))
-            methodGraph(node);
-        else if (node.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
-            mainMethodGraph(node);
-        else
-            scopeGraph(node);
-    }
-
-    public void cleanGraph(){
+    private void cleanGraph(){
         if(headNode == tailNode)
             return;
 
@@ -79,6 +69,21 @@ public class FlowGraph {
         }
     }
 
+    public FlowGraph(SimpleNode node){
+
+        if(node.equalsNodeType(ParserTreeConstants.JJTMETHOD))
+            methodGraph(node);
+        else if (node.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
+            mainMethodGraph(node);
+        else
+            scopeGraph(node);
+
+        cleanGraph();
+
+        if(ControlVars.PRINT_FLOW_GRAPH)
+            print();
+    }
+
     public void mainMethodGraph(SimpleNode node){
         SimpleNode methodBody = (SimpleNode) node.jjtGetChild(1);
 
@@ -121,6 +126,8 @@ public class FlowGraph {
 
         while(childIndex < numChildren) {
             SimpleNode child = (SimpleNode) node.jjtGetChild(childIndex);
+
+            System.out.println("Computing: " + child.id);
 
             switch(child.id){
                 case ParserTreeConstants.JJTIF_ELSE:
@@ -346,10 +353,11 @@ public class FlowGraph {
 
 
         for(FlowNode node : in.keySet()){
-            /*System.out.println(node);
-            System.out.println("            - " + ControlVars.PURPLE + "IN " + ControlVars.RESET + " = " + in.get(node));
-            System.out.println("            - " + ControlVars.PURPLE + "OUT" + ControlVars.RESET + " = " + out.get(node));
-        */
+            if(ControlVars.PRINT_NODE_TABLE){
+                System.out.println(node);
+                System.out.println("            - " + ControlVars.PURPLE + "IN " + ControlVars.RESET + " = " + in.get(node));
+                System.out.println("            - " + ControlVars.PURPLE + "OUT" + ControlVars.RESET + " = " + out.get(node));
+            }
 
             for(String var : in.get(node)){
                 if(!liveness.containsKey(var))
@@ -368,10 +376,12 @@ public class FlowGraph {
             }
         }
 
-        for(String var : liveness.keySet()){
-            System.out.println(" Var " + var + " is alive in:");
-            for(FlowNode node : liveness.get(var))
-                System.out.println("    " + node);
+        if(ControlVars.PRINT_LIVENESS){
+            for(String var : liveness.keySet()){
+                System.out.println(" Var " + var + " is alive in:");
+                for(FlowNode node : liveness.get(var))
+                    System.out.println("    " + node);
+            }
         }
 
         return liveness;

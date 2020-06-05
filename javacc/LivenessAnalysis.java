@@ -1,38 +1,16 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class LivenessAnalysis {
-    private static ArrayList<FlowGraph> flowGraphs = new ArrayList<>();
+    private static FlowGraph flowGraph;
 
-    public static void generateFlowGraphs(SimpleNode root, int k){
-        SimpleNode classNode = null;
-        int numChildren;
-        int index = 0;
+    public static HashMap<String, Integer> getRegisterAllocation(SimpleNode methodNode, int k) throws Exception {
+        if(!methodNode.equalsNodeType(ParserTreeConstants.JJTMETHOD) && !methodNode.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
+            return null;
 
-        while(classNode == null){
-            SimpleNode child = (SimpleNode) root.jjtGetChild(index);
+        flowGraph = new FlowGraph(methodNode);
+        RIGraph rigraph = new RIGraph(flowGraph.analyseLiveness());
 
-            if(child.equalsNodeType(ParserTreeConstants.JJTCLASS))
-                classNode = child;
-
-            index++;
-        }
-
-        numChildren = classNode.jjtGetNumChildren();
-        index = 0;
-
-        while(index < numChildren){
-            SimpleNode child = (SimpleNode) classNode.jjtGetChild(index);
-
-            if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD) || child.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
-                flowGraphs.add(new FlowGraph(child));
-
-            index++;
-        }
-
-        for(FlowGraph graph : flowGraphs){
-
-            RIGraph rigraph = new RIGraph(graph.analyseLiveness());
-            rigraph.colorGraph(k);
-        }
+        return rigraph.colorGraph(k);
     }
 }

@@ -44,7 +44,7 @@ public class RIGraph {
         this.buildRIGraph();
     }
 
-    public boolean colorGraph(int k){
+    public HashMap<String, Integer> colorGraph(int k) throws Exception {
         ArrayList<RINode> stack = new ArrayList<>();
 
         int minimum = 0;
@@ -79,9 +79,13 @@ public class RIGraph {
             stack.add(0, candidate);
         }
 
+        HashMap<String, Integer> registers = new HashMap<>();
+
         while(!stack.isEmpty()){
             RINode node = stack.remove(0);
             int color = node.color(stack);
+
+            registers.put(node.getId(), color - 1);
 
             if(color > minimum)
                 minimum = color;
@@ -92,7 +96,11 @@ public class RIGraph {
             System.out.println("Minimum colors needed: " + minimum + "\n");
         }
 
-        return minimum <= k;
+        if(k < minimum){
+            throw new Exception(ControlVars.RED_BRIGHT + "Given k is insufficient for register allocation. Minimum needed is " + minimum + "." + ControlVars.RESET);
+        }
+
+        return registers;
     }
 
     public void print(){

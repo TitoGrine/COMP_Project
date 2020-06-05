@@ -1,20 +1,43 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MethodGenerator extends CodeGenerator{
 
     ASTMETHOD methodNode;
-    private static List<String> locals;
+    private HashMap<String, Integer> locals;
+    private int localsSize = 0;
     private int maxStack = 0;
     private int stack = 0;
+    private boolean r_optimized = false;
 
-    MethodGenerator(ASTMETHOD methodNode, ASTCLASS classNode, List<String> classVars, Counter counter){
+    public MethodGenerator(ASTMETHOD methodNode, ASTCLASS classNode, List<String> classVars, Counter counter){
         super.classNode = classNode;
         super.classVars = classVars;
         super.counter = counter;
-
         this.methodNode = methodNode;
-        locals = new ArrayList<>(methodNode.localSize);
+        locals = new HashMap<>();
+        localsSize = methodNode.localSize;
+    }
+
+    public MethodGenerator(ASTMETHOD methodNode, ASTCLASS classNode, List<String> classVars, Counter counter, HashMap<String, Integer> locals){
+        super.classNode = classNode;
+        super.classVars = classVars;
+        super.counter = counter;
+        this.methodNode = methodNode;
+        this.locals = locals;
+
+        for(String key : locals.keySet())
+            localsSize = Math.max(localsSize, locals.get(key) + 1);
+
+        r_optimized = true;
+    }
+
+    private int getRegister(String key){
+        if(locals.containsKey(key))
+            return locals.get(key);
+
+        return -1;
     }
 
     private void pushStack(int n){
@@ -31,13 +54,15 @@ public class MethodGenerator extends CodeGenerator{
             SimpleNode child = (SimpleNode) argumentsNode.jjtGetChild(i);
 
             if(child.equalsNodeType(ParserTreeConstants.JJTARGUMENT)){
-                locals.add(((ASTARGUMENT) child).argName);
+                if(!locals.containsKey(((ASTARGUMENT) child).argName) && !r_optimized)
+                    locals.put(((ASTARGUMENT) child).argName, locals.size());
             }
         }
     }
 
     private void addVariable(ASTVARIABLE varNode){
-        locals.add(varNode.varName);
+        if(!locals.containsKey(varNode.varName) && !r_optimized)
+            locals.put(varNode.varName, locals.size());
     }
 
     private boolean isStatic(ASTFUNC_METHOD funcNode){
@@ -79,16 +104,27 @@ public class MethodGenerator extends CodeGenerator{
                     boolean addition = rightNode.equalsNodeType(ParserTreeConstants.JJTADD);
 
                     if (((ASTIDENT) lhside).name.equals(varName) && num < 127 && num > -128){
-                        int index = locals.indexOf(varName);
+                        int index = getRegister(varName);
 
                         if(index != -1)
-                            return "iinc " + locals.indexOf(varName) + space() + (addition ? "" : "-") + num;
+                            return "iinc " + getRegister(varName) + space() + (addition ? "" : "-") + num;
                     }
                 }
             }
         }
 
         return null;
+    }
+
+    private boolean uselessAssign(SimpleNode varNode){
+        String varName;
+
+        if(varNode.equalsNodeType(ParserTreeConstants.JJTARRAY_ACCESS))
+            varName = ((ASTARRAY_ACCESS) varNode).object;
+        else
+            varName = ((ASTIDENT) varNode).name;
+
+        return !varName.contains("this.") && !locals.containsKey(varName) && ControlVars.IGNORE_USELESS_ASSIGNS;
     }
 
     private String addStoreVar(SimpleNode varNode, SimpleNode expNode, int indentation){
@@ -103,7 +139,7 @@ public class MethodGenerator extends CodeGenerator{
         else
             varName = ((ASTIDENT) varNode).name;
 
-        int index = locals.indexOf(varName);
+        int index = getRegister(varName);
 
         if(index != -1){
 
@@ -146,7 +182,6 @@ public class MethodGenerator extends CodeGenerator{
                 popStack(2);
                 storeCode += tab(indentation) + "putfield " + classNode.className + "/" + cleanseVar(varName) + space() + getJasminType(varName, varNode) + nl();
             }
-
         }
 
         return storeCode;
@@ -189,7 +224,7 @@ public class MethodGenerator extends CodeGenerator{
         String stackCode = "";
 
         stackCode += tab() + ".limit stack " + maxStack + nl();
-        stackCode += tab() + ".limit locals " + methodNode.localSize + nl();
+        stackCode += tab() + ".limit locals " + localsSize + nl();
 
         return stackCode;
     }
@@ -343,7 +378,7 @@ public class MethodGenerator extends CodeGenerator{
     private String generateVarCode(ASTIDENT identNode, int indentation){
         String varCode = "";
         String varName = identNode.name;
-        int index = locals.indexOf(varName);
+        int index = getRegister(varName);
 
         if(index != -1){
             String varType = ((Symbol) identNode.symbolTable.getSymbol(varName)).getType();
@@ -493,6 +528,9 @@ public class MethodGenerator extends CodeGenerator{
         String assignCode = "";
         SimpleNode firstChild = (SimpleNode) assignNode.jjtGetChild(0);
         SimpleNode secondChild = (SimpleNode) assignNode.jjtGetChild(1);
+
+        if(uselessAssign(firstChild))
+            return assignCode;
 
         String quickAssign = checkSpecialAddition(firstChild, secondChild);
 
@@ -659,7 +697,9 @@ public class MethodGenerator extends CodeGenerator{
         int numChildren = methodNode.jjtGetNumChildren();
         int childIndex = 0;
         SimpleNode child;
-        locals.add("this");
+
+        if(!locals.containsKey("this") && !r_optimized)
+            locals.put("this", locals.size());
 
         while(childIndex < numChildren){
             child = (SimpleNode) methodNode.jjtGetChild(childIndex);
@@ -687,7 +727,8 @@ public class MethodGenerator extends CodeGenerator{
         ASTIDENT firstChild = (ASTIDENT) methodNode.jjtGetChild(0);
         SimpleNode secondChild = (SimpleNode) methodNode.jjtGetChild(1);
 
-        locals.add(firstChild.name);
+        if(!locals.containsKey(firstChild.name) && !r_optimized)
+            locals.put(firstChild.name, locals.size());
 
         auxCode += generateScopeCode(secondChild, 1);
 

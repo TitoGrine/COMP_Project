@@ -350,7 +350,6 @@ public class FlowGraph {
 
         HashMap<String, ArrayList<FlowNode>> liveness = new HashMap<>();
 
-
         for(FlowNode node : in.keySet()){
             if(ControlVars.PRINT_NODE_TABLE){
                 System.out.println(node);
@@ -372,6 +371,15 @@ public class FlowGraph {
 
                 if(!liveness.get(var).contains(node))
                     liveness.get(var).add(node);
+            }
+
+            if(!ControlVars.IGNORE_USELESS_ASSIGNS){
+                for(String var : node.getDefinitions()){
+                    if(!liveness.containsKey(var))
+                        liveness.put(var, new ArrayList<>(Collections.singleton(node)));
+                    else if(!liveness.get(var).contains(node))
+                        liveness.get(var).add(node);
+                }
             }
         }
 

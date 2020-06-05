@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CodeGenerator {
@@ -11,6 +12,14 @@ public class CodeGenerator {
     protected ASTCLASS classNode;
     protected Counter counter = new Counter();
     protected List<String> classVars;
+    protected int k = 0;
+
+    public CodeGenerator(){
+    }
+
+    public CodeGenerator(int k){
+        this.k = k;
+    }
 
     /**
      * Creates an appropriately named file to store the generated Jasmin Code.
@@ -268,7 +277,7 @@ public class CodeGenerator {
     /**
      * Iterates through all class methods and writes their generated code in the appropriate output.
      */
-    protected void convertClass(){
+    protected void convertClass() throws Exception {
         int numChildren = this.classNode.jjtGetNumChildren();
         int childIndex = convertClassHeader();
 
@@ -315,8 +324,15 @@ public class CodeGenerator {
      * @param methodNode    Node of the method declaration.
      * @return              Jasmin code representing the method declaration and body.
      */
-    protected String convertMethodDeclaration(ASTMETHOD methodNode){
-        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
+    protected String convertMethodDeclaration(ASTMETHOD methodNode) throws Exception {
+        MethodGenerator methodGenerator;
+
+        if(k > 0){
+            HashMap<String, Integer> register = LivenessAnalysis.getRegisterAllocation(methodNode, k);
+            methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
+        } else {
+            methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
+        }
 
         return methodGenerator.generateMethodCode();
     }
@@ -327,8 +343,15 @@ public class CodeGenerator {
      * @param methodNode    Node of the main method declaration.
      * @return              Jasmin code representing the main method declaration and body.
      */
-    protected String convertMainMethodDeclaration(ASTMAINMETHOD methodNode){
-        MethodGenerator methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
+    protected String convertMainMethodDeclaration(ASTMAINMETHOD methodNode) throws Exception {
+        MethodGenerator methodGenerator;
+
+        if(k > 0){
+            HashMap<String, Integer> registers = LivenessAnalysis.getRegisterAllocation(methodNode, k);
+            methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter, registers);
+        } else {
+            methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
+        }
 
         return methodGenerator.generateMainMethodCode();
     }
@@ -338,7 +361,7 @@ public class CodeGenerator {
      *
      * @param root      Root node of the AST.
      */
-    public void generate(SimpleNode root, String fileName){
+    public void generate(SimpleNode root, String fileName) throws Exception {
         generatedCode = "";
 
         int numChildren = root.jjtGetNumChildren();

@@ -6,16 +6,19 @@ public class ControlVars {
     public static final boolean PRINT_SYMBOLTABLE = false;
     public static final boolean PRINT_AST = true;
     public static final boolean RUN_CUSTOM_TESTS = true;
-    public static final boolean GENERATE_JASMIN_CODE = false;
-    public static final boolean SAVE_JASMIN_CODE = true;
+    public static final boolean GENERATE_JASMIN_CODE = true;
+    public static final boolean SAVE_JASMIN_CODE = false;
 
     // Related to -r optimization
     public static final boolean R_OPTIMIZATION = true;
+    public static final int K_VALUE = 6;
     public static final boolean PRINT_LIVENESS = false;
     public static final boolean PRINT_NODE_TABLE = false;
-    public static final boolean PRINT_FLOW_GRAPH = true;
+    public static final boolean PRINT_FLOW_GRAPH = false;
     public static final boolean PRINT_RI_GRAPH = true;
 
+    // Extra optimizations
+    public static final boolean IGNORE_USELESS_ASSIGNS = false;
 
     // Var Types
     public static final String BOOL = "BOOL";

@@ -1,4 +1,4 @@
-import static ioPlus.printHelloWorld(void) void;
+import static io.println(int) void;
 
 class Liveness {
 	public static void main(String[] args) {
@@ -24,5 +24,7 @@ class Liveness {
         t4 = t3 + c;
         t5 = t4 + t2;
         y = t5;
+
+        //io.println(y);
 	}
 }

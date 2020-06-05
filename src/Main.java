@@ -28,12 +28,11 @@ public class Main {
                 root.dump(""); // prints the tree on the screen
             }
 
-            if(ControlVars.R_OPTIMIZATION){
-                LivenessAnalysis.generateFlowGraphs(root, 5);
-            }
-
             if(ControlVars.GENERATE_JASMIN_CODE){
-                new CodeGenerator().generate(root, args[0]);
+                if(ControlVars.R_OPTIMIZATION)
+                    new CodeGenerator(ControlVars.K_VALUE).generate(root, args[0]);
+                else
+                    new CodeGenerator().generate(root, args[0]);
             }
 
             analysis.showWarnings(ControlVars.THROW_WARNING_EXCEPTION);

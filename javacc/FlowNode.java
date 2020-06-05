@@ -65,6 +65,14 @@ public class FlowNode {
         return predecessors;
     }
 
+    public ArrayList<String> getDefinitions() {
+        return definitions;
+    }
+
+    public ArrayList<String> getUses() {
+        return uses;
+    }
+
     public void deletePredecessors() {
         predecessors = new ArrayList<>();
     }

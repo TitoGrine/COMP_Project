@@ -3,22 +3,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class FlowNode {
-    ArrayList<FlowNode> successors = new ArrayList<>();
-    ArrayList<FlowNode> predecessors = new ArrayList<>();
-    ArrayList<String> definitions = new ArrayList<>();
-    ArrayList<String> uses = new ArrayList<>();
+    private ArrayList<FlowNode> successors = new ArrayList<>();
+    private ArrayList<FlowNode> predecessors = new ArrayList<>();
+    private ArrayList<String> definitions = new ArrayList<>();
+    private ArrayList<String> uses = new ArrayList<>();
 
     public boolean isEmpty(){
         return definitions.isEmpty() && uses.isEmpty();
     }
 
     public void addSuccessor(FlowNode successor){
-        if(!successors.contains(successor) && !successor.isEmpty())
+        if(!successors.contains(successor))
             successors.add(successor);
     }
 
     public void addPredecessor(FlowNode predecessor){
-        if(!predecessors.contains(predecessor) && !predecessor.isEmpty())
+        if(!predecessors.contains(predecessor))
             predecessors.add(predecessor);
     }
 
@@ -30,6 +30,13 @@ public class FlowNode {
     public void addUse(String identifier){
         if(!uses.contains(identifier))
             uses.add(identifier);
+    }
+
+    public void addUses(ArrayList<String> identifiers){
+        Set<String> set = new HashSet<>(this.uses);
+        set.addAll(identifiers);
+        this.uses.clear();
+        this.uses = new ArrayList<>(set);
     }
 
     public ArrayList<String> in(){

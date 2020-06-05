@@ -32,6 +32,8 @@ class ASTARGUMENTS extends TypeSensitive {
       childIndex++;
     }
 
+    uses.removeIf(var -> !this.symbolTable.existsSymbol(var) && !var.equals("this"));
+
     return new ArrayList<>(uses);
   }
 

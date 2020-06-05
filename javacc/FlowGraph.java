@@ -268,7 +268,8 @@ public class FlowGraph {
         FlowNode flowNode = new FlowNode();
 
         if(node.equalsNodeType(ParserTreeConstants.JJTASSIGN)){
-            flowNode.addDefinition(((ASTASSIGN) node).definition);
+            if(((ASTASSIGN) node).definition != null)
+                flowNode.addDefinition(((ASTASSIGN) node).definition);
         }
 
         flowNode.addUses(node.getUses());

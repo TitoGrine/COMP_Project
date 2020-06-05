@@ -30,6 +30,8 @@ class ASTASSIGN extends TypeSensitive {
       uses.addAll(accessUses);
     }
 
+    uses.removeIf(var -> !this.symbolTable.existsSymbol(var) && !var.equals("this"));
+
     return new ArrayList<>(uses);
   }
 
@@ -51,8 +53,6 @@ class ASTASSIGN extends TypeSensitive {
     else
       varName = ((ASTIDENT) firstChild).name;
 
-    definition = varName;
-
     if(!this.symbolTable.existsSymbol(varName)){
 
       if(!this.symbolTable.existsSymbol("this." + varName) ){
@@ -65,6 +65,8 @@ class ASTASSIGN extends TypeSensitive {
       if(varName != null){
         varName = "this." + varName;
       }
+    } else if(!varName.contains("this.")){
+      definition = varName;
     }
 
     if(compareNode(firstChild, ParserTreeConstants.JJTARRAY_ACCESS))

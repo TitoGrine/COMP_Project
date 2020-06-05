@@ -23,6 +23,8 @@ class ASTLESSTHAN extends TypeSensitive {
     Set<String> uses = new HashSet<>(firstChild.getUses());
     uses.addAll(secondChild.getUses());
 
+    uses.removeIf(var -> !this.symbolTable.existsSymbol(var) && !var.equals("this"));
+
     return new ArrayList<>(uses);
   }
 

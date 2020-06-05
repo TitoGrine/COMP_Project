@@ -27,6 +27,8 @@ class ASTFUNC_METHOD extends TypeSensitive {
     if(varCall != null)
       uses.add(varCall);
 
+    uses.removeIf(var -> !this.symbolTable.existsSymbol(var) && !var.equals("this"));
+
     return new ArrayList<>(uses);
   }
 

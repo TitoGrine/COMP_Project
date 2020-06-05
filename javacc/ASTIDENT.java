@@ -17,6 +17,10 @@ class ASTIDENT extends SimpleNode {
 
   @Override
   public ArrayList<String> getUses() {
+
+    if(!this.symbolTable.existsSymbol(name))
+      return new ArrayList<>();
+
     return new ArrayList<>(Collections.singleton(name));
   }
 

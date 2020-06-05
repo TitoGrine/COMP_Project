@@ -11,8 +11,8 @@ public class ControlVars {
 
     // Related to -r optimization
     public static final boolean R_OPTIMIZATION = true;
-    public static final boolean PRINT_LIVENESS = true;
-    public static final boolean PRINT_NODE_TABLE = true;
+    public static final boolean PRINT_LIVENESS = false;
+    public static final boolean PRINT_NODE_TABLE = false;
     public static final boolean PRINT_FLOW_GRAPH = true;
     public static final boolean PRINT_RI_GRAPH = true;
 

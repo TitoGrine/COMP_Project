@@ -34,9 +34,9 @@ public class FlowGraph {
                 return;
             } else {
                 nodeQueue.addAll(successors);
+                visitedNodes.add(headNode);
+                break;
             }
-
-//            visitedNodes.add(headNode);
         }
 
         nodeQueue.add(headNode);
@@ -79,6 +79,7 @@ public class FlowGraph {
             scopeGraph(node);
 
         cleanGraph();
+
 
         if(ControlVars.PRINT_FLOW_GRAPH)
             print();
@@ -126,8 +127,6 @@ public class FlowGraph {
 
         while(childIndex < numChildren) {
             SimpleNode child = (SimpleNode) node.jjtGetChild(childIndex);
-
-            System.out.println("Computing: " + child.id);
 
             switch(child.id){
                 case ParserTreeConstants.JJTIF_ELSE:

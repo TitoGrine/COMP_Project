@@ -277,7 +277,7 @@ public class FlowGraph {
         return flowNode;
     }
 
-    public void analyseLiveness(){
+    public HashMap<String, ArrayList<FlowNode>> analyseLiveness(){
         HashMap<FlowNode, ArrayList<String>> in = new HashMap<>();
         HashMap<FlowNode, ArrayList<String>> out = new HashMap<>();
         Queue<FlowNode> nodeQueue = new ArrayDeque<>();
@@ -331,24 +331,50 @@ public class FlowGraph {
                 if(!out.get(node).equals(nodeOut))
                     finished = false;
 
-                out.replace(node, nodeOut);
+                out.put(node, nodeOut);
 
                 ArrayList<String> nodeIn = node.in(out.get(node));
 
                 if(!in.get(node).equals(nodeIn))
                     finished = false;
 
-                in.replace(node, nodeIn);
+                in.put(node, nodeIn);
             }
         }
 
+        HashMap<String, ArrayList<FlowNode>> liveness = new HashMap<>();
+
+
         for(FlowNode node : in.keySet()){
-            System.out.println(node);
+            /*System.out.println(node);
             System.out.println("            - " + ControlVars.PURPLE + "IN " + ControlVars.RESET + " = " + in.get(node));
             System.out.println("            - " + ControlVars.PURPLE + "OUT" + ControlVars.RESET + " = " + out.get(node));
+        */
+
+            for(String var : in.get(node)){
+                if(!liveness.containsKey(var))
+                    liveness.put(var, new ArrayList<>());
+
+                if(!liveness.get(var).contains(node))
+                    liveness.get(var).add(node);
+            }
+
+            for(String var : out.get(node)){
+                if(!liveness.containsKey(var))
+                    liveness.put(var, new ArrayList<>());
+
+                if(!liveness.get(var).contains(node))
+                    liveness.get(var).add(node);
+            }
         }
 
-        System.out.println("");
+        for(String var : liveness.keySet()){
+            System.out.println(" Var " + var + " is alive in:");
+            for(FlowNode node : liveness.get(var))
+                System.out.println("    " + node);
+        }
+
+        return liveness;
     }
 
     public void print(){

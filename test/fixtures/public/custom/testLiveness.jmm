@@ -1,0 +1,28 @@
+import static ioPlus.printHelloWorld(void) void;
+
+class Liveness {
+	public static void main(String[] args) {
+	    int x;
+	    int y;
+	    int a;
+	    int b;
+	    int c;
+	    int t1;
+	    int t2;
+	    int t3;
+	    int t4;
+	    int t5;
+
+	    x = 0-1;
+	    a = 1;
+	    b = 2;
+	    c = 3;
+
+		t1 = x * x;
+        t2 = a * t1;
+        t3 = b * x;
+        t4 = t3 + c;
+        t5 = t4 + t2;
+        y = t5;
+	}
+}

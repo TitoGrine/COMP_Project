@@ -19,6 +19,11 @@ class ASTCALL extends TypeSensitive {
 
   @Override
   public ArrayList<String> getUses() {
+    int numChildren = this.jjtGetNumChildren();
+
+    if(numChildren == 1)
+      return new ArrayList<>();
+
     SimpleNode child = (SimpleNode) this.jjtGetChild(1);
 
     return child.getUses();

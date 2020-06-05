@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
 public class LivenessAnalysis {
-    ArrayList<FlowGraph> flowGraphs = new ArrayList<>();
+    private static ArrayList<FlowGraph> flowGraphs = new ArrayList<>();
 
-    public void generateFlowGraphs(SimpleNode root){
+    public static void generateFlowGraphs(SimpleNode root){
         SimpleNode classNode = null;
-        int numChildren = root.jjtGetNumChildren();
+        int numChildren;
         int index = 0;
 
         while(classNode == null){
@@ -23,10 +23,13 @@ public class LivenessAnalysis {
         while(index < numChildren){
             SimpleNode child = (SimpleNode) classNode.jjtGetChild(index);
 
-            if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD))
+            if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD) || child.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
                 flowGraphs.add(new FlowGraph(child));
 
             index++;
         }
+
+        for(FlowGraph graph : flowGraphs)
+            graph.print();
     }
 }

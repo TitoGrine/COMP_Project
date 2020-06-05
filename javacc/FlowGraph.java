@@ -1,3 +1,8 @@
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Set;
+
 public class FlowGraph {
     private FlowNode headNode = null;
     private FlowNode tailNode = null;
@@ -16,53 +21,45 @@ public class FlowGraph {
     }
 
     public FlowGraph(SimpleNode node){
-        switch (node.id){
-            case ParserTreeConstants.JJTMETHOD:
-                methodGraph(node);
-                break;
-            case ParserTreeConstants.JJTSCOPE:
-                scopeGraph(node);
-                break;
-            default:
-                break;
-        }
+
+        if(node.equalsNodeType(ParserTreeConstants.JJTMETHOD))
+            methodGraph(node);
+        else if (node.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
+            mainMethodGraph(node);
+        else
+            scopeGraph(node);
+    }
+
+    public void mainMethodGraph(SimpleNode node){
+        SimpleNode methodBody = (SimpleNode) node.jjtGetChild(1);
+
+        FlowGraph methodGraph = scopeGraph(methodBody);
+        headNode = methodGraph.getHeadNode();
+        tailNode = methodGraph.getTailNode();
     }
 
     public void methodGraph(SimpleNode node){
         SimpleNode methodBody = null;
-        int numChildren;
+        SimpleNode returnNode = node;
+        int numChildren = node.jjtGetNumChildren();
         int childIndex = 2;
 
-        while(methodBody == null){
+        while(methodBody == null && childIndex < numChildren){
             SimpleNode child = (SimpleNode) node.jjtGetChild(childIndex);
 
-            if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD_BODY))
+            if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD_BODY)){
                 methodBody = child;
-
-            childIndex++;
-        }
-
-        numChildren = methodBody.jjtGetNumChildren();
-        childIndex = 0;
-        FlowNode prevNode = null;
-
-        // Find first node with uses or a definition.
-        while(childIndex < numChildren){
-            SimpleNode child = (SimpleNode) methodBody.jjtGetChild(childIndex);
-
-            FlowGraph possibleBranch = complexNode(node, null);
-
-            childIndex++;
-
-            if(possibleBranch != null){
-                this.headNode = possibleBranch.getHeadNode();
-                prevNode = possibleBranch.getTailNode();
+                returnNode = (SimpleNode) node.jjtGetChild(childIndex + 1);
             }
+
+            childIndex++;
         }
 
-        if(prevNode == null)
-            return;
-
+        FlowGraph methodGraph = scopeGraph(methodBody);
+        tailNode = simpleFlowNode(returnNode);
+        headNode = methodGraph.getHeadNode();
+        FlowNode auxNode = methodGraph.getTailNode();
+        auxNode.addSuccessor(tailNode);
     }
 
     public FlowGraph scopeGraph(SimpleNode node){
@@ -110,6 +107,9 @@ public class FlowGraph {
                          auxNode.addSuccessor(prevNode);
                      }
 
+//                    System.out.println("HEAD: " + headNode);
+//                    System.out.println("TAIL: " + prevNode);
+
                      break;
                 case ParserTreeConstants.JJTSCOPE:
                     result = scopeGraph(child);
@@ -125,18 +125,32 @@ public class FlowGraph {
 
                     break;
                 default:
+                    System.out.println("Well " + child.id);
+
                     if(headNode == null){
-                        prevNode = simpleFlowNode(node);
+                        prevNode = simpleFlowNode(child);
                         headNode = prevNode;
                     } else {
-                        auxNode = simpleFlowNode(node);
-                        auxNode.addPredecessor(prevNode);
+                        auxNode = simpleFlowNode(child);
+//                        System.out.println("\n" + auxNode);
                         prevNode.addSuccessor(auxNode);
+                        System.out.println("Successors:");
+                        for(FlowNode successor : prevNode.getSuccessors()){
+                            System.out.println(successor);
+                        }
                         prevNode = auxNode;
                     }
 
                     break;
             }
+
+            childIndex++;
+        }
+
+        // Case where the scope contains nothing
+        if(headNode == null){
+            headNode = new FlowNode();
+            prevNode = headNode;
         }
 
         return new FlowGraph(headNode, prevNode);
@@ -220,5 +234,36 @@ public class FlowGraph {
         flowNode.addUses(node.getUses());
 
         return flowNode;
+    }
+
+    public void print(){
+        HashSet visitedNodes = new HashSet();
+        Queue<FlowNode> nodeQueue = new ArrayDeque<>();
+
+        nodeQueue.add(headNode);
+
+        System.out.println(" --------- GRAPH NODES --------- ");
+
+        while(!nodeQueue.isEmpty()){
+            FlowNode node = nodeQueue.poll();
+
+            if(visitedNodes.contains(node))
+                continue;
+
+            visitedNodes.add(node);
+
+            System.out.println(node);
+
+            for(FlowNode successor : node.getSuccessors()){
+                if(!visitedNodes.contains(successor))
+                    nodeQueue.add(successor);
+            }
+        }
+
+        System.out.println("");
+
+        if(!visitedNodes.contains(tailNode)){
+            System.out.println("Something isn't right. Tail node is detached from graph.");
+        }
     }
 }

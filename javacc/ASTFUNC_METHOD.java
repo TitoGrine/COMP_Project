@@ -7,6 +7,7 @@ import java.util.Set;
 public
 class ASTFUNC_METHOD extends TypeSensitive {
   protected String call;
+  protected String varCall = null;
   protected ArrayList<String> arguments = new ArrayList<>();
 
   public ASTFUNC_METHOD(int id) {
@@ -19,11 +20,12 @@ class ASTFUNC_METHOD extends TypeSensitive {
 
   @Override
   public ArrayList<String> getUses() {
-    SimpleNode firstChild = (SimpleNode) this.jjtGetChild(0);
     SimpleNode secondChild = (SimpleNode) this.jjtGetChild(1);
 
-    Set<String> uses = new HashSet<>(firstChild.getUses());
-    uses.addAll(secondChild.getUses());
+    Set<String> uses = new HashSet<>(secondChild.getUses());
+
+    if(varCall != null)
+      uses.add(varCall);
 
     return new ArrayList<>(uses);
   }
@@ -52,6 +54,9 @@ class ASTFUNC_METHOD extends TypeSensitive {
       if(this.symbolTable.existsSymbol(object)){
         Symbol symbol = this.symbolTable.getSymbol(object);
 
+        if(!this.symbolTable.existsClassSymbol(object))
+          varCall = object;
+
         switch(symbol.getType()){
           case ControlVars.BOOL:
           case ControlVars.INT:
@@ -64,7 +69,8 @@ class ASTFUNC_METHOD extends TypeSensitive {
             object = symbol.getType();
             break;
         }
-          object = this.symbolTable.getClassType(object);
+
+        object = this.symbolTable.getClassType(object);
 
         if(this.symbolTable.existsClassSymbol(object))
           extendedClass = ((ClassSymbol) this.symbolTable.getSymbol(object)).getExtendedClass();

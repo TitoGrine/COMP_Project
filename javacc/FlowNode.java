@@ -39,6 +39,14 @@ public class FlowNode {
         this.uses = new ArrayList<>(set);
     }
 
+    public ArrayList<FlowNode> getSuccessors() {
+        return successors;
+    }
+
+    public ArrayList<FlowNode> getPredecessors() {
+        return predecessors;
+    }
+
     public ArrayList<String> in(){
         Set<String> set = new HashSet<>(this.out());
 
@@ -63,11 +71,6 @@ public class FlowNode {
 
     @Override
     public String toString() {
-        return "FlowNode{" +
-                "successors=" + successors +
-                ", predecessors=" + predecessors +
-                ", definitions=" + definitions +
-                ", uses=" + uses +
-                '}';
+        return " · FlowNode - { def: " + definitions + " | use: " + uses + '}';
     }
 }

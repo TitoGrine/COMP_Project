@@ -11,6 +11,7 @@ public class MethodGenerator extends CodeGenerator{
     private int maxStack = 0;
     private int stack = 0;
     private boolean r_optimized = false;
+    private boolean inDynamic = false;
 
     public MethodGenerator(ASTMETHOD methodNode, ASTCLASS classNode, List<String> classVars, Counter counter){
         super.classNode = classNode;
@@ -438,11 +439,11 @@ public class MethodGenerator extends CodeGenerator{
 
             varCode += tab(indentation);
 
-            if(constants.containsKey(varName)) {
-                varCode += "bipush" + space() + Integer.toString(constants.get(varName));
-                pushStack(1);
+            pushStack(1);
+
+            if(!inDynamic && constants.containsKey(varName)) {
+                varCode += constantInstruction(constants.get(varName)) + Math.abs(constants.get(varName));
             } else {
-                pushStack(1);
                 switch(varType){
                     case ControlVars.BOOL:
                     case ControlVars.INT:
@@ -587,15 +588,19 @@ public class MethodGenerator extends CodeGenerator{
         String assignCode = "";
         SimpleNode firstChild = (SimpleNode) assignNode.jjtGetChild(0);
         SimpleNode secondChild = (SimpleNode) assignNode.jjtGetChild(1);
-
-        if (firstChild.equalsNodeType(ParserTreeConstants.JJTIDENT) && secondChild.equalsNodeType(ParserTreeConstants.JJTNUM))
-            constants.put(((ASTIDENT)firstChild).name, ((ASTNUM)secondChild).value);
-        else if (constants.containsKey(((ASTIDENT)firstChild).name))
-                constants.remove(((ASTIDENT)firstChild).name);
-
         
         if(uselessAssign(firstChild))
             return assignCode;
+
+        if(ControlVars.O_OPTIMIZATION && firstChild.equalsNodeType(ParserTreeConstants.JJTIDENT)) {
+            String firstChildName = ((ASTIDENT)firstChild).name;
+            if (secondChild.equalsNodeType(ParserTreeConstants.JJTNUM)) 
+                constants.put(firstChildName, ((ASTNUM)secondChild).value);
+            else if (constants.containsKey(firstChildName)) {
+                constants.remove(firstChildName);
+            }
+        }
+        
 
         String quickAssign = checkSpecialAddition(firstChild, secondChild);
 
@@ -742,19 +747,20 @@ public class MethodGenerator extends CodeGenerator{
     private String generateLoopCode(ASTWHILE loopNode, int indentation){
         ASTCONDITION conditionNode = (ASTCONDITION) loopNode.jjtGetChild(0);
         SimpleNode loopScopeNode = (SimpleNode) loopNode.jjtGetChild(1);
+        boolean alreadyinDynamic = inDynamic;
 
         String loopCode = "";
         int index = counter.loopCounter;
         counter.loopCounter++;
 
-        String conditionCode = generateConditionCode(conditionNode, indentation);
-
-        loopCode += conditionCode + space() + "endloop_" + index + nl(2);
+        loopCode += generateConditionCode(conditionNode, indentation) + space() + "endloop_" + index + nl(2);
+        inDynamic = true;
         loopCode += tab(indentation) + "loop_" + index + entry() + nl();
         loopCode += generateScopeCode(loopScopeNode, indentation + 1);
-        loopCode += tab() + conditionCode + space() + "endloop_" + index + nl(2);
+        loopCode += generateConditionCode(conditionNode, indentation) + space() + "endloop_" + index + nl(2);
         loopCode += tab(indentation + 1) + "goto loop_" + index + nl();
         loopCode += tab(indentation) + "endloop_" + index + entry() + nl(2);
+        inDynamic = alreadyinDynamic;
 
         return loopCode;
     }

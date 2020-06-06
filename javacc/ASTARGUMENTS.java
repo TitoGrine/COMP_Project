@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,7 +36,11 @@ class ASTARGUMENTS extends TypeSensitive {
 
     uses.removeIf(var -> !this.symbolTable.existsSymbol(var));
 
-    return new ArrayList<>(uses);
+    ArrayList<String> result = new ArrayList<>(uses);
+
+    Collections.reverse(result);
+
+    return result;
   }
 
   @Override

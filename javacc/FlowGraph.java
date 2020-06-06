@@ -408,9 +408,16 @@ public class FlowGraph {
     }
 
     public HashMap<String, Integer> allocateRegisters(int k) throws Exception {
-        RIGraph rigraph = new RIGraph(analyseLiveness());
+
+        HashMap<String, ArrayList<FlowNode>> liveness = analyseLiveness();
+
+        for(String var : this.fixed_registers){
+            liveness.remove(var);
+        }
+
+        RIGraph rigraph = new RIGraph(liveness);
         HashMap<String, Integer> registers = new HashMap<>();
-        HashMap<String, Integer> coloring = new HashMap<>();
+        HashMap<String, Integer> coloring;
         int fixedSize = this.fixed_registers.size();
 
         try{
@@ -419,7 +426,6 @@ public class FlowGraph {
             throw new Exception(ControlVars.RED_BRIGHT + "Given k is insufficient for register allocation. The minimum number of registers needed are " + (fixedSize + Integer.parseInt(min.getMessage())) +
                     ", being that " + fixedSize + (fixedSize == 1 ? " is" : " are") + " fixed and can't be optimized. So k must be at least " + Integer.parseInt(min.getMessage()) + "." + ControlVars.RESET);
         }
-
 
         for(String var : this.fixed_registers){
             registers.put(var, this.fixed_registers.indexOf(var));

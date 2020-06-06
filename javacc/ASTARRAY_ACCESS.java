@@ -25,8 +25,6 @@ class ASTARRAY_ACCESS extends TypeSensitive {
     Set<String> uses = new HashSet<>(firstChild.getUses());
     uses.addAll(secondChild.getUses());
 
-    System.out.println(uses);
-
     uses.removeIf(var -> !this.symbolTable.existsSymbol(var));
 
     return new ArrayList<>(uses);

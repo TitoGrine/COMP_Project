@@ -590,6 +590,9 @@ public class MethodGenerator extends CodeGenerator{
 
         if (firstChild.equalsNodeType(ParserTreeConstants.JJTIDENT) && secondChild.equalsNodeType(ParserTreeConstants.JJTNUM))
             constants.put(((ASTIDENT)firstChild).name, ((ASTNUM)secondChild).value);
+        else if (constants.containsKey(((ASTIDENT)firstChild).name))
+                constants.remove(((ASTIDENT)firstChild).name);
+
         
         if(uselessAssign(firstChild))
             return assignCode;

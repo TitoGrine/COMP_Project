@@ -5,12 +5,15 @@ class OptimizationsTest {
     public static void main(String[] args){
         int a;
         int b;
+        int c;
 
         OptimizationsTest s;
         a = 20;
-        b = 20+a;
+        a = 30 + 30;
+        c = 10;
+        b = a + c;
         s = new OptimizationsTest();
 
-        io.println(b);
+        io.println(a);
     }
 }

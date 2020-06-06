@@ -733,9 +733,12 @@ public class MethodGenerator extends CodeGenerator{
         int index = counter.loopCounter;
         counter.loopCounter++;
 
+        String conditionCode = generateConditionCode(conditionNode, indentation);
+
+        loopCode += conditionCode + space() + "endloop_" + index + nl(2);
         loopCode += tab(indentation) + "loop_" + index + entry() + nl();
-        loopCode += generateConditionCode(conditionNode, indentation + 1) + space() + "endloop_" + index + nl(2);
         loopCode += generateScopeCode(loopScopeNode, indentation + 1);
+        loopCode += tab() + conditionCode + space() + "endloop_" + index + nl(2);
         loopCode += tab(indentation + 1) + "goto loop_" + index + nl();
         loopCode += tab(indentation) + "endloop_" + index + entry() + nl(2);
 

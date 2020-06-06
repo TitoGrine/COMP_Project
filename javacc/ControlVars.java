@@ -7,7 +7,7 @@ public class ControlVars {
     public static final boolean PRINT_AST = true;
     public static final boolean RUN_CUSTOM_TESTS = true;
     public static final boolean GENERATE_JASMIN_CODE = true;
-    public static final boolean SAVE_JASMIN_CODE = false;
+    public static final boolean SAVE_JASMIN_CODE = true;
 
     // Related to -r optimization
     public static final boolean R_OPTIMIZATION = true;

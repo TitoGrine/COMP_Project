@@ -78,6 +78,28 @@ public class CodeGenerator {
     }
 
     /**
+     * Return a Method Generator to generate a method's code.
+     *
+     * @param methodNode    Method's node which the code will be generated
+     * @return              A method generator instance.
+     */
+    private MethodGenerator getMethodGenerator(ASTMETHOD methodNode) throws Exception {
+        MethodGenerator methodGenerator;
+
+        if(k < methodNode.localSize){
+            HashMap<String, Integer> registers = LivenessAnalysis.getRegisterAllocation(methodNode, k);
+            if(registers != null)
+                methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter, registers);
+            else
+                methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
+        } else {
+            methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
+        }
+
+        return methodGenerator;
+    }
+
+    /**
      * Shortcut for writing a space character.
      *
      * @return      A space character.
@@ -325,14 +347,7 @@ public class CodeGenerator {
      * @return              Jasmin code representing the method declaration and body.
      */
     protected String convertMethodDeclaration(ASTMETHOD methodNode) throws Exception {
-        MethodGenerator methodGenerator;
-
-        if(k > 0){
-            HashMap<String, Integer> register = LivenessAnalysis.getRegisterAllocation(methodNode, k);
-            methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
-        } else {
-            methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
-        }
+        MethodGenerator methodGenerator = getMethodGenerator(methodNode);
 
         return methodGenerator.generateMethodCode();
     }
@@ -344,14 +359,7 @@ public class CodeGenerator {
      * @return              Jasmin code representing the main method declaration and body.
      */
     protected String convertMainMethodDeclaration(ASTMAINMETHOD methodNode) throws Exception {
-        MethodGenerator methodGenerator;
-
-        if(k > 0){
-            HashMap<String, Integer> registers = LivenessAnalysis.getRegisterAllocation(methodNode, k);
-            methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter, registers);
-        } else {
-            methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
-        }
+        MethodGenerator methodGenerator = getMethodGenerator(methodNode);
 
         return methodGenerator.generateMainMethodCode();
     }

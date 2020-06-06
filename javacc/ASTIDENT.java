@@ -18,10 +18,10 @@ class ASTIDENT extends SimpleNode {
   @Override
   public ArrayList<String> getUses() {
 
-    if(!this.symbolTable.existsSymbol(name))
-      return new ArrayList<>();
+    if(this.symbolTable.existsSymbol(name))
+      return new ArrayList<>(Collections.singleton(name));
 
-    return new ArrayList<>(Collections.singleton(name));
+    return new ArrayList<>();
   }
 
   public String toString() {

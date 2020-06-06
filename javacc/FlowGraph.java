@@ -3,6 +3,7 @@ import java.util.*;
 public class FlowGraph {
     private FlowNode headNode = null;
     private FlowNode tailNode = null;
+    private ArrayList<String> fixed_registers = new ArrayList<>();
 
     public FlowNode getHeadNode() {
         return headNode;
@@ -86,7 +87,10 @@ public class FlowGraph {
     }
 
     public void mainMethodGraph(SimpleNode node){
+        ASTIDENT argsNode = (ASTIDENT) node.jjtGetChild(0);
         SimpleNode methodBody = (SimpleNode) node.jjtGetChild(1);
+
+        this.fixed_registers.add(argsNode.name);
 
         FlowGraph methodGraph = scopeGraph(methodBody);
         headNode = methodGraph.getHeadNode();
@@ -99,10 +103,14 @@ public class FlowGraph {
         int numChildren = node.jjtGetNumChildren();
         int childIndex = 2;
 
+        this.fixed_registers.add("this");
+
         while(methodBody == null && childIndex < numChildren){
             SimpleNode child = (SimpleNode) node.jjtGetChild(childIndex);
 
-            if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD_BODY)){
+            if(child.equalsNodeType(ParserTreeConstants.JJTARGUMENTS)){
+                this.fixed_registers.addAll(child.getUses());
+            } else if(child.equalsNodeType(ParserTreeConstants.JJTMETHOD_BODY)){
                 methodBody = child;
                 returnNode = (SimpleNode) node.jjtGetChild(childIndex + 1);
             }
@@ -307,7 +315,6 @@ public class FlowGraph {
 
         boolean finished = false;
 
-
         while(!finished){
             HashSet visitedNodes = new HashSet();
             finished = true;
@@ -358,6 +365,9 @@ public class FlowGraph {
             }
 
             for(String var : in.get(node)){
+                if(this.fixed_registers.contains(var))
+                    continue;
+
                 if(!liveness.containsKey(var))
                     liveness.put(var, new ArrayList<>());
 
@@ -366,6 +376,9 @@ public class FlowGraph {
             }
 
             for(String var : out.get(node)){
+                if(this.fixed_registers.contains(var))
+                    continue;
+
                 if(!liveness.containsKey(var))
                     liveness.put(var, new ArrayList<>());
 
@@ -392,6 +405,33 @@ public class FlowGraph {
         }
 
         return liveness;
+    }
+
+    public HashMap<String, Integer> allocateRegisters(int k) throws Exception {
+        RIGraph rigraph = new RIGraph(analyseLiveness());
+        HashMap<String, Integer> registers = new HashMap<>();
+        HashMap<String, Integer> coloring = new HashMap<>();
+        int fixedSize = this.fixed_registers.size();
+
+        try{
+            coloring = rigraph.colorGraph(k);
+        } catch (Exception min){
+            throw new Exception(ControlVars.RED_BRIGHT + "Given k is insufficient for register allocation. The minimum number of registers needed are " + (fixedSize + Integer.parseInt(min.getMessage())) +
+                    ", being that " + fixedSize + (fixedSize == 1 ? " is" : " are") + " fixed and can't be optimized. So k must be at least " + Integer.parseInt(min.getMessage()) + "." + ControlVars.RESET);
+        }
+
+
+        for(String var : this.fixed_registers){
+            registers.put(var, this.fixed_registers.indexOf(var));
+        }
+
+        for(String var : coloring.keySet()){
+            registers.put(var, coloring.get(var) + fixedSize);
+        }
+
+        System.out.println("Registers: " + registers);
+
+        return registers;
     }
 
     public void print(){

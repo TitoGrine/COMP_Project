@@ -25,6 +25,6 @@ class Liveness {
         t5 = t4 + t2;
         y = t5;
 
-        //io.println(y);
+        io.println(y);
 	}
 }

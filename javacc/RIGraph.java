@@ -97,7 +97,7 @@ public class RIGraph {
         }
 
         if(k < minimum){
-            throw new Exception(ControlVars.RED_BRIGHT + "Given k is insufficient for register allocation. Minimum needed is " + minimum + "." + ControlVars.RESET);
+            throw new Exception(String.valueOf(minimum));
         }
 
         return registers;

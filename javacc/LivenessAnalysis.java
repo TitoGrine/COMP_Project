@@ -9,8 +9,7 @@ public class LivenessAnalysis {
             return null;
 
         flowGraph = new FlowGraph(methodNode);
-        RIGraph rigraph = new RIGraph(flowGraph.analyseLiveness());
 
-        return rigraph.colorGraph(k);
+        return flowGraph.allocateRegisters(k);
     }
 }

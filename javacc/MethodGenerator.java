@@ -6,6 +6,7 @@ public class MethodGenerator extends CodeGenerator{
 
     ASTMETHOD methodNode;
     private HashMap<String, Integer> locals;
+    private HashMap<String, Integer> constants;
     private int localsSize = 0;
     private int maxStack = 0;
     private int stack = 0;
@@ -17,6 +18,7 @@ public class MethodGenerator extends CodeGenerator{
         super.counter = counter;
         this.methodNode = methodNode;
         locals = new HashMap<>();
+        constants = new HashMap<>();
         localsSize = methodNode.localSize;
     }
 
@@ -436,17 +438,23 @@ public class MethodGenerator extends CodeGenerator{
 
             varCode += tab(indentation);
 
-            pushStack(1);
-            switch(varType){
-                case ControlVars.BOOL:
-                case ControlVars.INT:
-                case ControlVars.VOID:
-                    varCode += "iload" + (index < 4 ? us() : space()) + index;
-                    break;
-                default:
-                    varCode += "aload" + (index < 4 ? us() : space()) + index;
-                    break;
+            if(constants.containsKey(varName)) {
+                varCode += "bipush" + space() + Integer.toString(constants.get(varName));
+                pushStack(1);
+            } else {
+                pushStack(1);
+                switch(varType){
+                    case ControlVars.BOOL:
+                    case ControlVars.INT:
+                    case ControlVars.VOID:
+                        varCode += "iload" + (index < 4 ? us() : space()) + index;
+                        break;
+                    default:
+                        varCode += "aload" + (index < 4 ? us() : space()) + index;
+                        break;
+                }
             }
+
         } else {
             index = classVars.indexOf(varName); //TODO: necessary?
 
@@ -580,6 +588,9 @@ public class MethodGenerator extends CodeGenerator{
         SimpleNode firstChild = (SimpleNode) assignNode.jjtGetChild(0);
         SimpleNode secondChild = (SimpleNode) assignNode.jjtGetChild(1);
 
+        if (firstChild.equalsNodeType(ParserTreeConstants.JJTIDENT) && secondChild.equalsNodeType(ParserTreeConstants.JJTNUM))
+            constants.put(((ASTIDENT)firstChild).name, ((ASTNUM)secondChild).value);
+        
         if(uselessAssign(firstChild))
             return assignCode;
 

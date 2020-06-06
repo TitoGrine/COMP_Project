@@ -1,0 +1,16 @@
+import static io.println(int) void;
+class OptimizationsTest {
+
+
+    public static void main(String[] args){
+        int a;
+        int b;
+
+        OptimizationsTest s;
+        a = 20;
+        b = 20+a;
+        s = new OptimizationsTest();
+
+        io.println(b);
+    }
+}

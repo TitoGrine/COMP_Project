@@ -116,6 +116,51 @@ public class MethodGenerator extends CodeGenerator{
         return null;
     }
 
+    private String constantFolding(SimpleNode operationNode, int indentation){
+        SimpleNode leftSide = (SimpleNode) operationNode.jjtGetChild(0);
+        SimpleNode rightSide = (SimpleNode) operationNode.jjtGetChild(1);
+
+        if(leftSide.equalsNodeType(ParserTreeConstants.JJTNUM) && rightSide.equalsNodeType(ParserTreeConstants.JJTNUM)){
+            int val1 = ((ASTNUM) leftSide).value;
+            int val2 = ((ASTNUM) rightSide).value;
+
+            int result;
+
+            switch(operationNode.id){
+                case ParserTreeConstants.JJTADD:
+                    result = val1 + val2;
+                    break;
+                case ParserTreeConstants.JJTSUB:
+                    result = val1 - val2;
+                    break;
+                case ParserTreeConstants.JJTMUL:
+                    result = val1 * val2;
+                    break;
+                case ParserTreeConstants.JJTDIV:
+                    result = val1 / val2;
+                    break;
+                case ParserTreeConstants.JJTLESSTHAN:
+                    result = val1 < val2 ? 1 : 0;
+                    break;
+                default:
+                    return "";
+            }
+
+            pushStack(1);
+            return tab(indentation) + constantInstruction(result) + Math.abs(result);
+        } else if (leftSide.equalsNodeType(ParserTreeConstants.JJTBOOL) && rightSide.equalsNodeType(ParserTreeConstants.JJTBOOL)){
+            boolean val1 = ((ASTBOOL) leftSide).truth_value;
+            boolean val2 = ((ASTBOOL) rightSide).truth_value;
+
+            int result = val1 && val2 ? 1 : 0;
+
+            pushStack(1);
+            return tab(indentation) + constantInstruction(result) + Math.abs(result);
+        }
+
+        return "";
+    }
+
     private boolean uselessAssign(SimpleNode varNode){
         String varName;
 
@@ -250,7 +295,7 @@ public class MethodGenerator extends CodeGenerator{
 
     private String generateNumCode(ASTNUM numNode, int indentation){
         pushStack(1);
-        return tab(indentation) + (numNode.value > -2 && numNode.value < 6 ? "iconst_" : (numNode.value < 128 ? "bipush " : "ldc ")) + numNode.value;
+        return tab(indentation) + constantInstruction(numNode.value) + Math.abs(numNode.value);
     }
 
     private String generateBoolCode(ASTBOOL boolNode, int indentation){
@@ -263,14 +308,20 @@ public class MethodGenerator extends CodeGenerator{
         String leftSide, rightSide = "";
         boolean binaryOperation = operationNode.jjtGetNumChildren() > 1;
 
+        if(ControlVars.O_OPTIMIZATION && binaryOperation){
+            String constantFolding = constantFolding(operationNode, indentation);
+
+            if(!constantFolding.equals(""))
+                return constantFolding;
+        }
+
         SimpleNode firstchild = (SimpleNode) operationNode.jjtGetChild(0);
+        SimpleNode secondChild = null;
 
         leftSide = generateTypeSensitiveCode(firstchild, indentation, true);
 
         if(binaryOperation){
-            SimpleNode secondChild = (SimpleNode) operationNode.jjtGetChild(1);
-
-
+            secondChild = (SimpleNode) operationNode.jjtGetChild(1);
 
             rightSide = generateTypeSensitiveCode(secondChild, indentation + (operationNode.equalsNodeType(ParserTreeConstants.JJTAND) ? 1 : 0), true);
         }

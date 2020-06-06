@@ -162,6 +162,15 @@ public class CodeGenerator {
         return "\t";
     }
 
+    protected static String constantInstruction(int value){
+        if(value == -1)
+            return "iconst_m";
+
+         String instruction = (-1 < value && value < 6 ? "iconst_" : (-129 < value && value < 128 ? "bipush " : "ldc "));
+
+        return instruction + (value < 0 ? "-" : "");
+    }
+
     /**
      * Prepends an underscore to the end of the given variable name in order to
      * prevent name conflicts with Jasmin keywords.

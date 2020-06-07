@@ -95,6 +95,8 @@ public class TypeSensitive extends SimpleNode {
                     return null;
 
                 return this.symbolTable.getSymbol(newObject).getType();
+            case ParserTreeConstants.JJTTHIS:
+                return ((ASTTHIS) node).className;
             default:
                 break;
         }
@@ -119,6 +121,7 @@ public class TypeSensitive extends SimpleNode {
             case ParserTreeConstants.JJTNEW:
             case ParserTreeConstants.JJTVOID:
             case ParserTreeConstants.JJTFUNC_METHOD:
+            case ParserTreeConstants.JJTTHIS:
                 break;
             case ParserTreeConstants.JJTARRAY_ACCESS:
                 String object = ((ASTARRAY_ACCESS) node).object;

@@ -512,6 +512,10 @@ public class MethodGenerator extends CodeGenerator{
             case ParserTreeConstants.JJTIDENT:
                 code += generateVarCode((ASTIDENT) child, indentation) + nl();
                 break;
+            case ParserTreeConstants.JJTTHIS:
+                pushStack(1);
+                code += tab(indentation) + "aload_0" + nl();
+                break;
             default:
                 break;
         }

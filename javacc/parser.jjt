@@ -53,30 +53,30 @@ public class Parser
 
     public void displayError(ParseException exception) throws ParseException{
 
-        System.out.println("Error occurred. Found \"" + exception.currentToken.next.image + "\" on line " +
+        System.out.println(ControlVars.RED_BRIGHT + "\nError occurred. Found \"" + exception.currentToken.next.image + "\" on line " +
         exception.currentToken.beginLine + " and column " +
-        exception.currentToken.beginColumn);
+        exception.currentToken.beginColumn + ControlVars.RESET);
 
-        System.out.println("Expected one of the tokens:");
+        System.out.println(ControlVars.YELLOW_BOLD + "Expected one of the tokens:" + ControlVars.RESET);
         for(int i = 0; i < exception.expectedTokenSequences.length; i++) {
             for(int k = 0; k < exception.expectedTokenSequences[i].length; k++) {
-                System.out.println(tokenImage[exception.expectedTokenSequences[i][k]]);
+                System.out.print(tokenImage[exception.expectedTokenSequences[i][k]]);
             }
+
+            System.out.print(i == exception.expectedTokenSequences.length - 1 ? "\n\n" : " | ");
         }
 
         int missing_parenthesis = errorSkip();
 
         if(missing_parenthesis > 0){
-            System.out.println("There are " + missing_parenthesis + " parenthesis missing.");
+            System.out.println(ControlVars.RED_BRIGHT + "There are " + missing_parenthesis + " parenthesis missing." + ControlVars.RESET);
         }
-
-        System.out.println("\n");
 
         nr_errors++;
 
 
         if (MAX_ERRORS <= nr_errors) {
-          throw new ParseException("The program has reached the maximum number of errors ("+ MAX_ERRORS +").");
+          throw new ParseException(ControlVars.YELLOW_BOLD + "The program has reached the maximum number of errors ("+ MAX_ERRORS +")." + ControlVars.RESET);
 
         }
       }

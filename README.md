@@ -70,8 +70,8 @@ and leafs of the tree with the information (including tokens) necessary to perfo
 8. ~~Generate JVM code accepted by jasmin for conditional instructions (if and if-else).~~
 9. ~~Generate JVM code accepted by jasmin for loops.~~
 10. ~~Generate JVM code accepted by jasmin to deal with arrays.~~
-11. Complete the compiler and test it using a set of Java-- classes.
-12. Proceed with the optimizations related to the code generation, related to the register allocation (“-r” option) and the optimizations related to the “-o” option.
+11. ~~Complete the compiler and test it using a set of Java-- classes.~~
+12. ~~Proceed with the optimizations related to the code generation, related to the register allocation (“-r” option) and the optimizations related to the “-o” option.~~
 
  
  

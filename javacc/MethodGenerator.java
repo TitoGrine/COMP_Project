@@ -1,12 +1,10 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class MethodGenerator extends CodeGenerator{
 
     ASTMETHOD methodNode;
     private HashMap<String, Integer> locals;
-    private HashMap<String, Integer> constants;
+    private ArrayDeque<HashMap<String, Integer>> constants;
     private int localsSize = 0;
     private int maxStack = 0;
     private int stack = 0;
@@ -19,7 +17,8 @@ public class MethodGenerator extends CodeGenerator{
         super.counter = counter;
         this.methodNode = methodNode;
         locals = new HashMap<>();
-        constants = new HashMap<>();
+        constants = new ArrayDeque<>();
+        constants.add(new HashMap<>());
         localsSize = methodNode.localSize;
     }
 
@@ -29,11 +28,19 @@ public class MethodGenerator extends CodeGenerator{
         super.counter = counter;
         this.methodNode = methodNode;
         this.locals = locals;
+        constants = new ArrayDeque<>();
+        constants.add(new HashMap<>());
 
         for(String key : locals.keySet())
             localsSize = Math.max(localsSize, locals.get(key) + 1);
 
         r_optimized = true;
+    }
+
+    private void resetConstant(String var){
+        for(HashMap<String, Integer> table : constants){
+            table.remove(var);
+        }
     }
 
     private int getRegister(String key){
@@ -441,8 +448,9 @@ public class MethodGenerator extends CodeGenerator{
 
             pushStack(1);
 
-            if(!inDynamic && constants.containsKey(varName)) {
-                varCode += constantInstruction(constants.get(varName)) + Math.abs(constants.get(varName));
+            if(!inDynamic && constants.peek().containsKey(varName)) {
+                int value = constants.peek().get(varName);
+                varCode += constantInstruction(value) + Math.abs(value);
             } else {
                 switch(varType){
                     case ControlVars.BOOL:
@@ -593,11 +601,12 @@ public class MethodGenerator extends CodeGenerator{
             return assignCode;
 
         if(ControlVars.O_OPTIMIZATION && firstChild.equalsNodeType(ParserTreeConstants.JJTIDENT)) {
-            String firstChildName = ((ASTIDENT)firstChild).name;
-            if (secondChild.equalsNodeType(ParserTreeConstants.JJTNUM)) 
-                constants.put(firstChildName, ((ASTNUM)secondChild).value);
-            else if (constants.containsKey(firstChildName)) {
-                constants.remove(firstChildName);
+            String varName = ((ASTIDENT)firstChild).name;
+
+            resetConstant(varName);
+
+            if (secondChild.equalsNodeType(ParserTreeConstants.JJTNUM)) {
+                constants.peek().put(varName, ((ASTNUM) secondChild).value);
             }
         }
         
@@ -734,11 +743,19 @@ public class MethodGenerator extends CodeGenerator{
         int index = counter.conditionalCounter;
         counter.conditionalCounter++;
 
+        HashMap<String, Integer> currentConst = (HashMap<String, Integer>) constants.peek().clone();
+
         conditionalCode += generateConditionCode(conditionNode, indentation) + space() + "else_" + index + nl();
+        constants.push(currentConst);
+        System.out.println(constants);
         conditionalCode += generateScopeCode(ifScopeNode, indentation + 1);
+        System.out.println(constants + "\n");
+        constants.pop();
         conditionalCode += tab(indentation + 1) + "goto endif_" + index + nl();
         conditionalCode += tab(indentation) + "else_" + index + entry() + nl();
+        constants.push(constants.peek());
         conditionalCode += generateScopeCode(elseScopeNode, indentation + 1);
+        constants.pop();
         conditionalCode += tab(indentation) + "endif_" + index + entry() + nl(2);
 
         return conditionalCode;
@@ -747,20 +764,22 @@ public class MethodGenerator extends CodeGenerator{
     private String generateLoopCode(ASTWHILE loopNode, int indentation){
         ASTCONDITION conditionNode = (ASTCONDITION) loopNode.jjtGetChild(0);
         SimpleNode loopScopeNode = (SimpleNode) loopNode.jjtGetChild(1);
-        boolean alreadyinDynamic = inDynamic;
+//        boolean alreadyinDynamic = inDynamic;
 
         String loopCode = "";
         int index = counter.loopCounter;
         counter.loopCounter++;
 
         loopCode += generateConditionCode(conditionNode, indentation) + space() + "endloop_" + index + nl(2);
-        inDynamic = true;
+//        inDynamic = true;
+        constants.push(new HashMap<>());
         loopCode += tab(indentation) + "loop_" + index + entry() + nl();
         loopCode += generateScopeCode(loopScopeNode, indentation + 1);
         loopCode += generateConditionCode(conditionNode, indentation) + space() + "endloop_" + index + nl(2);
         loopCode += tab(indentation + 1) + "goto loop_" + index + nl();
         loopCode += tab(indentation) + "endloop_" + index + entry() + nl(2);
-        inDynamic = alreadyinDynamic;
+        constants.pop();
+//        inDynamic = alreadyinDynamic;
 
         return loopCode;
     }

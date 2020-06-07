@@ -2,10 +2,10 @@
 
 GROUP: 2A
 
-NAME1: Eduardo João Santana Macedo      NR1: up201703658  GRADE1: 17  CONTRIBUTION1: 25%
-NAME2: José Miguel da Costa Simões      NR2: up201704317  GRADE2: 15  CONTRIBUTION2: 25%
+NAME1: Eduardo João Santana Macedo      NR1: up201703658  GRADE1: 18  CONTRIBUTION1: 25%
+NAME2: José Miguel da Costa Simões      NR2: up201704317  GRADE2: 16  CONTRIBUTION2: 20%
 NAME3: Mark Timothy Vasconcelos Meehan  NR3: up201704581  GRADE3: 18  CONTRIBUTION3: 25%
-NAME4: Tito Alexandre Trindade Griné    NR4: up201706732  GRADE4: 20  CONTRIBUTION4: 25%
+NAME4: Tito Alexandre Trindade Griné    NR4: up201706732  GRADE4: 20  CONTRIBUTION4: 30%
 
 
 GLOBAL Grade of the project: 19.5
@@ -183,8 +183,8 @@ Besides jasmin and javacc, no other libraries where used to complete this projec
 
 
 TASK DISTRIBUTION:
-
-
+Throughout the development of this project, the majority of the tasks were completed in group resorting to pair programming.
+Thus, for most tasks, the work was shared between group members, with slight variations from checkpoint to checkpoint.
 
 
 PROS:

@@ -3,9 +3,11 @@ import static io.println(int) void;
 public class Factorial {
 
     public static void main(String[] args) {
+        Factorial factorial;
+        factorial = new Factorial();
         int num = 10;
 
-        int fact = multiplyNumbers(num);
+        int fact = factorial.multiplyNumbers(num);
 
         io.println(fact);
     }

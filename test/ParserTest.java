@@ -208,4 +208,16 @@ public class ParserTest {
         if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
             test("fixtures/public/custom/WeirdArrayAccess.jmm", false);
     }
+
+    @Test
+    public void testFibonacci() {
+        if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
+            test("fixtures/public/custom/Fibonacci.jmm", false);
+    }
+
+    @Test
+    public void testFactorial() {
+        if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
+            test("fixtures/public/custom/Factorial.jmm", false);
+    }
 }

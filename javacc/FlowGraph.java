@@ -404,7 +404,6 @@ public class FlowGraph {
                     liveness.get(var).add(node);
             }
 
-//            if(!ControlVars.IGNORE_USELESS_ASSIGNS){
             if(!o_optimization){
                 for(String var : node.getDefinitions()){
                     if(!liveness.containsKey(var))

@@ -1,0 +1,60 @@
+import static io.println(int) void;
+
+class ArrayLoop {
+
+    int field;
+
+    public static void main(String[] args) {
+
+        int[] firstArray;
+        int firstInt;
+        ArrayLoop object;
+        int[] secondArray;
+
+        secondArray = new int[1];
+        firstArray = new int[10];
+        firstInt = 0;
+        object = new ArrayLoop();
+
+        //Prints 0->9
+        while(firstInt < firstArray.length){
+            firstArray[firstInt] = firstInt;
+            io.println(firstArray[firstInt]);
+            firstInt = firstInt + 1;
+        }
+
+        //Prints (9->0) *2)
+        firstInt = firstArray.length - 1;
+        while( 0 - 1 < firstInt ){
+            firstArray[firstInt] = object.func(firstInt);
+            io.println(firstArray[firstInt]);
+            firstInt = firstInt - 1;
+        }
+
+
+        io.println(firstArray[9] * firstArray[9]);
+
+        secondArray[0] = 99;
+        //Array addition ( 99 + 2 )
+        firstArray[0] = secondArray[0] + firstArray[1];
+        io.println(firstArray[0]);
+        
+	}
+
+    public int func(int k){
+       return k * 2;
+    }
+
+    public ArrayLoop getInstance(){
+        return new ArrayLoop();
+    }
+
+    public int setField(int fieldValue){
+        field = fieldValue;
+        return 0;
+    }
+
+    public int getField(){
+        return field;
+    }
+}

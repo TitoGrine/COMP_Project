@@ -1,11 +1,14 @@
-class Linked{
+import static ioPlus.printResult(int) void;
+
+class WeirdArrayAccess{
 
     public static void main(String[] args){
         int[] a;
         int b;
         int c;
-        Linked lin;
-        lin = new Linked();
+        WeirdArrayAccess lin;
+
+        lin = new WeirdArrayAccess();
 
         a = new int[10];
         b = 2 + a.length * a[3];
@@ -15,8 +18,10 @@ class Linked{
         c = a[0] + lin.add();
         c = lin.getArray()[0] + lin.add();
         b = a.length;
-        b = new int[10].length;
-        b = lin.getArray().length;
+        b = new int[10].length + c;
+        b = b * lin.getArray().length;
+
+        ioPlus.printResult(b);
     }
 
     public int add() {

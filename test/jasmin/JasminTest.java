@@ -44,5 +44,53 @@ public class JasminTest {
 		JasminUtils.testJmm("fixtures/public/WhileAndIF.jmm", JasminUtils.getResource("fixtures/public/WhileAndIF.txt"));
     }
 
+	@Test
+	public void testWeirdArrayAccess() {
+		JasminUtils.testJmm("fixtures/public/custom/WeirdArrayAccess.jmm", "Result: 374");
+	}
 
+	@Test
+	public void testArrayLoop() {
+		JasminUtils.testJmm("fixtures/public/custom/ArrayLoop.jmm", JasminUtils.getResource("fixtures/public/custom/ArrayLoop.txt"));
+	}
+
+	@Test
+	public void testLocalsOverflow() {
+		JasminUtils.testJmm("fixtures/public/custom/LocalsOverFlow.jmm", "-19\n121493");
+	}
+
+	@Test
+	public void testMethodOverload() {
+		JasminUtils.testJmm("fixtures/public/custom/MethodOverload.jmm", "-17\n20\n3");
+	}
+
+	@Test
+	public void testOptimizations() {
+		JasminUtils.testJmm("fixtures/public/custom/OptimizationsTest.jmm", "504");
+	}
+
+	@Test
+	public void testChainCalls() {
+		JasminUtils.testJmm("fixtures/public/custom/ChainCalls.jmm", "22");
+	}
+
+	@Test
+	public void testFunctionCalls() {
+		JasminUtils.testJmm("fixtures/public/custom/FunctionCalls.jmm", "40");
+	}
+
+	@Test
+	public void testJasminKeywords() {
+		JasminUtils.testJmm("fixtures/public/custom/JasminKeywords.jmm", "22");
+	}
+
+	@Test
+	public void testLiveness() {
+		JasminUtils.testJmm("fixtures/public/custom/Liveness.jmm", "2");
+	}
+
+	@Test
+	public void testNumericOperations() {
+		JasminUtils.testJmm("fixtures/public/custom/NumericOp.jmm", "6343");
+	}
 }

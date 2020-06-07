@@ -1,0 +1,68 @@
+import static ioPlus.printHelloWorld(void) void;
+import ioPlus;
+import ioPlus.plus(int, int, boolean);
+import ioPlus.plus(int, int, int) int;
+
+class TestAST {
+    int something;
+    boolean truth;
+    int a;
+
+	public static void main(String[] args) {
+        int num;
+        boolean star;
+        TestAST test;
+
+        num = 2;
+
+        test = new TestAST();
+
+        if(5*3+4/num < test.test(6) && (2-3/45*34+5) < 4/4*1){
+            num = 5;
+            star = false;
+        } else {
+            num = 7;
+            star = true;
+        }
+
+        while(num < 0){
+            num = num/2 * 3+2;
+        }
+
+        if((2*3-4) < (num+4/2)){
+            num = test.test(num);
+        } else {
+            num = 7*3;
+        }
+
+        num = 8 / 2 + num * 5 / 2 - 2;
+
+        test.methodOverload(new TestAST());
+        test.methodOverload(new ioPlus());
+
+		ioPlus.printHelloWorld();
+	}
+
+	public int methodOverload(TestAST i){
+	    return 1;
+	}
+
+	public int methodOverload(ioPlus i){
+        return 0;
+    }
+
+    public int test(int i){
+        int result;
+        ioPlus addition;
+
+        addition = new ioPlus();
+
+        if(i < 0){
+            result = 0;
+        } else {
+            result = addition.plus(i, i, i) + this.test(i - 1);
+        }
+
+        return result;
+    }
+}

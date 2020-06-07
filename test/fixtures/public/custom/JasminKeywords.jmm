@@ -1,5 +1,5 @@
 import static io.println(int);
-class Keywords {
+class JasminKeywords {
 
 	public static void main(String[] args) {
         int field;
@@ -9,9 +9,9 @@ class Keywords {
         int ireturn;
         boolean imul;
         boolean iconst_3;
-        Keywords simple;
+        JasminKeywords simple;
 
-        simple = new Keywords();
+        simple = new JasminKeywords();
         ireturn = 0;
         field = 4;
         putfield = 5;
@@ -23,7 +23,7 @@ class Keywords {
         if (imul && iconst_3) {
             ireturn = simple.add(field, putfield, bipush, ldc);
         } else {
-
+            ireturn = 0-1;
         }
 
         io.println(ireturn);

@@ -30,7 +30,7 @@ Where ``<class_name>`` is the name of the class you want to run and ``<arguments
 
 To run the JAR, do the following command:
 
-```cmd
+```cmdchrome://vivaldi-webui/startpage?section=Speed-dials&activeSpeedDialIndex=0&background-color=#1b2224
 java -jar <jar filename> <arguments>
 ```
 
@@ -54,7 +54,7 @@ costumization. Here are the description of each of those variables.
 | PRINT_SYMBOL_TABLE      | If **true**, it prints the symbol table of each meaningful scope.                                                                                  |
 | PRINT_AST               | If **true**, it prints the Abstract Syntax Tree.                                                                                                   |
 | RUN_CUSTOM_TESTS        | If **true**, it will run tests for custom made ``.jmm`` files.                                                                                     |
-| SAVE_JASMIN_CODE        | If **true**, it will save the generated Jasmin code in a file, otherwise it will print it to the terminal.                                         |
+| SAVE_JASMIN_CODE        |                                          |
 
 ## Checklist
 
@@ -70,8 +70,8 @@ and leafs of the tree with the information (including tokens) necessary to perfo
 8. ~~Generate JVM code accepted by jasmin for conditional instructions (if and if-else).~~
 9. ~~Generate JVM code accepted by jasmin for loops.~~
 10. ~~Generate JVM code accepted by jasmin to deal with arrays.~~
-11. Complete the compiler and test it using a set of Java-- classes.
-12. Proceed with the optimizations related to the code generation, related to the register allocation (“-r” option) and the optimizations related to the “-o” option.
+11. ~~Complete the compiler and test it using a set of Java-- classes.~~
+12. ~~Proceed with the optimizations related to the code generation, related to the register allocation (“-r” option) and the optimizations related to the “-o” option.~~
 
  
  

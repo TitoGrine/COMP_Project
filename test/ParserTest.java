@@ -3,6 +3,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.lang.reflect.Method;
 
+import jasmin.JasminUtils;
 import org.junit.Test;
 
 public class ParserTest {
@@ -186,27 +187,79 @@ public class ParserTest {
     // CUSTOM MADE TESTS
 
     @Test
-    public void testCustomTest() {
-        if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
-            test("fixtures/public/custom/CustomTest.jmm", false);
+    public void testAST() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/TestAST.jmm", false);
     }
 
     @Test
-    public void testAwfulCode() {
+    public void testWeirdArrayAccess() {
         if(ControlVars.RUN_CUSTOM_TESTS)
-            test("fixtures/public/custom/GodAwfulCode.jmm", true);
+            test("fixtures/public/custom/WeirdArrayAccess.jmm", false);
+    }
+
+    @Test
+    public void testArrayLoop() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/ArrayLoop.jmm", false);
+    }
+
+    @Test
+    public void testLocalsOverflow() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/LocalsOverFlow.jmm", false);
+    }
+
+    @Test
+    public void testMethodOverload() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/MethodOverload.jmm", false);
+    }
+
+    @Test
+    public void testOptimizations() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/OptimizationsTest.jmm", false);
+    }
+
+    @Test
+    public void testChainCalls() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/ChainCalls.jmm", false);
+    }
+
+    @Test
+    public void testFunctionCalls() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/FunctionCalls.jmm", false);
+    }
+
+    @Test
+    public void testJasminKeywords() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/JasminKeywords.jmm", false);
+    }
+
+    @Test
+    public void testLiveness() {
+        test("fixtures/public/custom/Liveness.jmm", false);
+    }
+
+    @Test
+    public void testNumericOperations() {
+        test("fixtures/public/custom/NumericOp.jmm", false);
     }
 
     @Test
     public void testScopeVarInit() {
         if(ControlVars.RUN_CUSTOM_TESTS)
-            test("fixtures/public/custom/ScopeVarInit.jmm", true);
+            test("fixtures/public/custom/fail/ScopeVarInit.jmm", true);
     }
 
     @Test
-    public void testWeirdArrayAccess() {
-        if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
-            test("fixtures/public/custom/WeirdArrayAccess.jmm", false);
+    public void testAwfulCode() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/fail/GodAwfulCode.jmm", true);
     }
 
     @Test

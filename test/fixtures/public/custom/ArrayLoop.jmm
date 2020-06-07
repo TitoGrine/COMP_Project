@@ -45,7 +45,6 @@ class ArrayLoop {
        return k * 2;
     }
 
-
     public ArrayLoop getInstance(){
         return new ArrayLoop();
     }

@@ -1,19 +1,27 @@
 import static io.println(int) void;
 class OptimizationsTest {
 
-
     public static void main(String[] args){
         int a;
         int b;
         int c;
 
-        OptimizationsTest s;
         a = 20;
-        a = 30 + 30;
-        c = 10;
-        b = a + c;
-        s = new OptimizationsTest();
+        b = 11 + 22;
+        c = b * a;
 
-        io.println(a);
+        if(a < b){
+            b = 6;
+            a = b*b*b;
+            c = a / b;
+        } else {
+            c = 10;
+            a = c/c/c;
+            b = a * c;
+        }
+
+        b = a + c;
+
+        io.println(a + b + c);
     }
 }

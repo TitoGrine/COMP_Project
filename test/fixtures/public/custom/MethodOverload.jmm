@@ -1,17 +1,17 @@
 import io;
 import static io.println(int);
 
-class Overflow {
+class MethodOverload {
 
 	public static void main(String[] args) {
-        Overflow simple;
+        MethodOverload simple;
         int a;
         int b;
         int result1;
         int result2;
         int result3;
 
-        simple = new Overflow();
+        simple = new MethodOverload();
         a = 3;
         b = 5;
 
@@ -29,7 +29,7 @@ class Overflow {
 		return a+b;
 	}
 
-	public int add(int a, Overflow b) {
+	public int add(int a, MethodOverload b) {
 		return a-20;
 	}
 

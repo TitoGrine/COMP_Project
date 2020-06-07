@@ -251,6 +251,18 @@ public class ParserTest {
     }
 
     @Test
+    public void testFibonacci() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/Fibonacci.jmm", false);
+    }
+
+    @Test
+    public void testFactorial() {
+        if(ControlVars.RUN_CUSTOM_TESTS)
+            test("fixtures/public/custom/Factorial.jmm", false);
+    }
+
+    @Test
     public void testScopeVarInit() {
         if(ControlVars.RUN_CUSTOM_TESTS)
             test("fixtures/public/custom/fail/ScopeVarInit.jmm", true);
@@ -260,17 +272,5 @@ public class ParserTest {
     public void testAwfulCode() {
         if(ControlVars.RUN_CUSTOM_TESTS)
             test("fixtures/public/custom/fail/GodAwfulCode.jmm", true);
-    }
-
-    @Test
-    public void testFibonacci() {
-        if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
-            test("fixtures/public/custom/Fibonacci.jmm", false);
-    }
-
-    @Test
-    public void testFactorial() {
-        if(ControlVars.RUN_CUSTOM_TESTS && !ControlVars.GENERATE_JASMIN_CODE)
-            test("fixtures/public/custom/Factorial.jmm", false);
     }
 }

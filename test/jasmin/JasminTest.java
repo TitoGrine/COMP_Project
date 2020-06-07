@@ -93,4 +93,14 @@ public class JasminTest {
 	public void testNumericOperations() {
 		JasminUtils.testJmm("fixtures/public/custom/NumericOp.jmm", "6343");
 	}
+
+	@Test
+	public void testFactorial() {
+		JasminUtils.testJmm("fixtures/public/custom/Factorial.jmm", "3628800");
+	}
+
+	@Test
+	public void testFibonacci() {
+		JasminUtils.testJmm("fixtures/public/custom/Fibonacci.jmm", "55");
+	}
 }

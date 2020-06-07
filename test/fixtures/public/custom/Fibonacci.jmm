@@ -1,19 +1,27 @@
 import static io.println(int) void;
 
-public class Fibonacci {
+class Fibonacci {
 
     public static void main(String[] args) {
-        int n1 = 0;
-        int n2 = 1;
+        Fibonacci fibonacci;
+        int fibo;
 
-        io.println(n1);
-        io.println(n2);
+        fibonacci = new Fibonacci();
 
-        for (int i = 1; i < 9; i++) {
-            int sum = n1 + n2;
-            n1 = n2;
-            n2 = sum;
-            io.println(sum);
-        }
+        fibo = fibonacci.fib(10);
+        io.println(fibo);
+    }
+
+    public int fib(int n) {
+      int result;
+
+      if (!(n < 0) && !(0 < n))
+         result = n;
+      else if (!(n < 1) && !(1 < n))
+        result = n;
+      else
+         result = this.fib(n - 1) + this.fib(n - 2);
+
+      return result;
     }
 }

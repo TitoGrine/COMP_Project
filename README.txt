@@ -2,10 +2,10 @@
 
 GROUP: 2A
 
-NAME1: Eduardo João Santana Macedo      NR1: up201703658  GRADE1: <0 to 20 value>  CONTRIBUTION1: 25%
-NAME2: José Miguel da Costa Simões      NR2: up201704317  GRADE2: <0 to 20 value>  CONTRIBUTION2: 25%
-NAME3: Mark Timothy Vasconcelos Meehan  NR3: up201704581  GRADE3: <0 to 20 value>  CONTRIBUTION3: 25%
-NAME4: Tito Alexandre Trindade Griné    NR4: up201706732  GRADE4: 20 CONTRIBUTION4: 25%
+NAME1: Eduardo João Santana Macedo      NR1: up201703658  GRADE1: 17  CONTRIBUTION1: 25%
+NAME2: José Miguel da Costa Simões      NR2: up201704317  GRADE2: 15  CONTRIBUTION2: 25%
+NAME3: Mark Timothy Vasconcelos Meehan  NR3: up201704581  GRADE3: 18  CONTRIBUTION3: 25%
+NAME4: Tito Alexandre Trindade Griné    NR4: up201706732  GRADE4: 20  CONTRIBUTION4: 25%
 
 
 GLOBAL Grade of the project: 19.5
@@ -183,6 +183,8 @@ Besides jasmin and javacc, no other libraries where used to complete this projec
 
 
 TASK DISTRIBUTION:
+
+
 
 
 PROS:

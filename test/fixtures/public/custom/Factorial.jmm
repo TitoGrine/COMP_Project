@@ -1,23 +1,30 @@
 import static io.println(int) void;
 
-public class Factorial {
+class Factorial {
 
     public static void main(String[] args) {
         Factorial factorial;
-        factorial = new Factorial();
-        int num = 10;
+        int num;
+        int fact;
 
-        int fact = factorial.multiplyNumbers(num);
+
+        factorial = new Factorial();
+        num = 10;
+        fact = factorial.multiplyNumbers(num);
 
         io.println(fact);
     }
 
-    public static int multiplyNumbers(int num) {
+    public int multiplyNumbers(int num) {
+        int result;
+
         if(num < 1) {
-            return 1;
+            result = 1;
         }
         else {
-            return num * multiplyNumbers(num - 1);
+            result = num * this.multiplyNumbers(num - 1);
         }
+
+        return result;
     }
 }

@@ -198,7 +198,10 @@ In addition, the following features were included:
 
 CONS:
 
-
+The code is not as well documented as it should be. And as previously stated adding more optimizations requires refactoring large
+portions of the code.
+Regarding the -o optimizations some are only applicable to simple cases. For example, constant folding only works for operations
+having two constants, constant propagation is lost when entering a while loop.
 
 
 

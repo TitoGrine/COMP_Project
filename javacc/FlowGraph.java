@@ -3,6 +3,7 @@ import java.util.*;
 public class FlowGraph {
     private FlowNode headNode = null;
     private FlowNode tailNode = null;
+    private String methodName = "";
     private ArrayList<String> fixed_registers = new ArrayList<>();
 
     public FlowNode getHeadNode() {
@@ -72,8 +73,10 @@ public class FlowGraph {
 
     public FlowGraph(SimpleNode node){
 
-        if(node.equalsNodeType(ParserTreeConstants.JJTMETHOD))
+        if(node.equalsNodeType(ParserTreeConstants.JJTMETHOD)){
+            methodName = ((ASTMETHOD) node).methodName;
             methodGraph(node);
+        }
         else if (node.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
             mainMethodGraph(node);
         else
@@ -89,6 +92,7 @@ public class FlowGraph {
     public void mainMethodGraph(SimpleNode node){
         ASTIDENT argsNode = (ASTIDENT) node.jjtGetChild(0);
         SimpleNode methodBody = (SimpleNode) node.jjtGetChild(1);
+        methodName = ((ASTMETHOD) node).methodName;
 
         this.fixed_registers.add(argsNode.name);
 
@@ -273,9 +277,23 @@ public class FlowGraph {
     }
 
     public FlowGraph elseGraph(ASTELSE elseNode){
+        FlowNode headNode = new FlowNode();
+        FlowNode prevNode;
+
         SimpleNode firstChild = (SimpleNode) elseNode.jjtGetChild(0);
 
-        return scopeGraph(firstChild);
+        if(firstChild.equalsNodeType(ParserTreeConstants.JJTIF_ELSE)){
+            prevNode = new FlowNode();
+
+            ifElseGraph((ASTIF_ELSE) firstChild, headNode, prevNode);
+        } else {
+            FlowGraph result = scopeGraph(firstChild);
+
+            headNode.addSuccessor(result.getHeadNode());
+            prevNode = result.getTailNode();
+        }
+
+        return new FlowGraph(headNode, prevNode);
     }
 
     public FlowNode simpleFlowNode(SimpleNode node){
@@ -291,7 +309,7 @@ public class FlowGraph {
         return flowNode;
     }
 
-    public HashMap<String, ArrayList<FlowNode>> analyseLiveness(){
+    public HashMap<String, ArrayList<FlowNode>> analyseLiveness(boolean o_optimization){
         HashMap<FlowNode, ArrayList<String>> in = new HashMap<>();
         HashMap<FlowNode, ArrayList<String>> out = new HashMap<>();
         Queue<FlowNode> nodeQueue = new ArrayDeque<>();
@@ -386,7 +404,8 @@ public class FlowGraph {
                     liveness.get(var).add(node);
             }
 
-            if(!ControlVars.IGNORE_USELESS_ASSIGNS){
+//            if(!ControlVars.IGNORE_USELESS_ASSIGNS){
+            if(!o_optimization){
                 for(String var : node.getDefinitions()){
                     if(!liveness.containsKey(var))
                         liveness.put(var, new ArrayList<>(Collections.singleton(node)));
@@ -398,7 +417,7 @@ public class FlowGraph {
 
         if(ControlVars.PRINT_LIVENESS){
             for(String var : liveness.keySet()){
-                System.out.println(" Var " + var + " is alive in:");
+                System.out.println("\n Var " + var + " is alive in:");
                 for(FlowNode node : liveness.get(var))
                     System.out.println("    " + node);
             }
@@ -407,9 +426,9 @@ public class FlowGraph {
         return liveness;
     }
 
-    public HashMap<String, Integer> allocateRegisters(int k) throws Exception {
+    public HashMap<String, Integer> allocateRegisters(int k, boolean o_optimization) throws Exception {
 
-        HashMap<String, ArrayList<FlowNode>> liveness = analyseLiveness();
+        HashMap<String, ArrayList<FlowNode>> liveness = analyseLiveness(o_optimization);
 
         for(String var : this.fixed_registers){
             liveness.remove(var);
@@ -423,8 +442,9 @@ public class FlowGraph {
         try{
             coloring = rigraph.colorGraph(k);
         } catch (Exception min){
-            throw new Exception(ControlVars.RED_BRIGHT + "Given k is insufficient for register allocation. The minimum number of registers needed are " + (fixedSize + Integer.parseInt(min.getMessage())) +
-                    ", being that " + fixedSize + (fixedSize == 1 ? " is" : " are") + " fixed and can't be optimized. So k must be at least " + Integer.parseInt(min.getMessage()) + "." + ControlVars.RESET);
+            throw new Exception(ControlVars.RED_BRIGHT + "\n Given k is insufficient for register allocation for method " + ControlVars.YELLOW_BOLD + methodName + ControlVars.RED_BRIGHT +
+                    ".\n The minimum number of registers needed are " + (fixedSize + Integer.parseInt(min.getMessage())) + ", being that " + fixedSize + (fixedSize == 1 ? " is" : " are") +
+                    " fixed and can't be optimized.\n So k must be at least " + ControlVars.YELLOW_BOLD + Integer.parseInt(min.getMessage()) + ControlVars.RED_BRIGHT + "." + ControlVars.RESET);
         }
 
         for(String var : this.fixed_registers){
@@ -435,7 +455,8 @@ public class FlowGraph {
             registers.put(var, coloring.get(var) + fixedSize);
         }
 
-        System.out.println("Registers: " + registers);
+        if(ControlVars.PRINT_ALLOCATED_REGISTERS)
+            System.out.println("Registers: " + registers);
 
         return registers;
     }

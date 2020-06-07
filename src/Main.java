@@ -13,6 +13,35 @@ public class Main {
         }
 
         Parser parser = new Parser(file);
+        boolean r_optimization = false;
+        boolean o_optimization = false;
+        int k = 0;
+
+        if(args.length > 1){
+            int index = 1;
+
+            while(index < args.length){
+                String[] arg = args[index].split("=");
+
+                if(arg[0].equals("-r")){
+                    if(Integer.parseInt(arg[1]) < 1){
+
+                        System.out.println("Flag -r must receive a positive integer, received " + Integer.parseInt(arg[1]) + ". Ignoring -r flag...");
+                        index++;
+                        continue;
+                    }
+
+                    r_optimization = true;
+                    k = Integer.parseInt(arg[1]);
+                } else if (arg[0].equals("-o")){
+                    o_optimization = true;
+                } else {
+                    System.out.println("Unable to recognize flag " + args[index] + ". Ignoring...");
+                }
+
+                index++;
+            }
+        }
 
         try {
             SimpleNode root = parser.Program(); // returns reference to root node
@@ -29,10 +58,7 @@ public class Main {
             }
 
             if(ControlVars.GENERATE_JASMIN_CODE){
-                if(ControlVars.R_OPTIMIZATION)
-                    new CodeGenerator(ControlVars.K_VALUE).generate(root, args[0]);
-                else
-                    new CodeGenerator().generate(root, args[0]);
+                new CodeGenerator(r_optimization, k, o_optimization).generate(root, args[0]);
             }
 
             analysis.showWarnings(ControlVars.THROW_WARNING_EXCEPTION);

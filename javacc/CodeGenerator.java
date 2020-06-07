@@ -12,12 +12,16 @@ public class CodeGenerator {
     protected ASTCLASS classNode;
     protected Counter counter = new Counter();
     protected List<String> classVars;
-    protected int k = 0;
+    private boolean r_optimization;
+    private boolean o_optimization;
+    private int k = 0;
 
     public CodeGenerator(){
     }
 
-    public CodeGenerator(int k){
+    public CodeGenerator(boolean r_optimization, int k, boolean o_optimization){
+        this.r_optimization = r_optimization;
+        this.o_optimization = o_optimization;
         this.k = k;
     }
 
@@ -86,14 +90,14 @@ public class CodeGenerator {
     private MethodGenerator getMethodGenerator(ASTMETHOD methodNode) throws Exception {
         MethodGenerator methodGenerator;
 
-        if(k < methodNode.localSize){
-            HashMap<String, Integer> registers = LivenessAnalysis.getRegisterAllocation(methodNode, k);
+        if(r_optimization && k < methodNode.localSize){
+            HashMap<String, Integer> registers = LivenessAnalysis.getRegisterAllocation(methodNode, k, o_optimization);
             if(registers != null)
-                methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter, registers);
+                methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter, registers, o_optimization);
             else
-                methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
+                methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter, o_optimization);
         } else {
-            methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter);
+            methodGenerator = new MethodGenerator(methodNode, classNode, classVars, counter, o_optimization);
         }
 
         return methodGenerator;
@@ -164,11 +168,11 @@ public class CodeGenerator {
 
     protected static String constantInstruction(int value){
         if(value == -1)
-            return "iconst_m";
+            return "iconst_m1";
 
          String instruction = (-1 < value && value < 6 ? "iconst_" : (-129 < value && value < 128 ? "bipush " : "ldc "));
 
-        return instruction + (value < 0 ? "-" : "");
+        return instruction + value;
     }
 
     /**

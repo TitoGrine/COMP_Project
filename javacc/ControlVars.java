@@ -10,18 +10,14 @@ public class ControlVars {
     public static final boolean SAVE_JASMIN_CODE = true;
 
     // Related to -r optimization
-    public static final boolean R_OPTIMIZATION = true;
-    public static final int K_VALUE = 99;
     public static final boolean PRINT_LIVENESS = false;
     public static final boolean PRINT_NODE_TABLE = false;
     public static final boolean PRINT_FLOW_GRAPH = false;
-    public static final boolean PRINT_RI_GRAPH = true;
-    
-    // Related to -o optimization
-    public static final boolean O_OPTIMIZATION = true;
+    public static final boolean PRINT_ALLOCATED_REGISTERS = false;
+    public static final boolean PRINT_RI_GRAPH = false;
 
     // Extra optimizations
-    public static final boolean IGNORE_USELESS_ASSIGNS = false;
+    public static final boolean IGNORE_USELESS_ASSIGNS = true;
 
     // Var Types
     public static final String BOOL = "BOOL";

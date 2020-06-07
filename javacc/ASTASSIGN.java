@@ -66,7 +66,7 @@ class ASTASSIGN extends TypeSensitive {
       if(varName != null){
         varName = "this." + varName;
       }
-    } else {
+    } else if (!varName.contains("this.")){
       definition = varName;
     }
 

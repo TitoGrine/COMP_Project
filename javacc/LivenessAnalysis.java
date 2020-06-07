@@ -4,12 +4,12 @@ import java.util.HashMap;
 public class LivenessAnalysis {
     private static FlowGraph flowGraph;
 
-    public static HashMap<String, Integer> getRegisterAllocation(SimpleNode methodNode, int k) throws Exception {
+    public static HashMap<String, Integer> getRegisterAllocation(SimpleNode methodNode, int k, boolean o_optimization) throws Exception {
         if(!methodNode.equalsNodeType(ParserTreeConstants.JJTMETHOD) && !methodNode.equalsNodeType(ParserTreeConstants.JJTMAINMETHOD))
             return null;
 
         flowGraph = new FlowGraph(methodNode);
 
-        return flowGraph.allocateRegisters(k);
+        return flowGraph.allocateRegisters(k, o_optimization);
     }
 }

@@ -1,0 +1,21 @@
+import static io.println(int) void;
+
+public class Factorial {
+
+    public static void main(String[] args) {
+        int num = 10;
+
+        int fact = multiplyNumbers(num);
+
+        io.println(fact);
+    }
+
+    public static int multiplyNumbers(int num) {
+        if(num < 1) {
+            return 1;
+        }
+        else {
+            return num * multiplyNumbers(num - 1);
+        }
+    }
+}

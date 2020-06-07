@@ -27,7 +27,6 @@ class ASTASSIGN extends TypeSensitive {
 
     if(firstChild.equalsNodeType(ParserTreeConstants.JJTARRAY_ACCESS)){
       ArrayList<String> accessUses = firstChild.getUses();
-      accessUses.remove(definition);
       uses.addAll(accessUses);
     }
 
@@ -66,7 +65,7 @@ class ASTASSIGN extends TypeSensitive {
       if(varName != null){
         varName = "this." + varName;
       }
-    } else if (!varName.contains("this.")){
+    } else if (!varName.contains("this.") && !firstChild.equalsNodeType(ParserTreeConstants.JJTARRAY_ACCESS)){
       definition = varName;
     }
 

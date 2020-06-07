@@ -181,7 +181,7 @@ public class MethodGenerator extends CodeGenerator{
         else
             varName = ((ASTIDENT) varNode).name;
 
-        return !varName.contains("this.") && !locals.containsKey(varName) && ControlVars.IGNORE_USELESS_ASSIGNS;
+        return !varName.contains("this.") && !varNode.symbolTable.existsSymbol("this." + varName) && !locals.containsKey(varName) && o_optimized;
     }
 
     private String addStoreVar(SimpleNode varNode, SimpleNode expNode, int indentation){
@@ -598,7 +598,7 @@ public class MethodGenerator extends CodeGenerator{
         SimpleNode secondChild = (SimpleNode) assignNode.jjtGetChild(1);
         
         if(uselessAssign(firstChild))
-            return assignCode;
+            return (secondChild.equalsNodeType(ParserTreeConstants.JJTFUNC_METHOD) ? generateSimpleScopeCode(secondChild, indentation) : "");
 
         if(o_optimized && firstChild.equalsNodeType(ParserTreeConstants.JJTIDENT)) {
             String varName = ((ASTIDENT)firstChild).name;

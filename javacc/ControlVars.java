@@ -16,9 +16,6 @@ public class ControlVars {
     public static final boolean PRINT_ALLOCATED_REGISTERS = false;
     public static final boolean PRINT_RI_GRAPH = false;
 
-    // Extra optimizations
-    public static final boolean IGNORE_USELESS_ASSIGNS = true;
-
     // Var Types
     public static final String BOOL = "BOOL";
     public static final String INT = "INT";

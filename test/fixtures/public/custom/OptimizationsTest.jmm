@@ -16,7 +16,6 @@ class OptimizationsTest {
             c = a / b;
         } else {
             c = 10;
-            a = c/c/c;
             b = a * c;
         }
 

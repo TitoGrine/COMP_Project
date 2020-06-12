@@ -1,18 +1,23 @@
 import static io.println(int);
 class JasminKeywords {
+    int field;
+    int putfield;
+    int bipush;
+    int ldc;
+    int ireturn;
+    boolean imul;
+    boolean iconst_3;
 
 	public static void main(String[] args) {
-        int field;
-        int putfield;
-        int bipush;
-        int ldc;
-        int ireturn;
-        boolean imul;
-        boolean iconst_3;
         JasminKeywords simple;
 
         simple = new JasminKeywords();
-        ireturn = 0;
+
+        io.println(simple.testKeywords());
+	}
+
+	public int testKeywords(){
+	    ireturn = 0;
         field = 4;
         putfield = 5;
         bipush = 6;
@@ -21,12 +26,12 @@ class JasminKeywords {
         iconst_3 = true;
 
         if (imul && iconst_3) {
-            ireturn = simple.add(field, putfield, bipush, ldc);
+            ireturn = this.add(field, putfield, bipush, ldc);
         } else {
             ireturn = 0-1;
         }
 
-        io.println(ireturn);
+        return ireturn;
 	}
 
     public int add(int a, int b, int c, int d) {

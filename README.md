@@ -1,7 +1,7 @@
 ## COMP Project
 
 Project of COMP (Compilers - 3rd year of Integrated Master Degree in Computer Engineering).
-The goal of the project was to build a compiler for a simple language called Java--, capable of translating programs in this language to java bytecodes. This included building a parser for the grammar, for lexical and syntatic analysis, and later converting it into an AST (Abstract Syntax Tree) to allow for semantic analysis. Finally the code was converted into JVM instruction accepted by [Jasmin](http://jasmin.sourceforge.net/) utilising various compiler optimizations. The generated code was able to be compiled with javac and could be ran with java. For more information about the assignment check the [project's specification]().
+The goal of the project was to build a compiler for a simple language called Java--, capable of translating programs in this language to java bytecodes. This included building a parser for the grammar, for lexical and syntatic analysis, and later converting it into an AST (Abstract Syntax Tree) to allow for semantic analysis. Finally the code was converted into JVM instruction accepted by [Jasmin](http://jasmin.sourceforge.net/) utilising various compiler optimizations. The generated code was able to be compiled with javac and could be ran with java. For more information about the assignment check the [project's specification](https://github.com/TitoGrine/COMP_Project/blob/master/docs/Project%20Specification.pdf).
 
 ### Course Information
 
@@ -9,7 +9,7 @@ The goal of the project was to build a compiler for a simple language called Jav
 
 ### Instructions
 
-For more information about how to run the project and more detailed descriptions of its functionalities check the [report]().
+For more information about how to run the project and a more detailed description of its functionalities check the [report](docs/Report.md).
 
 ### Authors
 
@@ -21,6 +21,3 @@ For more information about how to run the project and more detailed descriptions
 ### Evaluation
 
 **Project Grade:** 18.00
-
- 
- 

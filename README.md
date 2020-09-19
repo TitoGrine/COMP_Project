@@ -5,7 +5,7 @@ The goal of the project was to build a compiler for a simple language called Jav
 
 ### Course Information
 
-* All the course's information can be viewed [here](https://sigarra.up.pt/feup/pt/ucurr_geral.ficha_uc_view?pv_ocorrencia_id=436448).
+* All the course's information can be viewed [here](https://sigarra.up.pt/feup/en/ucurr_geral.ficha_uc_view?pv_ocorrencia_id=436448).
 
 ### Instructions
 
